@@ -75,10 +75,7 @@ public class HouseScene implements Scene, Main.CameraDirector {
     // ---------------------------------------------------------------- Aufbau des Innenraums
 
     private Material texLit(String path, ColorRGBA tint, float su, float sv, Mesh mesh) {
-        Material m = G3.lit(tint);
-        Texture tx = G3.am.loadTexture(path);
-        tx.setWrap(Texture.WrapMode.Repeat);
-        m.setTexture("DiffuseMap", tx);
+        Material m = G3.texture(path, tint);
         mesh.scaleTextureCoordinates(new Vector2f(su, sv));
         return m;
     }
@@ -134,27 +131,44 @@ public class HouseScene implements Scene, Main.CameraDirector {
         Material rug = G3.lit(evil ? new ColorRGBA(0.35f, 0.1f, 0.25f, 1) : new ColorRGBA(0.7f, 0.3f, 0.3f, 1));
         Geometry rg = cylY(2.2f, 2.2f, 0.02f, 32, rug, 0, 0.07f, 0.3f);
         Geometry rg2 = cylY(1.7f, 1.7f, 0.025f, 32, G3.lit(evil ? new ColorRGBA(0.2f, 0.08f, 0.25f, 1) : new ColorRGBA(0.95f, 0.75f, 0.35f, 1)), 0, 0.08f, 0.3f);
-        // Tisch & Hocker
-        cylY(0.9f, 0.9f, 0.08f, 24, wood, 0.6f, 0.82f, -1.2f);
-        cylY(0.1f, 0.14f, 0.8f, 10, wood, 0.6f, 0.4f, -1.2f);
-        for (int k = 0; k < 2; k++) cylY(0.32f, 0.32f, 0.08f, 16, wood, 0.6f + (k == 0 ? -1.3f : 1.3f), 0.48f, -1.2f);
-        Material cupM = G3.lit(new ColorRGBA(0.95f, 0.93f, 0.88f, 1));
-        cylY(0.07f, 0.06f, 0.12f, 12, cupM, 0.3f, 0.92f, -1.0f);
-        cylY(0.07f, 0.06f, 0.12f, 12, cupM, 0.9f, 0.92f, -1.4f);
-        Geometry pot = add(new Sphere(10, 12, 0.18f), G3.lit(evil ? new ColorRGBA(0.2f, 0.15f, 0.25f, 1) : new ColorRGBA(0.3f, 0.45f, 0.75f, 1)), 0.6f, 1.0f, -1.2f);
+        // Tisch & Hocker (echte Modelle), Teeservice und Öllampe
+        Spatial table = G3.model("round_wooden_table_01");
+        table.setLocalScale(0.85f);
+        table.setLocalTranslation(0.6f, 0, -1.2f);
+        interior.attachChild(table);
+        for (int k = 0; k < 2; k++) {
+            Spatial stool = G3.model("wooden_stool_01");
+            stool.setLocalScale(1.1f);
+            stool.setLocalTranslation(0.6f + (k == 0 ? -1.15f : 1.15f), 0, -1.2f + (k == 0 ? 0.2f : -0.1f));
+            interior.attachChild(stool);
+        }
+        Spatial tea = G3.model("tea_set_01");
+        tea.setLocalScale(0.9f);
+        tea.setLocalTranslation(0.6f, 0.86f, -1.2f);
+        interior.attachChild(tea);
+        if (!evil) {
+            Spatial lamp = G3.model("vintage_oil_lamp");
+            lamp.setLocalScale(0.55f);
+            lamp.setLocalTranslation(1.05f, 0.86f, -1.45f);
+            interior.attachChild(lamp);
+        }
+        Geometry pot = add(new Sphere(10, 12, 0.18f), G3.lit(evil ? new ColorRGBA(0.2f, 0.15f, 0.25f, 1) : new ColorRGBA(0.3f, 0.45f, 0.75f, 1)), -R + 1.0f, 0.18f, 1.6f);
         pot.setLocalScale(1, 0.85f, 1);
         // Bett
         Geometry bed = add(new Box(1.0f, 0.3f, 0.55f), wood, -R + 1.5f, 0.3f, -0.8f);
         Geometry blanket = add(new Box(0.95f, 0.08f, 0.5f), G3.lit(evil ? new ColorRGBA(0.25f, 0.12f, 0.3f, 1) : new ColorRGBA(0.5f, 0.65f, 0.9f, 1)), -R + 1.45f, 0.65f, -0.8f);
         Geometry pillow = add(new Sphere(8, 10, 0.3f), G3.lit(new ColorRGBA(0.95f, 0.92f, 0.85f, 1)), -R + 0.75f, 0.72f, -0.8f);
         pillow.setLocalScale(0.6f, 0.35f, 1.2f);
-        // Regal mit leuchtenden Gläsern
-        add(new Box(0.25f, 1.2f, 1.1f), wood, R - 0.5f, 1.2f, -0.5f);
+        // Regal mit leuchtenden Gläsern (echtes Bücherregal-Modell)
+        Spatial shelf = G3.model("wooden_bookshelf_worn");
+        shelf.setLocalTranslation(R - 0.45f, 0, -0.5f);
+        shelf.setLocalRotation(new Quaternion().fromAngleAxis(-FastMath.HALF_PI, Vector3f.UNIT_Y));
+        interior.attachChild(shelf);
         ColorRGBA[] jar = {new ColorRGBA(0.4f, 0.9f, 0.5f, 1), new ColorRGBA(0.9f, 0.6f, 0.2f, 1), new ColorRGBA(0.5f, 0.6f, 1f, 1), new ColorRGBA(1f, 0.4f, 0.7f, 1)};
         for (int s = 0; s < 3; s++) {
             for (int k = 0; k < 4; k++) {
                 ColorRGBA c = evil ? new ColorRGBA(0.7f, 0.2f, 1f, 1) : jar[(s + k) % jar.length];
-                cylY(0.09f, 0.09f, 0.22f, 10, G3.litGlow(c.mult(0.7f), c.mult(0.35f)), R - 0.6f, 0.55f + s * 0.75f, -1.2f + k * 0.45f);
+                cylY(0.07f, 0.07f, 0.18f, 10, G3.litGlow(c.mult(0.7f), c.mult(0.35f)), R - 0.45f, 0.5f + s * 0.62f, -0.95f + k * 0.3f);
             }
         }
         // Kamin bzw. Kessel
@@ -216,6 +230,7 @@ public class HouseScene implements Scene, Main.CameraDirector {
         ColorRGBA lc = evil ? new ColorRGBA(0.7f, 0.35f, 1f, 1) : new ColorRGBA(1f, 0.75f, 0.45f, 1);
         lights.add(new PointLight(base.add(0, H - 0.5f, 0), lc.mult(evil ? 1.1f : 1.6f), 14));
         lights.add(new PointLight(base.add(fx, 1.2f, fz + 0.8f), (evil ? new ColorRGBA(0.6f, 0.2f, 1f, 1) : new ColorRGBA(1f, 0.5f, 0.2f, 1)).mult(1.4f), 8));
+        G3.tangents(interior);
         interior.setLocalTranslation(base);
         // Bewohner und Gast
         resident = new Figure(house.look);

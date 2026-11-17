@@ -19,6 +19,8 @@ dependencies {
     implementation "org.jmonkeyengine:jme3-effects:$jmeVersion"
     implementation "org.jmonkeyengine:jme3-terrain:$jmeVersion"
     implementation "org.jmonkeyengine:jme3-plugins:$jmeVersion"
+    // OGG-Musik (Orchesteraufnahmen)
+    implementation "org.jmonkeyengine:jme3-jogg:$jmeVersion"
     // Beispieldaten der Engine: nur die benutzten Dateien kommen ins Spiel (siehe slimAssets)
     assetsFull "org.jmonkeyengine:jme3-testdata:$jmeVersion"
     runtimeOnly files("$buildDir/slim/daemmerwald-assets.jar") { builtBy 'slimAssets' }

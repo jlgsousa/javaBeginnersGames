@@ -174,10 +174,7 @@ public final class Home {
     // ---------------------------------------------------------------- 3D-Modell (außen)
 
     private static Material tex(String path, ColorRGBA tint, Mesh mesh, float su, float sv) {
-        Material m = G3.lit(tint);
-        Texture t = G3.am.loadTexture(path);
-        t.setWrap(Texture.WrapMode.Repeat);
-        m.setTexture("DiffuseMap", t);
+        Material m = G3.texture(path, tint);
         if (mesh != null) mesh.scaleTextureCoordinates(new Vector2f(su, sv));
         return m;
     }
@@ -207,7 +204,12 @@ public final class Home {
         float slope = (float) Math.hypot(w + 0.4f, pitch);
         float ang = FastMath.atan2(pitch, w + 0.4f);
         for (int side = -1; side <= 1; side += 2) {
-            Geometry r = box(n, "roof", slope / 2, 0.09f, d + 0.45f, m, side * (w + 0.4f) / 2, y + pitch / 2, 0);
+            Box rb = new Box(slope / 2, 0.09f, d + 0.45f);
+            rb.scaleTextureCoordinates(new Vector2f(slope * 0.8f, (d + 0.45f) * 0.8f));
+            Geometry r = new Geometry("roof", rb);
+            r.setMaterial(m);
+            r.setLocalTranslation(side * (w + 0.4f) / 2, y + pitch / 2, 0);
+            n.attachChild(r);
             r.setLocalRotation(new Quaternion().fromAngleAxis(-side * ang, Vector3f.UNIT_Z));
         }
         // Giebeldreiecke
@@ -281,7 +283,7 @@ public final class Home {
         float[] fp = footprint(level);
         float w = fp[0], d = fp[1];
         Material roofMat = tex(BARK, new ColorRGBA(0.55f, 0.42f, 0.32f, 1), null, 1, 1);
-        Material shingles = tex(BRICK, new ColorRGBA(0.55f, 0.32f, 0.26f, 1), null, 1, 1);
+        Material shingles = G3.phFresh("clay_roof_tiles", new ColorRGBA(0.95f, 0.82f, 0.78f, 1));
         float wallH;
         switch (level) {
             case 0 -> {
@@ -339,6 +341,7 @@ public final class Home {
                 if (level >= 5) villa(root, w, d);
             }
         }
+        G3.tangents(root);
         root.setShadowMode(com.jme3.renderer.queue.RenderQueue.ShadowMode.CastAndReceive);
         root.setLocalTranslation(X, WorldGen.height(X, Z) - 0.05f, Z);
         root.setLocalRotation(new Quaternion().fromAngleAxis(YAW, Vector3f.UNIT_Y));
@@ -368,7 +371,12 @@ public final class Home {
     }
 
     private static void timber(Node n, float w, float d, float y0, float h) {
-        box(n, "plaster", w, h / 2, d, G3.lit(new ColorRGBA(0.93f, 0.88f, 0.76f, 1)), 0, y0 + h / 2, 0);
+        Box pb = new Box(w, h / 2, d);
+        pb.scaleTextureCoordinates(new Vector2f(w, h / 2));
+        Geometry pl = new Geometry("plaster", pb);
+        pl.setMaterial(G3.phFresh("clay_plaster", new ColorRGBA(1f, 0.96f, 0.86f, 1)));
+        pl.setLocalTranslation(0, y0 + h / 2, 0);
+        n.attachChild(pl);
         Material beam = G3.lit(new ColorRGBA(0.26f, 0.16f, 0.09f, 1));
         for (int s = -1; s <= 1; s += 2) {
             box(n, "beam", w + 0.03f, 0.09f, 0.05f, beam, 0, y0 + 0.05f, s * (d + 0.02f));
@@ -386,7 +394,7 @@ public final class Home {
     }
 
     private static void veranda(Node n, float w, float d) {
-        Material plank = tex(BARK, new ColorRGBA(0.95f, 0.8f, 0.65f, 1), null, 1, 1);
+        Material plank = G3.phFresh("brown_planks_05", ColorRGBA.White);
         Material post = G3.lit(new ColorRGBA(0.38f, 0.24f, 0.13f, 1));
         box(n, "deck", w + 0.3f, 0.08f, 0.8f, plank, 0, 0.18f, d + 0.85f);
         for (int s = -1; s <= 1; s += 2) {
@@ -395,7 +403,7 @@ public final class Home {
         }
         box(n, "rail", w * 0.32f, 0.04f, 0.04f, post, -w * 0.62f, 0.9f, d + 1.55f);
         box(n, "rail", w * 0.32f, 0.04f, 0.04f, post, w * 0.62f, 0.9f, d + 1.55f);
-        Geometry canopy = box(n, "canopy", w + 0.4f, 0.06f, 0.95f, tex(BRICK, new ColorRGBA(0.55f, 0.32f, 0.26f, 1), null, 1, 1), 0, 2.62f, d + 0.85f);
+        Geometry canopy = box(n, "canopy", w + 0.4f, 0.06f, 0.95f, G3.phFresh("clay_roof_tiles", new ColorRGBA(0.95f, 0.82f, 0.78f, 1)), 0, 2.62f, d + 0.85f);
         canopy.setLocalRotation(new Quaternion().fromAngleAxis(0.18f, Vector3f.UNIT_X));
         // Bank und Laternen
         box(n, "bench", 0.7f, 0.05f, 0.2f, plank, -w * 0.6f, 0.62f, d + 0.4f);
@@ -414,7 +422,7 @@ public final class Home {
         t.setLocalTranslation(tx, h / 2, tz);
         n.attachChild(t);
         Geometry cone = new Geometry("towerRoof", new Dome(Vector3f.ZERO, 2, 20, r + 0.35f, false));
-        cone.setMaterial(tex(BRICK, new ColorRGBA(0.45f, 0.3f, 0.5f, 1), null, 1, 1));
+        cone.setMaterial(G3.phFresh("clay_roof_tiles", new ColorRGBA(0.7f, 0.55f, 0.85f, 1)));
         cone.setLocalScale(1, 3.2f / (r + 0.35f), 1);
         cone.setLocalTranslation(tx, h, tz);
         n.attachChild(cone);

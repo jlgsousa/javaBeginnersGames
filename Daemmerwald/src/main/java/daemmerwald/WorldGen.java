@@ -102,7 +102,7 @@ public final class WorldGen {
         }
         // Laternbach mit flachen Ufern
         double sd = streamDist(x, z);
-        if (sd < 6) h = lerp(h, -0.9, G3.smooth(6f, 2.6f, (float) sd));
+        if (sd < 6.5) h = lerp(h, -1.9, G3.smooth(6.5f, 2.2f, (float) sd));
         // Klippen-Plateau beim Café
         double plateau = smooth(130, 196, z) * smooth(-170, -60, x) * (1 - smooth(170, 260, x));
         h += plateau * 20;

@@ -25,3 +25,18 @@ auf den eigenen Rechner.
 `assets/models/Fox.glb` aus den [Khronos glTF Sample Assets](https://github.com/KhronosGroup/glTF-Sample-Assets/tree/main/Models/Fox):
 Modell von PixelMannen (CC0), Rigging und Animation von tomkranis
 ([CC-BY 4.0](https://creativecommons.org/licenses/by/4.0/)), glTF-Umwandlung von @AsoboStudio und @scurest.
+
+## Musik
+Alle Stücke in `assets/music/` von **Kevin MacLeod** ([incompetech.com](https://incompetech.com)),
+lizenziert unter [Creative Commons: By Attribution 4.0](https://creativecommons.org/licenses/by/4.0/),
+für das Spiel in OGG umgewandelt (ansonsten unverändert):
+
+| Datei | Stück | Wann |
+|---|---|---|
+| title.ogg | Heroic Age | Titelbild |
+| epic.ogg | Sovereign | Titelbild, Finale |
+| day1.ogg / day2.ogg | Enchanted Valley / Dreams Become Real | Tag im Wald |
+| night1.ogg / night2.ogg | Lightless Dawn / Peaceful Desolation | Nacht |
+| dark1.ogg / dark2.ogg | Darkest Child / Unseen Horrors | dunkle Orte, böse Häuser |
+| drama1.ogg / drama2.ogg / drama3.ogg | Volatile Reaction / Five Armies / Clash Defiant | Duelle, Prüfungen, Rennen, Gefahr |
+| cafe1.ogg / cafe2.ogg | Gymnopedie No 1 / Heartwarming | Café, Zuhause, freundliche Häuser |

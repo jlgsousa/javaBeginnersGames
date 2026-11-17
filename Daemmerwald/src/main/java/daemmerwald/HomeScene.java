@@ -67,10 +67,7 @@ public class HomeScene implements Scene, Main.CameraDirector {
     // ================================================================ Innenraum
 
     private Material tex(String path, ColorRGBA tint, Mesh mesh, float su, float sv) {
-        Material m = G3.lit(tint);
-        Texture tx = G3.am.loadTexture(path);
-        tx.setWrap(Texture.WrapMode.Repeat);
-        m.setTexture("DiffuseMap", tx);
+        Material m = G3.texture(path, tint);
         if (mesh != null) mesh.scaleTextureCoordinates(new Vector2f(su, sv));
         return m;
     }
@@ -125,16 +122,13 @@ public class HomeScene implements Scene, Main.CameraDirector {
         H = lv <= 1 ? 2.6f : lv == 2 ? 3.0f : 3.3f;
         final String BARK = "Models/Tree/BarkColor.jpg", BRICK = "Textures/Terrain/BrickWall/BrickWall.jpg", ROCK = "Textures/Terrain/Rocky/RockyTexture.jpg";
 
-        // Boden aus Dielen
-        Material plank = tex(BARK, new ColorRGBA(1f, 0.86f, 0.7f, 1), null, 1, 1);
-        for (float x = -W; x < W; x += 0.32f) {
-            Box b = new Box(0.15f, 0.04f, D);
-            b.scaleTextureCoordinates(new Vector2f(0.4f, 3));
-            Geometry g = new Geometry("plank", b);
-            g.setMaterial(plank);
-            g.setLocalTranslation(x + 0.16f, -0.04f, 0);
-            interior.attachChild(g);
-        }
+        // Boden aus Dielen (echte Holztextur)
+        Box fb = new Box(W, 0.04f, D);
+        fb.scaleTextureCoordinates(new Vector2f(W * 0.9f, D * 0.9f));
+        Geometry floorG = new Geometry("floor", fb);
+        floorG.setMaterial(G3.phFresh("brown_planks_05", new ColorRGBA(1f, 0.92f, 0.82f, 1)));
+        floorG.setLocalTranslation(0, -0.04f, 0);
+        interior.attachChild(floorG);
         // Wände: Holz (Stufe 0–2), unten Ziegel und oben Putz (ab Stufe 3)
         if (lv < 3) {
             ColorRGBA wt = new ColorRGBA(0.95f, 0.8f, 0.64f, 1);
@@ -156,8 +150,8 @@ public class HomeScene implements Scene, Main.CameraDirector {
             for (int s = -1; s <= 1; s += 2) {
                 texBox(BRICK, new ColorRGBA(0.9f, 0.65f, 0.55f, 1), W, 0.6f, 0.05f, 0, 0.6f, s * (D + 0.05f), 1.2f);
                 texBox(BRICK, new ColorRGBA(0.9f, 0.65f, 0.55f, 1), 0.05f, 0.6f, D, s * (W + 0.05f), 0.6f, 0, 1.2f);
-                box(W, (H - 1.2f) / 2, 0.05f, G3.lit(new ColorRGBA(0.74f, 0.68f, 0.58f, 1)), 0, 1.2f + (H - 1.2f) / 2, s * (D + 0.05f));
-                box(0.05f, (H - 1.2f) / 2, D, G3.lit(new ColorRGBA(0.74f, 0.68f, 0.58f, 1)), s * (W + 0.05f), 1.2f + (H - 1.2f) / 2, 0);
+                box(W, (H - 1.2f) / 2, 0.05f, G3.phFresh("clay_plaster", new ColorRGBA(0.95f, 0.88f, 0.76f, 1)), 0, 1.2f + (H - 1.2f) / 2, s * (D + 0.05f));
+                box(0.05f, (H - 1.2f) / 2, D, G3.phFresh("clay_plaster", new ColorRGBA(0.95f, 0.88f, 0.76f, 1)), s * (W + 0.05f), 1.2f + (H - 1.2f) / 2, 0);
             }
             Material beam = G3.lit(new ColorRGBA(0.3f, 0.19f, 0.1f, 1));
             for (float x = -W; x <= W + 0.01f; x += W / 2) box(0.07f, (H - 1.2f) / 2, 0.06f, beam, x, 1.2f + (H - 1.2f) / 2, -D + 0.01f);
@@ -185,6 +179,11 @@ public class HomeScene implements Scene, Main.CameraDirector {
         saw.setLocalRotation(new Quaternion().fromAngleAxis(0.3f, Vector3f.UNIT_Y));
         box(0.07f, 0.04f, 0.04f, darkWood, bx + 0.3f, 0.95f, bz);
         box(0.02f, 0.02f, 0.12f, G3.lit(new ColorRGBA(0.6f, 0.6f, 0.65f, 1)), bx + 0.3f, 0.95f, bz + 0.12f);
+        Spatial oil = G3.model("vintage_oil_lamp");
+        oil.setLocalScale(0.5f);
+        oil.setLocalTranslation(bx + 0.5f, 0.92f, bz + 0.15f);
+        interior.attachChild(oil);
+        lights.add(new PointLight(base.add(bx + 0.5f, 1.3f, bz + 0.4f), new ColorRGBA(1f, 0.7f, 0.4f, 1).mult(0.7f), 4));
         // kleine Häufchen der Baustoffe auf der Werkbank
         if (st.mats(Baustoff.BRETTER) > 0) for (int i = 0; i < Math.min(4, st.mats(Baustoff.BRETTER)); i++)
             box(0.22f, 0.012f, 0.06f, tex(BARK, new ColorRGBA(1f, 0.85f, 0.65f, 1), null, 1, 1), bx + 0.25f, 0.94f + i * 0.025f, bz - 0.15f);
@@ -238,29 +237,8 @@ public class HomeScene implements Scene, Main.CameraDirector {
             }
         }
         if (has("schaukelstuhl")) {
-            float sx = -0.6f, sz = 0.9f;
-            Node chair = new Node("chair");
-            Material cw = G3.lit(new ColorRGBA(0.45f, 0.28f, 0.15f, 1));
-            Geometry seat = new Geometry("seat", new Box(0.28f, 0.03f, 0.28f));
-            seat.setMaterial(cw);
-            seat.setLocalTranslation(0, 0.45f, 0);
-            chair.attachChild(seat);
-            Geometry back = new Geometry("back", new Box(0.28f, 0.35f, 0.03f));
-            back.setMaterial(cw);
-            back.setLocalTranslation(0, 0.8f, 0.27f);
-            back.setLocalRotation(new Quaternion().fromAngleAxis(-0.15f, Vector3f.UNIT_X));
-            chair.attachChild(back);
-            for (int s = -1; s <= 1; s += 2) {
-                Geometry rocker = new Geometry("rocker", new Box(0.025f, 0.03f, 0.42f));
-                rocker.setMaterial(cw);
-                rocker.setLocalTranslation(s * 0.25f, 0.04f, 0);
-                chair.attachChild(rocker);
-                Geometry leg = new Geometry("leg", new Box(0.025f, 0.2f, 0.025f));
-                leg.setMaterial(cw);
-                leg.setLocalTranslation(s * 0.25f, 0.25f, 0.12f);
-                chair.attachChild(leg);
-            }
-            chair.setLocalTranslation(sx, 0, sz);
+            Spatial chair = G3.model("Rockingchair_01");
+            chair.setLocalTranslation(-0.6f, 0, 0.9f);
             chair.setLocalRotation(new Quaternion().fromAngleAxis(2.6f, Vector3f.UNIT_Y));
             chair.setUserData("rock", 1);
             interior.attachChild(chair);
@@ -395,6 +373,10 @@ public class HomeScene implements Scene, Main.CameraDirector {
             interior.attachChild(tube);
         }
         if (has("kronleuchter")) {
+            Spatial ch = G3.model("lantern_chandelier_01");
+            ch.setLocalScale(1.3f);
+            ch.setLocalTranslation(0, H - 0.05f, 0.2f);
+            interior.attachChild(ch);
             Material gold = G3.lit(new ColorRGBA(0.9f, 0.75f, 0.35f, 1));
             Geometry ring = new Geometry("ring", new Torus(24, 6, 0.03f, 0.55f));
             ring.setMaterial(gold);
@@ -448,6 +430,7 @@ public class HomeScene implements Scene, Main.CameraDirector {
         lights.add(new PointLight(base.add(-W + 1.05f, 1.6f, -D + 1.2f), new ColorRGBA(0.75f, 0.85f, 1f, 1).mult(0.4f), 5));
         interior.setLocalTranslation(base);
 
+        G3.tangents(interior);
         guest = new Figure(st.outfit.apply(st.hero.look), st.outfit.accessory);
         guest.node.setLocalTranslation(0.5f, 0, 0.6f);
         guest.node.setLocalRotation(new Quaternion().fromAngleAxis(FastMath.PI + 0.6f, Vector3f.UNIT_Y));

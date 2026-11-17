@@ -137,6 +137,12 @@ public class WorldScene implements Scene, Main.CameraDirector {
 
     public boolean racing() { return race != null; }
 
+    /** Ein dunkles Wesen ist ganz in der Nähe – die Musik wird spannend. */
+    public boolean danger() {
+        for (Creature c : creatures) if (c.dark() && c.pos.distance(pos) < 16) return true;
+        return false;
+    }
+
     public boolean wantsMouse() {
         return dialog == null && choice == null && menuTab < 0 && !shop && !brew;
     }

@@ -93,6 +93,9 @@ public class TitleScene implements Scene {
         g.setFont(Art.SMALL);
         g.setColor(new Color(160, 160, 190));
         Art.centered(g, "Pfeiltasten / Maus  ·  Enter zum Bestätigen", 640, 690);
+        g.setFont(new Font("SansSerif", Font.PLAIN, 11));
+        g.setColor(new Color(170, 165, 190, 200));
+        Art.centered(g, "Musik: Kevin MacLeod (incompetech.com), CC BY 4.0  ·  Texturen & Modelle: Poly Haven (CC0)", 640, 712);
         if (!Mixamo.status.isEmpty()) {
             g.setColor(new Color(230, 220, 190));
             Art.centered(g, Mixamo.status, 640, 666);

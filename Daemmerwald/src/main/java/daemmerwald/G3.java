@@ -87,6 +87,7 @@ public final class G3 {
     }
 
     static Material litTex(String path, ColorRGBA tint, String normal) {
+        if (upgrade(path) != null) return phFresh(upgrade(path), tint);
         Material m = lit(tint);
         Texture t = am.loadTexture(path);
         t.setWrap(Texture.WrapMode.Repeat);
@@ -128,14 +129,57 @@ public final class G3 {
 
     static Material ph(String name) { return ph(name, ColorRGBA.White); }
 
-    /** Erzeugt Tangenten für Normalenkarten (für selbst gebaute Formen). */
+    /** Erzeugt Tangenten für alle Formen mit Normalenkarte (sonst wirkt das Relief nicht). */
     static void tangents(Spatial s) {
-        if (World3D.lowGraphics) return;
-        try {
-            com.jme3.util.mikktspace.MikktspaceTangentGenerator.generate(s);
-        } catch (Exception ignored) {
-            // Form ohne Texturkoordinaten – dann eben ohne Relief
+        if (World3D.lowGraphics || s == null) return;
+        s.depthFirstTraversal(sp -> {
+            if (!(sp instanceof Geometry g) || sp instanceof ParticleEmitter || g.getMaterial() == null) return;
+            Mesh m = g.getMesh();
+            if (m.getBuffer(VertexBuffer.Type.Tangent) != null || m.getBuffer(VertexBuffer.Type.TexCoord) == null) return;
+            if (g.getMaterial().getParam("NormalMap") == null) return;
+            try {
+                com.jme3.util.mikktspace.MikktspaceTangentGenerator.generate(g);
+            } catch (Exception ignored) {
+                // Form ohne passende Daten – dann eben ohne Relief
+            }
+        });
+    }
+
+    /** Alte Engine-Beispieltexturen → fotorealistische Poly-Haven-Texturen. */
+    static String upgrade(String path) {
+        return switch (path) {
+            case "Models/Tree/BarkColor.jpg" -> "bark_brown_02";
+            case "Textures/Terrain/Rocky/RockyTexture.jpg", "Textures/Terrain/BrickWall/BrickWall.jpg" -> "mossy_stone_wall";
+            case "Textures/Terrain/splat/dirt.jpg" -> "clay_plaster";
+            case "Textures/Terrain/PBR/Rock035_1K_Color.jpg" -> "mossy_rock";
+            default -> null;
+        };
+    }
+
+    /** Eigenes (nicht geteiltes) Material mit Farbe + Normalenkarte von Poly Haven. */
+    static Material phFresh(String name, ColorRGBA tint) {
+        Material m = lit(tint);
+        m.setColor("Ambient", tint.mult(0.9f));
+        Texture t = am.loadTexture("polyhaven/textures/" + name + "/" + name + "_diff.jpg");
+        t.setWrap(Texture.WrapMode.Repeat);
+        m.setTexture("DiffuseMap", t);
+        if (!World3D.lowGraphics) {
+            Texture n = am.loadTexture("polyhaven/textures/" + name + "/" + name + "_nor.jpg");
+            n.setWrap(Texture.WrapMode.Repeat);
+            m.setTexture("NormalMap", n);
         }
+        return m;
+    }
+
+    /** Textur-Material: nutzt automatisch die realistische Variante, falls vorhanden. */
+    static Material texture(String path, ColorRGBA tint) {
+        String up = upgrade(path);
+        if (up != null) return phFresh(up, tint);
+        Material m = lit(tint);
+        Texture t = am.loadTexture(path);
+        t.setWrap(Texture.WrapMode.Repeat);
+        m.setTexture("DiffuseMap", t);
+        return m;
     }
 
     /** Lädt ein Poly-Haven-Modell (glTF) einmal und liefert Kopien mit klassischer Beleuchtung. */

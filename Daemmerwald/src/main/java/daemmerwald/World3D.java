@@ -109,6 +109,7 @@ public class World3D {
         root.attachChild(village.root);
         for (float[] v : village.solids) solid(v[0], v[1], v[2]);
         for (com.jme3.light.PointLight l : village.lights) root.addLight(l);
+        G3.tangents(root);
         buildNpcs();
         buildParticles();
         setupFilters();
@@ -197,9 +198,7 @@ public class World3D {
     }
 
     private static Material texMat(String path, ColorRGBA tint, Vector2f scaleHint) {
-        Material m = G3.lit(tint);
-        m.setTexture("DiffuseMap", repeat(path).tex);
-        return m;
+        return G3.texture(path, tint);
     }
 
     private static Mesh scaled(Mesh m, float u, float v) {
@@ -398,7 +397,7 @@ public class World3D {
         Geometry walls = G3.geom("hut", scaled(new Cylinder(2, 18, 3.2f, 3.2f, 3.4f, true, false), 6, 1), bark);
         walls.setLocalRotation(new Quaternion().fromAngleAxis(-FastMath.HALF_PI, Vector3f.UNIT_X));
         add(root, walls, x, y + 1.7f, z).setShadowMode(ShadowMode.CastAndReceive);
-        Material thatch = texMat("Textures/Terrain/splat/dirt.jpg", new ColorRGBA(0.62f, 0.55f, 0.35f, 1), null);
+        Material thatch = G3.phFresh("thatch_roof_angled", new ColorRGBA(0.95f, 0.85f, 0.7f, 1));
         Geometry roof = cylY("roof", 4.2f, 0.05f, 3.6f, 18, thatch);
         roof.setLocalTranslation(x, y + 5.2f, z);
         roof.setShadowMode(ShadowMode.CastAndReceive);

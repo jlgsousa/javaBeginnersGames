@@ -50,11 +50,32 @@ public class Main extends SimpleApplication implements RawInputListener {
         s.setRenderer(AppSettings.LWJGL_OPENGL32);
         s.setGammaCorrection(false);
         s.setUseJoysticks(true);
-        if (Boolean.getBoolean("dw.noaudio")) s.setAudioRenderer(null);
+        if (Boolean.getBoolean("dw.noaudio") || !audioAvailable()) s.setAudioRenderer(null);
         app.setSettings(s);
         app.setShowSettings(false);
         app.setPauseOnLostFocus(false);
         app.start();
+    }
+
+    /** Gibt es ein Tongerät? Sonst würde OpenAL beim Start abstürzen – dann spielen wir eben stumm. */
+    static boolean audioAvailable() {
+        try {
+            long dev = org.lwjgl.openal.ALC10.alcOpenDevice((java.nio.ByteBuffer) null);
+            if (dev == 0) {
+                System.err.println("Kein Tongerät gefunden – das Spiel läuft ohne Musik.");
+                return false;
+            }
+            org.lwjgl.openal.ALCCapabilities caps = org.lwjgl.openal.ALC.createCapabilities(dev);
+            long ctx = org.lwjgl.openal.ALC10.alcCreateContext(dev, (java.nio.IntBuffer) null);
+            boolean ok = ctx != 0 && caps != null;
+            if (ctx != 0) org.lwjgl.openal.ALC10.alcDestroyContext(ctx);
+            org.lwjgl.openal.ALC10.alcCloseDevice(dev);
+            if (!ok) System.err.println("Tongerät nicht nutzbar – das Spiel läuft ohne Musik.");
+            return ok;
+        } catch (Throwable t) {
+            System.err.println("Ton nicht verfügbar (" + t + ") – das Spiel läuft ohne Musik.");
+            return false;
+        }
     }
 
     /**

@@ -268,6 +268,7 @@ public class House {
         n.attachChild(body);
         n.setLocalTranslation(x, y, z);
         n.setShadowMode(ShadowMode.CastAndReceive);
+        G3.tangents(n);
         return n;
     }
 
