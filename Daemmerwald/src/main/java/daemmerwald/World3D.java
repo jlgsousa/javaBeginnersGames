@@ -61,6 +61,7 @@ public class World3D {
     private DirectionalLightShadowFilter shadows2;
     private boolean split;
     private FilterPostProcessor fpp1, fpp2;
+    private GradeFilter grade, grade2;
     private Material heartLeaves, heartVeins;
     private PointLight heartLight;
     private Geometry crystal;
@@ -104,6 +105,10 @@ public class World3D {
             solid(h.x, h.z, h.radius());
         }
         setHomeLevel(0);
+        village = new Village();
+        root.attachChild(village.root);
+        for (float[] v : village.solids) solid(v[0], v[1], v[2]);
+        for (com.jme3.light.PointLight l : village.lights) root.addLight(l);
         buildNpcs();
         buildParticles();
         setupFilters();
@@ -111,7 +116,17 @@ public class World3D {
 
     // ================================================================ Hilfen
 
-    public float height(float x, float z) { return WorldGen.height(x, z); }
+    public Village village;
+
+    /** Bodenhöhe für Figuren: Gelände – oder die Brücke im Feendorf. */
+    public float height(float x, float z) {
+        float hg = WorldGen.height(x, z);
+        if (village != null) {
+            float d = village.deckHeight(x, z);
+            if (!Float.isNaN(d) && d > hg) return d;
+        }
+        return hg;
+    }
 
     public Vector3f ground(float x, float z) { return new Vector3f(x, height(x, z), z); }
 
@@ -1005,11 +1020,13 @@ public class World3D {
         sunRays.setNbSamples(lowGraphics ? 30 : 50);
         fpp.addFilter(sunRays);
         BloomFilter bloom = new BloomFilter(BloomFilter.GlowMode.Objects);
-        bloom.setBloomIntensity(1.15f);
+        bloom.setBloomIntensity(1.45f);
         bloom.setExposurePower(4.5f);
-        bloom.setBlurScale(1.6f);
+        bloom.setBlurScale(2.1f);
         bloom.setDownSamplingFactor(2);
         fpp.addFilter(bloom);
+        grade = new GradeFilter();
+        fpp.addFilter(grade);
         fpp.addFilter(new FXAAFilter());
         app.getViewPort().addProcessor(fpp);
         fpp1 = fpp;
@@ -1065,6 +1082,8 @@ public class World3D {
             fpp.addFilter(shadows2);
             fog2 = new SkyFogFilter();
             fpp.addFilter(fog2);
+            grade2 = new GradeFilter();
+            fpp.addFilter(grade2);
             fpp.addFilter(new FXAAFilter());
             vp2.addProcessor(fpp);
             fpp2 = fpp;
@@ -1135,6 +1154,8 @@ public class World3D {
         float density = 0.0024f + night * 0.0028f + zoneDark * 0.012f + weather.rain * 0.006f + weather.cover * 0.0012f - zoneBright * 0.0008f;
         ColorRGBA fc = dayNight.fogColor.clone();
         fc = G3.lerp(fc, new ColorRGBA(0.42f, 0.44f, 0.47f, 1).multLocal(0.3f + 0.7f * (1 - night)), weather.rain * 0.6f);
+        grade.mood(night, zoneDark, zoneBright, indoors);
+        if (grade2 != null) grade2.mood(night, zoneDark, zoneBright, indoors);
         ColorRGBA wc = G3.lerp(new ColorRGBA(0.01f, 0.03f, 0.06f, 1), new ColorRGBA(0.05f, 0.16f, 0.22f, 1), 1 - night);
         for (int i = 0; i < 2; i++) {
             SkyFogFilter f = i == 0 ? fog : fog2;

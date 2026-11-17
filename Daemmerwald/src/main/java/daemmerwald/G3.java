@@ -11,6 +11,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
+import com.jme3.scene.Spatial;
 import com.jme3.scene.VertexBuffer;
 import com.jme3.texture.Texture;
 import com.jme3.texture.Texture2D;
@@ -96,6 +97,87 @@ public final class G3 {
             m.setTexture("NormalMap", n);
         }
         return m;
+    }
+
+    // ---------------------------------------------------------------- Poly-Haven-Assets (CC0)
+
+    private static final java.util.Map<String, Material> PH_MATS = new java.util.HashMap<>();
+    private static final java.util.Map<String, Spatial> PH_MODELS = new java.util.HashMap<>();
+
+    /**
+     * Fotorealistische Oberfläche (Farbe + Normalen) aus assets/polyhaven/textures.
+     * Die Geometrie braucht Tangenten (siehe {@link #tangents}), damit die Normalenkarte wirkt.
+     */
+    static Material ph(String name, ColorRGBA tint) {
+        String key = name + tint;
+        Material cached = PH_MATS.get(key);
+        if (cached != null) return cached;
+        Material m = lit(tint);
+        m.setColor("Ambient", tint.mult(0.9f));
+        Texture t = am.loadTexture("polyhaven/textures/" + name + "/" + name + "_diff.jpg");
+        t.setWrap(Texture.WrapMode.Repeat);
+        m.setTexture("DiffuseMap", t);
+        if (!World3D.lowGraphics) {
+            Texture n = am.loadTexture("polyhaven/textures/" + name + "/" + name + "_nor.jpg");
+            n.setWrap(Texture.WrapMode.Repeat);
+            m.setTexture("NormalMap", n);
+        }
+        PH_MATS.put(key, m);
+        return m;
+    }
+
+    static Material ph(String name) { return ph(name, ColorRGBA.White); }
+
+    /** Erzeugt Tangenten für Normalenkarten (für selbst gebaute Formen). */
+    static void tangents(Spatial s) {
+        if (World3D.lowGraphics) return;
+        try {
+            com.jme3.util.mikktspace.MikktspaceTangentGenerator.generate(s);
+        } catch (Exception ignored) {
+            // Form ohne Texturkoordinaten – dann eben ohne Relief
+        }
+    }
+
+    /** Lädt ein Poly-Haven-Modell (glTF) einmal und liefert Kopien mit klassischer Beleuchtung. */
+    static Spatial model(String name) {
+        Spatial s = PH_MODELS.get(name);
+        if (s == null) {
+            s = am.loadModel("polyhaven/models/" + name + "/" + name + ".gltf");
+            toPhong(s);
+            tangents(s);
+            PH_MODELS.put(name, s);
+        }
+        return s.clone();
+    }
+
+    /** Ersetzt PBR-Materialien durch klassisches Licht (passt zur übrigen Beleuchtung, braucht keine Umgebungssonde). */
+    static void toPhong(Spatial s) {
+        s.depthFirstTraversal(sp -> {
+            if (!(sp instanceof Geometry g) || g.getMaterial() == null) return;
+            Material pbr = g.getMaterial();
+            if (pbr.getMaterialDef().getMaterialParam("BaseColor") == null) return;
+            Material m = new Material(am, "Common/MatDefs/Light/Lighting.j3md");
+            com.jme3.material.MatParam base = pbr.getParam("BaseColorMap"), nrm = pbr.getParam("NormalMap"), col = pbr.getParam("BaseColor"),
+                em = pbr.getParam("EmissiveMap"), emc = pbr.getParam("Emissive");
+            ColorRGBA c = col != null ? (ColorRGBA) col.getValue() : ColorRGBA.White;
+            m.setBoolean("UseMaterialColors", true);
+            m.setColor("Diffuse", c);
+            m.setColor("Ambient", c.mult(0.9f));
+            m.setColor("Specular", new ColorRGBA(0.12f, 0.12f, 0.12f, 1));
+            m.setFloat("Shininess", 14);
+            if (base != null) m.setTexture("DiffuseMap", (Texture) base.getValue());
+            if (nrm != null && !World3D.lowGraphics) m.setTexture("NormalMap", (Texture) nrm.getValue());
+            if (em != null) m.setTexture("GlowMap", (Texture) em.getValue());
+            else if (emc != null && ((ColorRGBA) emc.getValue()).r + ((ColorRGBA) emc.getValue()).g > 0.1f) m.setColor("GlowColor", (ColorRGBA) emc.getValue());
+            RenderState.BlendMode bm = pbr.getAdditionalRenderState().getBlendMode();
+            if (bm != RenderState.BlendMode.Off || pbr.getParam("AlphaDiscardThreshold") != null) {
+                m.setFloat("AlphaDiscardThreshold", 0.45f);
+                m.getAdditionalRenderState().setFaceCullMode(RenderState.FaceCullMode.Off);
+            } else {
+                m.getAdditionalRenderState().setFaceCullMode(pbr.getAdditionalRenderState().getFaceCullMode());
+            }
+            g.setMaterial(m);
+        });
     }
 
     static Material litGlow(ColorRGBA diffuse, ColorRGBA glow) {

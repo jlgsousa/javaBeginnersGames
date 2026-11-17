@@ -17,13 +17,21 @@ import java.nio.ByteBuffer;
 
 /** Zeichnet die Java2D-Oberfläche (Menüs, HUD, Dialoge, Prüfungen) in eine Textur über der 3D-Szene. */
 public class Overlay {
-    private final BufferedImage img = new BufferedImage(GamePanel.W, GamePanel.H, BufferedImage.TYPE_4BYTE_ABGR);
-    private final ByteBuffer buf = BufferUtils.createByteBuffer(GamePanel.W * GamePanel.H * 4);
+    private final BufferedImage img;
+    private final ByteBuffer buf;
     private final Image image;
     private final Picture pic;
+    /** Pixelgröße der Oberfläche: so groß wie das Fenster (höchstens 1920 breit), damit Schrift scharf bleibt. */
+    private final int iw, ih;
 
     public Overlay(Main app) {
-        image = new Image(Image.Format.ABGR8, GamePanel.W, GamePanel.H, buf, ColorSpace.sRGB);
+        int cw = app.getCamera().getWidth(), ch = app.getCamera().getHeight();
+        float sc = Math.max(1f, Math.min(1920f, cw) / GamePanel.W);
+        iw = Math.round(GamePanel.W * sc);
+        ih = Math.round(GamePanel.H * sc);
+        img = new BufferedImage(iw, ih, BufferedImage.TYPE_4BYTE_ABGR);
+        buf = BufferUtils.createByteBuffer(iw * ih * 4);
+        image = new Image(Image.Format.ABGR8, iw, ih, buf, ColorSpace.sRGB);
         Texture2D tex = new Texture2D(image);
         tex.setMagFilter(Texture.MagFilter.Bilinear);
         tex.setMinFilter(Texture.MinFilter.BilinearNoMipMaps);
@@ -49,8 +57,9 @@ public class Overlay {
     public void render(GamePanel core) {
         Graphics2D g = img.createGraphics();
         g.setComposite(AlphaComposite.Clear);
-        g.fillRect(0, 0, GamePanel.W, GamePanel.H);
+        g.fillRect(0, 0, iw, ih);
         g.setComposite(AlphaComposite.SrcOver);
+        g.scale(iw / (double) GamePanel.W, ih / (double) GamePanel.H);
         Art.hints(g);
         core.render(g);
         g.dispose();

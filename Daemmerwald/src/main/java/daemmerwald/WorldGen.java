@@ -14,18 +14,22 @@ public final class WorldGen {
     // Story-Orte (x, z)
     public static final float[] ACADEMY = {0, -112}, COURTYARD = {0, -66}, HEART = {0, 12}, LAKE = {-124, -4},
         QUARRY = {120, -36}, SWAMP = {0, 92}, MUSHROOMS = {-120, 92}, RAVINE = {128, 84}, SHADOW = {-124, -92},
-        MEADOW = {116, -104}, CAFE = {34, 194}, HOME = {-66, -52};
+        MEADOW = {116, -104}, CAFE = {34, 194}, HOME = {-66, -52},
+        VILLAGE = {-92, -40};
+
+    /** Der Laternbach: fließt durch das Feendorf Laternhain in den Mondsee. */
+    public static final float[][] STREAM = {{-90, -84}, {-94, -62}, {-92, -44}, {-96, -28}, {-102, -15}, {-112, -6}};
 
     /** Pfade als Polylinien {x1,z1,x2,z2}. */
     public static final float[][] PATHS = {
         {0, -92, 0, -14}, {0, 30, 0, 66}, {-26, 14, -88, -2}, {26, 6, 92, -30}, {-100, 22, -114, 74},
         {26, 94, 100, 84}, {20, -62, 94, -44}, {-20, -66, -100, -86}, {20, -74, 92, -98}, {12, 104, 30, 182},
-        {-16, -64, -58, -50}
+        {-16, -64, -58, -50}, {-58, -50, -84.3f, -37.8f}, {-101.7f, -42.2f, -112, -60}
     };
 
     private static final Feature[] FLAT = {
         new Feature(0, -100, 54), new Feature(COURTYARD, 30), new Feature(HEART, 34), new Feature(MEADOW, 36),
-        new Feature(MUSHROOMS, 22), new Feature(SHADOW, 28), new Feature(CAFE, 22), new Feature(LAKE, 46), new Feature(HOME, 28)
+        new Feature(MUSHROOMS, 22), new Feature(SHADOW, 28), new Feature(CAFE, 22), new Feature(LAKE, 46), new Feature(HOME, 28), new Feature(VILLAGE, 34)
     };
 
     private record Feature(float x, float z, float r) {
@@ -96,6 +100,9 @@ public final class WorldGen {
             h = lerp(h, coreBase(RAVINE[0], RAVINE[1]), G3.smooth(26, 16, (float) dr));
             h += rim * 22 * (0.65 + 0.7 * G3.fbm(x * 0.15 + 4, z * 0.15, 3));
         }
+        // Laternbach mit flachen Ufern
+        double sd = streamDist(x, z);
+        if (sd < 6) h = lerp(h, -0.9, G3.smooth(6f, 2.6f, (float) sd));
         // Klippen-Plateau beim Café
         double plateau = smooth(130, 196, z) * smooth(-170, -60, x) * (1 - smooth(170, 260, x));
         h += plateau * 20;
@@ -109,11 +116,31 @@ public final class WorldGen {
         double isl = G3.fbm(x * 0.008 + 300, z * 0.008 - 200, 3);
         if (s > 0.9 && isl > 0.68) h = Math.max(h, -16 + (isl - 0.68) / 0.32 * 70);
         // Festland nicht unter Wasser (außer Seen/Moor)
-        if (r < 250 && dl > 34 && ds > 36 && z < 200) h = Math.max(h, 1.0);
+        if (r < 250 && dl > 34 && ds > 36 && sd > 5 && z < 200) h = Math.max(h, 1.0);
         return (float) h;
     }
 
     // ---------------------------------------------------------------- Pfade & Zonen
+
+    /** Abstand zum Laternbach (leicht geschlängelt). */
+    public static double streamDist(double x, double z) {
+        double best = 1e9;
+        for (int i = 0; i + 1 < STREAM.length; i++) {
+            float[] a = STREAM[i], b = STREAM[i + 1];
+            double dx = b[0] - a[0], dz = b[1] - a[1];
+            double t = Math.max(0, Math.min(1, ((x - a[0]) * dx + (z - a[1]) * dz) / (dx * dx + dz * dz)));
+            double[] p = streamPoint(i, t);
+            best = Math.min(best, Math.hypot(x - p[0], z - p[1]));
+        }
+        return best;
+    }
+
+    /** Punkt auf dem Bachlauf: Abschnitt i, Anteil t (0..1). */
+    public static double[] streamPoint(int i, double t) {
+        float[] a = STREAM[i], b = STREAM[i + 1];
+        double dx = b[0] - a[0], dz = b[1] - a[1];
+        return new double[]{a[0] + dx * t + Math.sin(t * Math.PI * 2 + i) * 1.6 * Math.sin(t * Math.PI), a[1] + dz * t};
+    }
 
     public static double pathDist(double x, double z) {
         double best = 1e9;
@@ -150,6 +177,7 @@ public final class WorldGen {
         b = Math.max(b, G3.smooth(30, 16, (float) dist(x, z, MUSHROOMS)));
         b = Math.max(b, G3.smooth(36, 20, (float) dist(x, z, COURTYARD)));
         b = Math.max(b, G3.smooth(30, 16, (float) dist(x, z, CAFE)));
+        b = Math.max(b, G3.smooth(40, 22, (float) dist(x, z, VILLAGE)));
         if (Math.hypot(x, z) > 300) {
             double n = G3.fbm(x * 0.003 + 120, z * 0.003 - 60, 3);
             b = Math.max(b, G3.smooth(0.64f, 0.74f, (float) n));

@@ -122,6 +122,15 @@ public class Shot {
         });
         step("home_build", 2.5f, () -> { if (app.core.scene() instanceof HomeScene hs) hs.debugMode("build"); });
         step("home_shop", 2.5f, () -> { if (app.core.scene() instanceof HomeScene hs) hs.debugMode("shop"); });
+        step("village_day", 5f, () -> {
+            app.core.state.twoPlayers = false;
+            app.core.state.flags.add("intro");
+            app.core.state.flags.add("home:seen");
+            app.core.setScene(new WorldScene(app.core));
+        });
+        step("village_day2", 5f, () -> { teleport(-70, -38, -1.75f); app.world.dayNight.time = 0.62f; });
+        step("village_night", 5f, () -> { teleport(-70, -38, -1.75f); app.world.dayNight.time = 0.9f; });
+        step("village_bridge", 5f, () -> { teleport(-82, -37, -1.6f); app.world.dayNight.time = 0.8f; });
         step("players", 2f, () -> app.core.setScene(new PlayersScene(app.core)));
         step("two_players", 6f, () -> {
             GameState gs = app.core.state;

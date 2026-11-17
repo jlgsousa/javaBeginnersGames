@@ -69,7 +69,7 @@ public final class Mixamo {
             if (f == null || !Files.exists(DIR.resolve(f)) || !Files.exists(DIR.resolve("Soldier.glb"))) continue;
             try {
                 Spatial s = am.loadModel(f).clone();
-                if (retarget(s)) { toPhong(s); return s; }
+                if (retarget(s)) { G3.toPhong(s); return s; }
             } catch (Exception e) {
                 System.err.println("Mixamo-Figur " + f + " nicht lesbar: " + e.getMessage());
             }
@@ -145,28 +145,4 @@ public final class Mixamo {
         return q;
     }
 
-    /** Ersetzt die PBR-Materialien der glTF-Datei durch klassische Beleuchtung (passt zum restlichen Licht des Spiels). */
-    private static void toPhong(Spatial s) {
-        s.depthFirstTraversal(sp -> {
-            if (!(sp instanceof com.jme3.scene.Geometry g)) return;
-            com.jme3.material.Material pbr = g.getMaterial();
-            if (pbr.getMaterialDef().getMaterialParam("BaseColor") == null) return;
-            com.jme3.material.Material m = new com.jme3.material.Material(am, "Common/MatDefs/Light/Lighting.j3md");
-            com.jme3.material.MatParam base = pbr.getParam("BaseColorMap"), nrm = pbr.getParam("NormalMap"), col = pbr.getParam("BaseColor");
-            com.jme3.math.ColorRGBA c = col != null ? (com.jme3.math.ColorRGBA) col.getValue() : com.jme3.math.ColorRGBA.White;
-            m.setBoolean("UseMaterialColors", true);
-            m.setColor("Diffuse", c);
-            m.setColor("Ambient", c.mult(0.9f));
-            m.setColor("Specular", new com.jme3.math.ColorRGBA(0.12f, 0.12f, 0.12f, 1));
-            m.setFloat("Shininess", 12);
-            if (base != null) m.setTexture("DiffuseMap", (com.jme3.texture.Texture) base.getValue());
-            if (nrm != null) m.setTexture("NormalMap", (com.jme3.texture.Texture) nrm.getValue());
-            if (pbr.getAdditionalRenderState().getBlendMode() != com.jme3.material.RenderState.BlendMode.Off) {
-                m.getAdditionalRenderState().setBlendMode(com.jme3.material.RenderState.BlendMode.Alpha);
-                m.setFloat("AlphaDiscardThreshold", 0.4f);
-            }
-            m.getAdditionalRenderState().setFaceCullMode(pbr.getAdditionalRenderState().getFaceCullMode());
-            g.setMaterial(m);
-        });
-    }
 }

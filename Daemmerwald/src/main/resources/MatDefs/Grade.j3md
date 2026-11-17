@@ -1,0 +1,25 @@
+MaterialDef Grade {
+
+    MaterialParameters {
+        Int NumSamples
+        Texture2D Texture
+        Float Saturation
+        Float Contrast
+        Float Vignette
+        Vector3 ShadowTint
+        Vector3 HighTint
+        Float Exposure
+    }
+
+    Technique {
+        VertexShader GLSL150 GLSL100:   Common/MatDefs/Post/Post.vert
+        FragmentShader GLSL150 GLSL100: MatDefs/Grade.frag
+
+        WorldParameters {
+        }
+
+        Defines {
+            RESOLVE_MS : NumSamples
+        }
+    }
+}

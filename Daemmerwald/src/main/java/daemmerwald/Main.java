@@ -42,7 +42,9 @@ public class Main extends SimpleApplication implements RawInputListener {
         Main app = new Main();
         AppSettings s = new AppSettings(true);
         s.setTitle("Das Flüstern im Dämmerwald");
-        s.setResolution(1280, 720);
+        int[] res = windowSize();
+        s.setResolution(res[0], res[1]);
+        if (Boolean.getBoolean("dw.fullscreen")) s.setFullscreen(true);
         s.setSamples(World3D.lowGraphics ? 0 : 4);
         s.setVSync(true);
         s.setRenderer(AppSettings.LWJGL_OPENGL32);
@@ -55,6 +57,28 @@ public class Main extends SimpleApplication implements RawInputListener {
         app.start();
     }
 
+    /**
+     * Fenstergröße passend zum Bildschirm (16:9, etwa 92 % der Fläche). Mit -Ddw.res=1920x1080 festlegbar.
+     */
+    static int[] windowSize() {
+        String fixed = System.getProperty("dw.res");
+        if (fixed != null && fixed.matches("\\d+x\\d+")) {
+            String[] a = fixed.split("x");
+            return new int[]{Integer.parseInt(a[0]), Integer.parseInt(a[1])};
+        }
+        try {
+            if (!org.lwjgl.glfw.GLFW.glfwInit()) return new int[]{1280, 720};
+            org.lwjgl.glfw.GLFWVidMode vm = org.lwjgl.glfw.GLFW.glfwGetVideoMode(org.lwjgl.glfw.GLFW.glfwGetPrimaryMonitor());
+            if (vm == null) return new int[]{1280, 720};
+            if (Boolean.getBoolean("dw.fullscreen")) return new int[]{vm.width(), vm.height()};
+            int w = (int) Math.min(vm.width() * 0.92, vm.height() * 0.92 * 16 / 9);
+            w = Math.max(1280, w - w % 16);
+            return new int[]{w, w * 9 / 16};
+        } catch (Throwable t) {
+            return new int[]{1280, 720};
+        }
+    }
+
     @Override
     public void simpleInitApp() {
         setDisplayFps(false);
@@ -64,6 +88,8 @@ public class Main extends SimpleApplication implements RawInputListener {
         cam.setFrustumPerspective(58, (float) cam.getWidth() / cam.getHeight(), 0.25f, 1000f);
         renderManager.setPreferredLightMode(TechniqueDef.LightMode.SinglePass);
         renderManager.setSinglePassLightBatchSize(6);
+        // Texturen auch schräg von der Seite scharf (Wege, Dächer, Boden)
+        renderer.setDefaultAnisotropicFilter(World3D.lowGraphics ? 2 : 8);
         buildKeyMap();
 
         Mixamo.init(assetManager);

@@ -24,6 +24,9 @@ dependencies {
     runtimeOnly files("$buildDir/slim/daemmerwald-assets.jar") { builtBy 'slimAssets' }
 }
 
+// Freie CC0-Texturen und -Modelle von Poly Haven (siehe assets/CREDITS.md, tools/fetch_polyhaven.py)
+sourceSets { main { resources { srcDir 'assets' } } }
+
 /** Packt aus jme3-testdata (~180 MB) nur die Modelle und Texturen, die das Spiel wirklich benutzt (~20 MB). */
 tasks.register('slimAssets', Jar) {
     archiveFileName = 'daemmerwald-assets.jar'

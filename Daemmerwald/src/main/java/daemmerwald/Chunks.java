@@ -74,19 +74,21 @@ public class Chunks {
     public Chunks(Node world) {
         world.attachChild(root);
         terrainBase = new Material(G3.am, "Common/MatDefs/Terrain/TerrainLighting.j3md");
-        setTex(terrainBase, "DiffuseMap", "Textures/Terrain/PBR/Ground037_1K_Color.png", "DiffuseMap_0_scale", 30f * TILE);
-        setTex(terrainBase, "DiffuseMap_1", "Textures/Terrain/splat/dirt.jpg", "DiffuseMap_1_scale", 52f * TILE);
-        setTex(terrainBase, "DiffuseMap_2", "Textures/Terrain/PBR/Rock035_1K_Color.jpg", "DiffuseMap_2_scale", 22f * TILE);
+        // Fotorealistische CC0-Oberflächen von Poly Haven: Waldboden, moosiges Kopfsteinpflaster, moosiger Fels, Gras
+        String ph = "polyhaven/textures/";
+        setTex(terrainBase, "DiffuseMap", ph + "forest_ground_04/forest_ground_04_diff.jpg", "DiffuseMap_0_scale", 40f * TILE);
+        setTex(terrainBase, "DiffuseMap_1", ph + "mossy_cobblestone/mossy_cobblestone_diff.jpg", "DiffuseMap_1_scale", 56f * TILE);
+        setTex(terrainBase, "DiffuseMap_2", ph + "mossy_rock/mossy_rock_diff.jpg", "DiffuseMap_2_scale", 20f * TILE);
         setTex(terrainBase, "DiffuseMap_3", "Textures/Terrain/splat/grass.jpg", "DiffuseMap_3_scale", 48f * TILE);
-        Texture n0 = G3.am.loadTexture("Textures/Terrain/splat/dirt_normal.png");
-        n0.setWrap(Texture.WrapMode.Repeat);
-        terrainBase.setTexture("NormalMap", n0);
-        Texture n2 = G3.am.loadTexture("Textures/Terrain/Rock/Rock_normal.png");
-        n2.setWrap(Texture.WrapMode.Repeat);
-        terrainBase.setTexture("NormalMap_2", n2);
-        Texture n3 = G3.am.loadTexture("Textures/Terrain/splat/grass_normal.jpg");
-        n3.setWrap(Texture.WrapMode.Repeat);
-        terrainBase.setTexture("NormalMap_3", n3);
+        if (!World3D.lowGraphics) {
+            String[][] nm = {{"NormalMap", ph + "forest_ground_04/forest_ground_04_nor.jpg"}, {"NormalMap_1", ph + "mossy_cobblestone/mossy_cobblestone_nor.jpg"},
+                {"NormalMap_2", ph + "mossy_rock/mossy_rock_nor.jpg"}, {"NormalMap_3", "Textures/Terrain/splat/grass_normal.jpg"}};
+            for (String[] n : nm) {
+                Texture t = G3.am.loadTexture(n[1]);
+                t.setWrap(Texture.WrapMode.Repeat);
+                terrainBase.setTexture(n[0], t);
+            }
+        }
         terrainBase.setFloat("Shininess", 8f);
         terrainBase.setColor("Specular", ColorRGBA.Black);
         terrainBase.setColor("Diffuse", ColorRGBA.White);
@@ -144,7 +146,8 @@ public class Chunks {
         flowerMat.setFloat("AlphaDiscardThreshold", 0.4f);
         flowerMat.setColor("GlowColor", new ColorRGBA(0.12f, 0.1f, 0.05f, 1));
         flowerMat.getAdditionalRenderState().setFaceCullMode(RenderState.FaceCullMode.Off);
-        rockMat = G3.litTex("Textures/Terrain/PBR/Rock035_1K_Color.jpg", new ColorRGBA(0.85f, 0.85f, 0.85f, 1), null);
+        rockMat = G3.litTex("polyhaven/textures/mossy_rock/mossy_rock_diff.jpg", new ColorRGBA(0.95f, 0.95f, 0.95f, 1),
+            World3D.lowGraphics ? null : "polyhaven/textures/mossy_rock/mossy_rock_nor.jpg");
         for (int i = 0; i < rocks.length; i++) rocks[i] = G3.rock(i * 7L + 1, 1f);
         stoneMat = G3.litTex("Textures/Terrain/BrickWall/BrickWall.jpg", new ColorRGBA(0.7f, 0.7f, 0.72f, 1), "Textures/Terrain/BrickWall/BrickWall_normal.jpg");
         runeMat = G3.emissive(new ColorRGBA(0.4f, 0.8f, 1f, 1));
