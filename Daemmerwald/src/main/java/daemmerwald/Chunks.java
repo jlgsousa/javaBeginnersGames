@@ -410,6 +410,23 @@ public class Chunks {
                 break;
             }
         }
+        // Rast-Cafés: in der Wildnis tauchen immer wieder welche auf (dort kann man speichern)
+        if (Math.hypot(x0 + 64, z0 + 64) > 300 && hr.nextFloat() < 0.14f) {
+            for (int tries = 0; tries < 6; tries++) {
+                float hx = x0 + 20 + hr.nextFloat() * 88, hz = z0 + 20 + hr.nextFloat() * 88;
+                float h0 = WorldGen.height(hx, hz);
+                float sl = Math.abs(WorldGen.height(hx + 4, hz) - h0) + Math.abs(WorldGen.height(hx, hz + 4) - h0);
+                if (h0 < WorldGen.WATER + 1.2f || sl > 2.2f || h0 > 90 || WorldGen.darkness(hx, hz) > 0.3f) continue;
+                boolean clash = false;
+                for (House o : hs) if (FastMath.sqr(o.x - hx) + FastMath.sqr(o.z - hz) < 400) clash = true;
+                if (clash) continue;
+                House ch = House.randomCafe("c" + c.cx + "_" + c.cz, hx, hz, hr);
+                hs.add(ch);
+                obst.add(new float[]{hx, hz, ch.radius(), 5, h0, 1, 0, 0});
+                far.attachChild(ch.buildExterior());
+                break;
+            }
+        }
         for (House sh : STORY_HOUSES) if (sh.x > x0 - 10 && sh.x < x0 + SIZE + 10 && sh.z > z0 - 10 && sh.z < z0 + SIZE + 10) hs.add(sh);
         for (float gz = 3; gz < SIZE; gz += 7) {
             for (float gx = 3; gx < SIZE; gx += 7) {

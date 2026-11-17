@@ -2,6 +2,10 @@ plugins {
     id 'application'
 }
 
+configurations {
+    assetsFull
+}
+
 repositories {
     mavenCentral()
 }
@@ -15,7 +19,24 @@ dependencies {
     implementation "org.jmonkeyengine:jme3-effects:$jmeVersion"
     implementation "org.jmonkeyengine:jme3-terrain:$jmeVersion"
     implementation "org.jmonkeyengine:jme3-plugins:$jmeVersion"
-    implementation "org.jmonkeyengine:jme3-testdata:$jmeVersion"
+    // Beispieldaten der Engine: nur die benutzten Dateien kommen ins Spiel (siehe slimAssets)
+    assetsFull "org.jmonkeyengine:jme3-testdata:$jmeVersion"
+    runtimeOnly files("$buildDir/slim/daemmerwald-assets.jar") { builtBy 'slimAssets' }
+}
+
+/** Packt aus jme3-testdata (~180 MB) nur die Modelle und Texturen, die das Spiel wirklich benutzt (~20 MB). */
+tasks.register('slimAssets', Jar) {
+    archiveFileName = 'daemmerwald-assets.jar'
+    destinationDirectory = file("$buildDir/slim")
+    from({ configurations.assetsFull.collect { zipTree(it) } }) {
+        include 'Effects/Explosion/flame.png', 'Effects/Smoke/Smoke.png'
+        include 'Models/Ninja/**', 'Models/Sinbad/**', 'Models/Tree/**'
+        include 'Textures/Terrain/BrickWall/BrickWall.jpg', 'Textures/Terrain/BrickWall/BrickWall_normal.jpg'
+        include 'Textures/Terrain/PBR/Ground037_1K_Color.png', 'Textures/Terrain/PBR/Rock035_1K_Color.jpg'
+        include 'Textures/Terrain/Rock/Rock_normal.png', 'Textures/Terrain/Rocky/**'
+        include 'Textures/Terrain/splat/dirt.jpg', 'Textures/Terrain/splat/dirt_normal.png'
+        include 'Textures/Terrain/splat/grass.jpg', 'Textures/Terrain/splat/grass_normal.jpg'
+    }
 }
 
 java {
@@ -34,4 +55,19 @@ application {
 run {
     // Test-Schalter wie -Ddw.tour=... an das Spiel weiterreichen
     systemProperties System.getProperties().findAll { it.key.toString().startsWith('dw.') }
+}
+
+distributions {
+    main {
+        distributionBaseName = 'Daemmerwald'
+        contents {
+            from('dist') {
+                filesMatching(['*.command', '*.sh']) { it.permissions { unix('rwxr-xr-x') } }
+            }
+        }
+    }
+}
+
+tasks.named('startScripts') {
+    applicationName = 'daemmerwald'
 }

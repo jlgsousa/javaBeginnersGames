@@ -57,6 +57,8 @@ public class HouseScene implements Scene, Main.CameraDirector {
     private final List<Runnable> actions = new ArrayList<>();
     private boolean menu;
     private boolean teaHad;
+    private BookReader book;
+    private float savedT;
     private float t, lookYaw;
     private final Random rnd = new Random();
 
@@ -250,6 +252,10 @@ public class HouseScene implements Scene, Main.CameraDirector {
             ? "*Die Tür knarrt. Drinnen riecht es nach kaltem Rauch und altem Zorn. Im Halbdunkel funkeln zwei Augen."
             : "*Die runde Tür schwingt auf. Drinnen ist es warm, es knistert, und irgendwo blubbert ein Teekessel.";
         String hello = pool[rnd.nextInt(pool.length)];
+        if (house.cafe) {
+            first = "*Ein Glöckchen klingelt über der Tür. Es duftet nach frischem Gebäck, Kräutertee und Holzfeuer.";
+            hello = "Willkommen im " + house.title + "! Setz dich, ruh dich aus. Hier kannst du auch deine Reise festhalten – ich hab ein dickes Gästebuch.";
+        }
         if (tamed) hello = "Du schon wieder. Na gut … setz dich. Aber fass nichts an. Und erzähl niemandem, dass ich nett war.";
         say(new String[]{first, hello}, this::openMenu);
     }
@@ -266,6 +272,23 @@ public class HouseScene implements Scene, Main.CameraDirector {
         GameState st = game.state;
         boolean tamed = st.flags.contains(key("beaten"));
         int day = (int) (st.playTime / DayNight.DAY_SECONDS);
+        if (house.cafe) {
+            option("Etwas zu trinken bestellen", () -> {
+                world.mana = (float) st.hero.manaMax();
+                say(new String[]{"*Ein dampfender Becher Kräutertee mit Honig. Dein Mana ist wieder voll, und deine Füße danken es dir."}, this::openMenu);
+            });
+            option("Ins Gästebuch eintragen (Spiel speichern)", () -> {
+                Vector3f d = house.door();
+                world.pos.set(d);
+                world.saveNow(false);
+                savedT = 4;
+                say(new String[]{"*Du schreibst deinen Namen in das dicke Gästebuch. Dein Spiel ist gespeichert."}, this::openMenu);
+            });
+            option("Ein Buch aus dem Regal lesen", () -> { book = new BookReader(); menu = false; });
+            option("Weiterziehen", this::leave);
+            menu = true;
+            return;
+        }
         if (house.evil && !tamed) {
             option("Ein Duell! (Tastenkombos, Stufe " + st.stage(key("duel")) + ")", () -> challenge(new DuelGame(game, house.owner, house.look), "duel"));
             option("Eine Rätselwette", () -> challenge(new RiddleGame(game), "riddle"));
@@ -329,6 +352,8 @@ public class HouseScene implements Scene, Main.CameraDirector {
             in.releaseAll();
             if (r == MiniGame.Result.WIN) {
                 st.stages.put(key(what), mg.level + 1);
+                world.saveNow(false);
+                savedT = 3;
                 int coins = st.earn(house.evil ? 35 + 10 * mg.level : 15 + 5 * mg.level);
                 List<String> m = st.addXp(mg.xpReward());
                 String[] l;
@@ -372,6 +397,11 @@ public class HouseScene implements Scene, Main.CameraDirector {
         game.state.playTime += dt;
         resident.update(dt, 0, false);
         guest.update(dt, 0, false);
+        savedT = Math.max(0, savedT - dt);
+        if (book != null) {
+            if (!book.update(in)) { book = null; openMenu(); }
+            return;
+        }
         if (dialog != null && !menu) {
             dialog.update(dt, in);
             if (dialog.done) {
@@ -421,9 +451,14 @@ public class HouseScene implements Scene, Main.CameraDirector {
         g.setFont(new Font("Serif", Font.BOLD | Font.ITALIC, 28));
         Art.shadowCentered(g, house.title, 640, 46, house.evil ? new Color(220, 150, 255) : Art.GOLD);
         g.setFont(Art.ITALIC);
-        Art.shadowCentered(g, (house.evil ? "Hier haust " : "Zuhause von ") + house.owner, 640, 76, Art.PARCH);
+        Art.shadowCentered(g, (house.cafe ? "Bewirtet von " : house.evil ? "Hier haust " : "Zuhause von ") + house.owner, 640, 76, Art.PARCH);
         Art.ornament(g, 640, 92, 360, t);
         if (dialog != null) dialog.render(g, t);
+        if (savedT > 0) {
+            g.setFont(Art.UI);
+            Art.shadowCentered(g, "✓ Spiel gespeichert", 640, 120, Art.alpha(Art.GOOD, (int) (Math.min(1, savedT) * 255)));
+        }
+        if (book != null) { book.render(g); return; }
         if (menu) {
             Art.panel(g, 740, 236, 510, 80 + labels.size() * 52);
             g.setFont(Art.H2);

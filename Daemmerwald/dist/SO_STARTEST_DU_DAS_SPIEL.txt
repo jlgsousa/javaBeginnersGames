@@ -1,0 +1,35 @@
+DAS FLÜSTERN IM DÄMMERWALD – so startest du das Spiel
+=====================================================
+
+1) Java installieren (einmalig, falls noch nicht vorhanden)
+   - Gehe auf https://adoptium.net
+   - Lade "Temurin 21" für dein System herunter und installiere es (einfach immer "Weiter").
+
+2) Spiel entpacken
+   - Diese ZIP-Datei mit Rechtsklick -> "Alle extrahieren" entpacken.
+
+3) Spiel starten
+   - Windows: Doppelklick auf "Spiel_starten_Windows.bat"
+       (Falls Windows warnt "Der Computer wurde durch Windows geschützt":
+        auf "Weitere Informationen" und dann "Trotzdem ausführen" klicken.)
+   - Mac:     Rechtsklick auf "Spiel_starten_Mac.command" -> "Öffnen" -> "Öffnen"
+   - Linux:   ./Spiel_starten_Linux.sh
+
+4) Beim ERSTEN Start lädt das Spiel einmalig die realistischen Figuren aus dem
+   Internet (ca. 5 MB). Danach geht es auch offline.
+
+Steuerung
+---------
+WASD laufen · Maus umsehen · Mausrad Zoom · Linksklick/Q zaubern
+Leertaste springen / flattern / fliegen · Umschalt rennen · E sprechen/betreten
+Tab oder Esc: Menü (Karte, Garderobe, Inventar, Missionen …) · 1–4 Tränke
+
+Speichern
+---------
+Automatisch nach jedem gewonnenen Spiel – und von Hand in jedem Café
+(ins Gästebuch eintragen). Cafés gibt es überall in der Welt; die Missionsliste
+rechts zeigt dir, wie weit das nächste entfernt ist.
+
+Läuft das Spiel zu langsam? Dann vor dem Start in der Datei bin/daemmerwald(.bat)
+nichts ändern, sondern im Ordner eine Eingabeaufforderung öffnen und eingeben:
+   set JAVA_OPTS=-Ddw.low=true  (Windows)   bzw.   JAVA_OPTS=-Ddw.low=true ./bin/daemmerwald

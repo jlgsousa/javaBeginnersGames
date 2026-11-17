@@ -29,6 +29,9 @@ public class Vista {
     private final Vector3f birdStart = new Vector3f(), birdDir = new Vector3f();
     private final Vector3f mantaStart = new Vector3f(), mantaDir = new Vector3f();
     private final Material mantaSpots;
+    private final Node hawk = new Node("hawk");
+    private final Node hawkL = new Node("hl"), hawkR = new Node("hr");
+    private float hawkT;
 
     public Vista(Node world) {
         world.attachChild(root);
@@ -105,6 +108,30 @@ public class Vista {
         manta.attachChild(tail);
         manta.setCullHint(Spatial.CullHint.Always);
         root.attachChild(manta);
+
+        // Greifvogel, der tagsüber hoch oben kreist
+        Material feather = G3.lit(new ColorRGBA(0.32f, 0.22f, 0.14f, 1));
+        Material light = G3.lit(new ColorRGBA(0.85f, 0.8f, 0.7f, 1));
+        Geometry hb = G3.geom("hawkBody", new Sphere(8, 10, 1), feather);
+        hb.setLocalScale(0.18f, 0.16f, 0.55f);
+        hawk.attachChild(hb);
+        Geometry hh = G3.geom("hawkHead", new Sphere(8, 8, 0.13f), light);
+        hh.setLocalTranslation(0, 0.05f, 0.52f);
+        hawk.attachChild(hh);
+        for (int side = -1; side <= 1; side += 2) {
+            Node wn = side < 0 ? hawkL : hawkR;
+            for (int k = 0; k < 3; k++) {
+                Geometry seg = G3.geom("hawkWing", new Box(0.32f, 0.02f, 0.22f - k * 0.05f), feather);
+                seg.setLocalTranslation(side * (0.32f + k * 0.6f), -k * 0.03f, -k * 0.06f);
+                wn.attachChild(seg);
+            }
+            hawk.attachChild(wn);
+        }
+        Geometry hawkTail = G3.geom("hawkTail", new Box(0.18f, 0.02f, 0.25f), feather);
+        hawkTail.setLocalTranslation(0, 0, -0.65f);
+        hawk.attachChild(hawkTail);
+        hawk.setShadowMode(RenderQueue.ShadowMode.Off);
+        root.attachChild(hawk);
     }
 
     private void splash(Vector3f p) {
@@ -146,6 +173,23 @@ public class Vista {
         nextBirds -= k;
         nextManta -= k;
         Vector3f c = cam.getLocation();
+
+        // Greifvogel kreist über dem Spieler (tagsüber)
+        hawkT += tpf;
+        boolean hawkOn = dn.night < 0.5f;
+        hawk.setCullHint(hawkOn ? Spatial.CullHint.Inherit : Spatial.CullHint.Always);
+        if (hawkOn) {
+            float a = hawkT * 0.16f;
+            Vector3f hp = new Vector3f(c.x + FastMath.cos(a) * 55, c.y + 48 + FastMath.sin(hawkT * 0.3f) * 6, c.z + FastMath.sin(a) * 55);
+            hawk.setLocalTranslation(hp);
+            Vector3f dir = new Vector3f(-FastMath.sin(a), 0, FastMath.cos(a));
+            Quaternion q = new Quaternion();
+            q.lookAt(dir, Vector3f.UNIT_Y);
+            hawk.setLocalRotation(q.mult(new Quaternion().fromAngleAxis(0.35f, Vector3f.UNIT_Z)));
+            float flap = (hawkT % 9) < 1.5f ? FastMath.sin(hawkT * 9) * 0.45f : 0.06f;
+            hawkL.setLocalRotation(new Quaternion().fromAngleAxis(flap, Vector3f.UNIT_Z));
+            hawkR.setLocalRotation(new Quaternion().fromAngleAxis(-flap, Vector3f.UNIT_Z));
+        }
 
         // Wal
         if (whaleT < 0 && nextWhale <= 0) {

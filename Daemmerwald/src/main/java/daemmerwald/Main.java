@@ -65,6 +65,7 @@ public class Main extends SimpleApplication implements RawInputListener {
         renderManager.setSinglePassLightBatchSize(6);
         buildKeyMap();
 
+        Mixamo.init(assetManager);
         world = new World3D(this);
         world.chunks.preload(0, -40);
         overlay = new Overlay(this);

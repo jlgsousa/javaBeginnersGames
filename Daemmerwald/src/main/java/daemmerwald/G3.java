@@ -161,19 +161,32 @@ public final class G3 {
             BufferedImage img = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
             Graphics2D g = img.createGraphics();
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            // Libellenflügel: schillernder Verlauf, Längsadern und feines Zellnetz
             Path2D p = new Path2D.Double();
             p.moveTo(10, 246);
             p.curveTo(20, 120, 120, 10, 240, 16);
             p.curveTo(250, 110, 160, 200, 10, 246);
-            g.setPaint(new GradientPaint(10, 246, new Color(255, 255, 255, 200), 240, 16, new Color(255, 255, 255, 40)));
+            g.setPaint(new LinearGradientPaint(10, 246, 240, 16, new float[]{0f, 0.35f, 0.7f, 1f},
+                new Color[]{new Color(230, 240, 255, 150), new Color(190, 235, 230, 90), new Color(240, 200, 240, 70), new Color(255, 255, 255, 40)}));
             g.fill(p);
-            g.setColor(new Color(255, 255, 255, 230));
+            g.setClip(p);
+            g.setStroke(new BasicStroke(1.6f));
+            g.setColor(new Color(255, 255, 255, 170));
+            for (int i = 0; i < 7; i++) g.draw(new QuadCurve2D.Double(10, 246, 70 + i * 18, 150 - i * 20, 110 + i * 22, 30 + i * 24));
+            g.setStroke(new BasicStroke(0.7f));
+            g.setColor(new Color(255, 255, 255, 95));
+            Random r = new Random(17);
+            for (int i = 0; i < 260; i++) {
+                double x = 20 + r.nextDouble() * 220, y = 20 + r.nextDouble() * 220;
+                double a = r.nextDouble() * Math.PI;
+                g.draw(new Line2D.Double(x, y, x + Math.cos(a) * 9, y + Math.sin(a) * 9));
+            }
+            g.setClip(null);
+            g.setColor(new Color(255, 255, 255, 220));
             g.setStroke(new BasicStroke(2.2f));
             g.draw(p);
-            g.setStroke(new BasicStroke(1.2f));
-            for (int i = 0; i < 6; i++) {
-                g.draw(new QuadCurve2D.Double(10, 246, 80 + i * 18, 150 - i * 20, 120 + i * 22, 40 + i * 22));
-            }
+            g.setColor(new Color(60, 50, 70, 200));
+            g.fill(new Ellipse2D.Double(196, 30, 14, 9));
             g.dispose();
             wingTex = tex(img);
         }

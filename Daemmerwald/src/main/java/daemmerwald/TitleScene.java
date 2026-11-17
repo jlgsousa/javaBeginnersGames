@@ -93,6 +93,10 @@ public class TitleScene implements Scene {
         g.setFont(Art.SMALL);
         g.setColor(new Color(160, 160, 190));
         Art.centered(g, "Pfeiltasten / Maus  ·  Enter zum Bestätigen", 640, 690);
+        if (!Mixamo.status.isEmpty()) {
+            g.setColor(new Color(230, 220, 190));
+            Art.centered(g, Mixamo.status, 640, 666);
+        }
 
         if (help) {
             g.setColor(new Color(0, 0, 0, 160));

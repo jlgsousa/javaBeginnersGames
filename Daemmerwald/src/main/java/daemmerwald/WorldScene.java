@@ -220,8 +220,7 @@ public class WorldScene implements Scene, Main.CameraDirector {
         pickups();
         updateCreatures(dt);
         world.updateMarkers(st, npcs);
-        autosaveT += dt;
-        if (autosaveT > 180) { autosaveT = 0; saveNow(false); }
+
     }
 
     private void idle(float dt) {
@@ -931,6 +930,7 @@ public class WorldScene implements Scene, Main.CameraDirector {
                 st.gamesWon++;
                 int coins = st.earn(15 + 10 * lvl);
                 List<String> lvlMsgs = st.addXp(mg.xpReward());
+                if (!(n.id.equals("heart") && !st.flags.contains("ended"))) saveNow(true);
                 floatText("+" + mg.xpReward() + " EP  +" + coins + " Taler", pos.add(0, fig.height + 1, 0), Art.GOLD);
                 if (n.id.equals("heart") && !st.flags.contains("ended")) {
                     pendingLines = lvlMsgs;
@@ -981,7 +981,7 @@ public class WorldScene implements Scene, Main.CameraDirector {
         st.pz = pos.z;
         st.dayTime = world.dayNight.time;
         st.save();
-        if (announce) floatText("Spiel gespeichert", pos.add(0, fig.height + 1, 0), Art.GOOD);
+        if (announce) floatText("✓ Automatisch gespeichert", pos.add(0, fig.height + 1.3f, 0), Art.GOOD);
     }
 
     // ================================================================ Rennen
@@ -1097,6 +1097,7 @@ public class WorldScene implements Scene, Main.CameraDirector {
             st.racesWon++;
             int coins = st.earn(30 + 15 * lvl);
             List<String> m = st.addXp(40 + 20 * lvl);
+            saveNow(true);
             String[] l = append(r.rival.win, "*Zeit: " + String.format("%.1f", r.time) + " s.  +" + (40 + 20 * lvl) + " EP, +" + coins + " Glimmertaler.");
             for (String s : m) l = append(l, s);
             sayNpc(r.rival, l, null);
@@ -1165,6 +1166,7 @@ public class WorldScene implements Scene, Main.CameraDirector {
                 if (r == MiniGame.Result.WIN) {
                     st.potions.merge(p, 1, Integer::sum);
                     st.brewed++;
+                    saveNow(true);
                     List<String> m = st.addXp(25);
                     String[] l = {"*Der Kessel zischt und färbt sich. Du füllst einen " + p.title + " ab. (Trinken mit Taste " + (p.ordinal() + 1) + ")"};
                     for (String s : m) l = append(l, s);
@@ -1204,9 +1206,7 @@ public class WorldScene implements Scene, Main.CameraDirector {
         }
         if (menuTab == 2) for (int i = 0; i < 4; i++) if (in.wasPressed(KeyEvent.VK_1 + i)) drink(Potion.values()[i]);
         if (menuTab == 6) {
-            if (in.wasPressed(KeyEvent.VK_S) || (in.mouseClicked && hitButton(0))) { saveNow(true); menuTab = -1; }
-            else if (in.wasPressed(KeyEvent.VK_Q) || (in.mouseClicked && hitButton(1))) {
-                saveNow(false);
+            if (in.wasPressed(KeyEvent.VK_Q) || (in.mouseClicked && hitButton(1))) {
                 fig.node.removeFromParent();
                 for (Creature c : creatures) c.remove();
                 game.state = new GameState();
@@ -1288,7 +1288,7 @@ public class WorldScene implements Scene, Main.CameraDirector {
         if (nearHouse != null && dialog == null && choice == null && menuTab < 0 && !shop && !brew && race == null) {
             double[] s = screen(nearHouse.door().add(0, 2.4f, 0));
             if (s == null) s = new double[]{SW / 2.0, SH - 140};
-            String label = "[E] " + (nearHouse.evil ? "Anklopfen bei " : "Besuch bei ") + nearHouse.owner;
+            String label = "[E] " + (nearHouse.cafe ? nearHouse.title + " betreten" : (nearHouse.evil ? "Anklopfen bei " : "Besuch bei ") + nearHouse.owner);
             g.setFont(Art.UI);
             int w = g.getFontMetrics().stringWidth(label) + 30;
             g.setColor(nearHouse.evil ? new Color(40, 10, 50, 210) : new Color(40, 26, 14, 210));
@@ -1376,9 +1376,28 @@ public class WorldScene implements Scene, Main.CameraDirector {
         Outfit cheapest = null;
         for (Outfit o : Outfit.values()) if (!st.owned.contains(o) && (cheapest == null || o.price < cheapest.price)) cheapest = o;
         if (cheapest != null) m.add(new String[]{"Laden", "Nächstes Gewand: " + cheapest.title, cheapest.price + " Taler bei Pimpernell (Hof)"});
+        m.add(new String[]{"Speichern", "Nächstes Café: " + nearestCafeText(), "Im Café ins Gästebuch eintragen"});
         if (!st.flags.contains("cafe")) m.add(new String[]{"Ruhe", "Besuche das Café Wolkenrand", "Auf der Klippe im Süden"});
         if (!st.flags.contains("visit:knorz")) m.add(new String[]{"Besuch", "Oma Knorz wohnt in einer Hügelhöhle", "beim Steinbruch – sie hat immer Tee"});
         return m;
+    }
+
+    /** Entfernung und Richtung zum nächsten bekannten Café. */
+    String nearestCafeText() {
+        List<float[]> cafes = new ArrayList<>();
+        cafes.add(new float[]{world.cafeDoor.x, world.cafeDoor.z});
+        for (House h : world.houses) if (h.cafe) cafes.add(new float[]{h.x, h.z});
+        for (House h : world.chunks.housesNear(pos.x, pos.z)) if (h.cafe) cafes.add(new float[]{h.x, h.z});
+        float best = Float.MAX_VALUE, bx = 0, bz = 0;
+        for (float[] c : cafes) {
+            float d = FastMath.sqrt(FastMath.sqr(c[0] - pos.x) + FastMath.sqr(c[1] - pos.z));
+            if (d < best) { best = d; bx = c[0]; bz = c[1]; }
+        }
+        String[] dirs = {"Süden", "Südosten", "Osten", "Nordosten", "Norden", "Nordwesten", "Westen", "Südwesten"};
+        float ang = FastMath.atan2(bx - pos.x, bz - pos.z);
+        int idx = Math.round(ang / (FastMath.PI / 4));
+        idx = ((idx % 8) + 8) % 8;
+        return (int) best + " m Richtung " + dirs[idx];
     }
 
     private String npcName(String id) {
@@ -1690,7 +1709,7 @@ public class WorldScene implements Scene, Main.CameraDirector {
     }
 
     private void drawGameTab(Graphics2D g) {
-        String[] b = {"[S] Spiel speichern", "[Q] Speichern & zum Titelbild"};
+        String[] b = {"Speichern nur im Café", "[Q] Zum Titelbild"};
         for (int i = 0; i < b.length; i++) {
             double y = 220 + i * 80;
             boolean hover = hitButton(i);
@@ -1703,7 +1722,8 @@ public class WorldScene implements Scene, Main.CameraDirector {
         }
         g.setFont(Art.SMALL);
         g.setColor(new Color(180, 180, 200));
-        Art.centered(g, "Das Spiel speichert auch automatisch alle drei Minuten und wenn du im Café Platz nimmst.", 640, 420);
+        Art.centered(g, "Gespeichert wird automatisch nach jedem gewonnenen Spiel – und von Hand in jedem Café (Gästebuch).", 640, 420);
+        Art.centered(g, "Zum Titelbild: Fortschritt seit dem letzten Speichern geht verloren. " + nearestCafeText(), 640, 466);
         Art.centered(g, "Spielstand: " + GameState.saveFile(), 640, 444);
     }
 }

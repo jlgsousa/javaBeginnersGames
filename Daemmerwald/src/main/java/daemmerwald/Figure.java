@@ -27,9 +27,11 @@ public class Figure {
     public final float height;
     private final Node model = new Node("model");
     private AnimComposer ac;
-    private Doll doll;
     private Anim anim;
-    private final boolean troll;
+    private boolean troll;
+    /** Realistische Mixamo-Figur (Idle/Walk/Run). */
+    private boolean mixamo;
+    private float lastSpeed, flyH, leanCur;
     private Node[] wings;
     private float t, castT, bob;
     public boolean hover;
@@ -44,8 +46,20 @@ public class Figure {
         this.troll = look.kind == Look.TROLL;
         node.attachChild(model);
         switch (look.kind) {
-            case Look.TROLL -> { height = 2.3f; doll = new Doll(look, height); model.attachChild(doll.root); }
-            case Look.FAIRY -> { height = 1.5f; buildFairy(); }
+            case Look.TROLL -> {
+                height = look.female ? 2.4f : 2.7f;
+                Spatial m = Mixamo.character(true);
+                if (look.female && m != null) buildMixamo(m, new ColorRGBA(0.72f, 0.92f, 0.7f, 1));
+                else buildTroll();
+            }
+            case Look.FAIRY -> {
+                height = look.female ? 1.62f : 1.75f;
+                Spatial m = Mixamo.character(look.female);
+                if (m != null) {
+                    buildMixamo(m, null);
+                    buildFairyWings();
+                } else buildFairy();
+            }
             case Look.SHROOM -> { height = 3.4f; buildShroom(); }
             case Look.MOUSE -> { height = 1.35f; buildMouse(); }
             default -> { height = 2.1f; buildWraith(); }
@@ -283,9 +297,78 @@ public class Figure {
         m.setColor("Ambient", c.mult(0.8f));
     }
 
+    /** Realistische Mixamo-Figur, optional getönt (z. B. Trollhaut). */
+    private void buildMixamo(Spatial s, ColorRGBA tint) {
+        mixamo = true;
+        troll = false;
+        if (tint != null) {
+            s.depthFirstTraversal(sp -> {
+                if (sp instanceof Geometry g) {
+                    Material m = g.getMaterial().clone();
+                    if (m.getMaterialDef().getMaterialParam("BaseColor") != null) m.setColor("BaseColor", tint);
+                    else if (m.getMaterialDef().getMaterialParam("Diffuse") != null) { m.setBoolean("UseMaterialColors", true); m.setColor("Diffuse", tint); }
+                    g.setMaterial(m);
+                }
+            });
+        }
+        mixamoFit(s);
+        if (look.horns) {
+            SkinningControl sc = Mixamo.skin(s);
+            Node head = sc != null ? sc.getAttachmentsNode(sc.getArmature().getJoint("mixamorig:Head") != null ? "mixamorig:Head" : "mixamorigHead") : null;
+            if (head != null) {
+                float u = 1f / s.getLocalScale().y * height / 100f;
+                Material hm = G3.lit(new ColorRGBA(0.82f, 0.78f, 0.66f, 1));
+                for (int side = -1; side <= 1; side += 2) {
+                    Geometry horn = G3.geom("horn", new Cylinder(4, 10, 6f * u, 0.4f * u, 26f * u, true, false), hm);
+                    horn.setLocalTranslation(side * 7f * u, 16f * u, 0);
+                    horn.setLocalRotation(new Quaternion().fromAngles(-FastMath.HALF_PI + 0.3f, 0, side * -0.5f));
+                    head.attachChild(horn);
+                }
+            }
+        }
+    }
+
+    /** Skaliert eine Mixamo-Figur. Mixamo-Exporte sind (bei Maßstab 1) etwa 1,62 m groß, die Füße stehen auf y = 0. */
+    private void mixamoFit(Spatial s) {
+        float k = height / 1.62f;
+        s.setLocalScale(k);
+        model.attachChild(s);
+        ac = Mixamo.composer(s);
+    }
+
+    private static com.jme3.anim.Joint joint(com.jme3.anim.Armature a, String n) {
+        com.jme3.anim.Joint j = a.getJoint("mixamorig:" + n);
+        return j != null ? j : a.getJoint("mixamorig" + n);
+    }
+
+    private void buildFairyWings() {
+        wings = new Node[4];
+        Material wm = G3.additive(G3.wingTex(), G3.rgb(look.wing).multLocal(0.22f), false);
+        for (int i = 0; i < 4; i++) {
+            Node w = new Node("wing");
+            boolean left = i % 2 == 0, lower = i >= 2;
+            float size = lower ? 0.62f : 0.95f;
+            Geometry q = G3.transparent(G3.geom("wq", new Quad(size, size), wm));
+            q.setLocalTranslation(0, lower ? -size * 0.9f : -0.05f, 0);
+            if (lower) q.setLocalRotation(new Quaternion().fromAngleAxis(-0.6f, Vector3f.UNIT_Z));
+            w.attachChild(q);
+            w.setLocalTranslation(0, height * 0.72f, -0.12f);
+            w.setUserData("left", left);
+            node.attachChild(w);
+            wings[i] = w;
+        }
+    }
+
     private void buildFairy() {
-        doll = new Doll(look, height);
-        model.attachChild(doll.root);
+        Spatial s = ninja();
+        // Natürliche Haut und Kleidung statt Leuchten: Kleidungsfarbe auf die Fototextur gelegt
+        Material m = G3.lit(G3.rgb(look.cloth).multLocal(0.9f).addLocal(new ColorRGBA(0.35f, 0.33f, 0.32f, 0)));
+        Texture t = G3.am.loadTexture("Models/Ninja/Ninja.jpg");
+        m.setTexture("DiffuseMap", t);
+        m.setColor("Specular", new ColorRGBA(0.18f, 0.18f, 0.18f, 1));
+        m.setFloat("Shininess", 16);
+        s.setMaterial(m);
+        fit(s, height, FastMath.PI);
         // Flügel
         wings = new Node[4];
         Material wm = G3.additive(G3.wingTex(), G3.rgb(look.wing).multLocal(0.22f), false);
@@ -370,7 +453,13 @@ public class Figure {
         if (a == anim || ac == null) { anim = a; return; }
         anim = a;
         try {
-            if (troll) {
+            if (mixamo) {
+                switch (a) {
+                    case IDLE, CAST -> ac.setCurrentAction("Idle");
+                    case RUN -> ac.setCurrentAction(look.kind == Look.FAIRY ? "Idle" : lastSpeed > 5.5f ? "Run" : "Walk");
+                    case JUMP -> ac.setCurrentAction("Run");
+                }
+            } else if (troll) {
                 switch (a) {
                     case IDLE -> { ac.setCurrentAction("IdleBase"); ac.setCurrentAction("IdleTop", "top"); }
                     case RUN -> { ac.setCurrentAction("RunBase"); ac.setCurrentAction("RunTop", "top"); }
@@ -400,6 +489,8 @@ public class Figure {
     /** speed: Laufgeschwindigkeit in m/s (0 = steht). */
     public void update(float tpf, float speed, boolean airborne) {
         t += tpf;
+        if (mixamo && anim == Anim.RUN && (lastSpeed > 5.5f) != (speed > 5.5f)) anim = null;
+        lastSpeed = speed;
         if (castT > 0) {
             castT -= tpf;
             if (castT <= 0) anim = null;
@@ -408,13 +499,21 @@ public class Figure {
             if (airborne && troll) play(Anim.JUMP);
             else play(speed > 0.5f ? Anim.RUN : Anim.IDLE);
         }
-        if (doll != null) doll.animate(tpf, t, speed, airborne || flying, castT > 0);
         if (ac != null) {
-            float base = troll ? speed / 5.2f : speed / 2.6f;
+            float base = troll ? speed / 5.2f : mixamo ? (speed > 5.5f ? speed / 6f : speed / 2.2f) : speed / 2.6f;
             ac.setGlobalSpeed(castT > 0 ? 1.3f : (speed > 0.5f ? Math.max(0.6f, Math.min(1.8f, base)) : 1f));
         }
-        if (look.kind == Look.FAIRY || look.kind == Look.WRAITH || hover) {
-            bob = FastMath.sin(t * 2.2f) * 0.08f + (look.kind == Look.FAIRY ? 0.25f : 0.12f);
+        if (look.kind == Look.FAIRY) {
+            // Feen fliegen: schweben, beim Fortbewegen höher und nach vorn geneigt gleitend
+            float target = speed > 0.5f || airborne || flying ? 0.85f : 0.35f;
+            flyH += (target - flyH) * Math.min(1, tpf * 3);
+            bob = FastMath.sin(t * 2.2f) * 0.08f + flyH;
+            model.setLocalTranslation(0, bob, 0);
+            float lean = Math.min(1, speed / 5f) * 0.38f;
+            leanCur += (lean - leanCur) * Math.min(1, tpf * 4);
+            model.setLocalRotation(new Quaternion().fromAngleAxis(leanCur, Vector3f.UNIT_X));
+        } else if (look.kind == Look.WRAITH || hover) {
+            bob = FastMath.sin(t * 2.2f) * 0.08f + 0.12f;
             model.setLocalTranslation(0, bob, 0);
         }
         if (bigWings != null) {

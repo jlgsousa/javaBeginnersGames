@@ -23,6 +23,8 @@ public class House {
     public final boolean tree, evil;
     public final Look look;
     public final long seed;
+    /** Rast-Café: hier kann man speichern. */
+    public boolean cafe;
 
     public House(String id, String owner, String title, float x, float z, float yaw, boolean tree, boolean evil, Look look, long seed) {
         this.id = id;
@@ -38,6 +40,19 @@ public class House {
     }
 
     public float radius() { return tree ? 3.3f : 5.2f; }
+
+    private static final String[] CAFE_NAMES = {"Teestube Mooskessel", "Café Zum Grünen Kessel", "Rastplatz Honigtau", "Café Wurzelwerk",
+        "Teehaus Sternschnuppe", "Café Am Stillen Weiher", "Kaffeestube Kieselgrund", "Café Morgenrot"};
+
+    /** Ein Rast-Café in der Wildnis (immer mit freundlicher Wirtin oder freundlichem Wirt). */
+    public static House randomCafe(String id, float x, float z, Random r) {
+        String name = CAFE_NAMES[r.nextInt(CAFE_NAMES.length)];
+        int kind = r.nextInt(3);
+        String host = kind == 0 ? NICE_TROLL[r.nextInt(NICE_TROLL.length)] : kind == 1 ? NICE_FAIRY[r.nextInt(NICE_FAIRY.length)] : NICE_MOUSE[r.nextInt(NICE_MOUSE.length)];
+        House h = new House(id, host, name, x, z, r.nextFloat() * FastMath.TWO_PI, r.nextBoolean(), false, residentLook(r, false, kind), r.nextLong());
+        h.cafe = true;
+        return h;
+    }
 
     /** Punkt vor der Tür (dort kann man klopfen). */
     public Vector3f door() {
@@ -248,11 +263,59 @@ public class House {
             box.setLocalTranslation(-2.2f, 1.2f, doorZ + 1.3f);
             body.attachChild(box);
         }
+        if (cafe) cafeDecor(body, doorZ, r);
         body.setLocalRotation(new Quaternion().fromAngleAxis(yaw, Vector3f.UNIT_Y));
         n.attachChild(body);
         n.setLocalTranslation(x, y, z);
         n.setShadowMode(ShadowMode.CastAndReceive);
         return n;
+    }
+
+    /** Schild mit Namen, Laternen und Tische vor der Tür. */
+    private void cafeDecor(Node body, float doorZ, Random r) {
+        java.awt.image.BufferedImage img = new java.awt.image.BufferedImage(512, 128, java.awt.image.BufferedImage.TYPE_INT_ARGB);
+        java.awt.Graphics2D g = img.createGraphics();
+        g.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING, java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
+        g.setRenderingHint(java.awt.RenderingHints.KEY_TEXT_ANTIALIASING, java.awt.RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        g.setColor(new Color(70, 42, 22));
+        g.fillRoundRect(0, 0, 512, 128, 30, 30);
+        g.setColor(new Color(230, 190, 110));
+        g.setStroke(new java.awt.BasicStroke(5));
+        g.drawRoundRect(6, 6, 500, 116, 26, 26);
+        g.setFont(new java.awt.Font("Serif", java.awt.Font.BOLD | java.awt.Font.ITALIC, title.length() > 18 ? 40 : 50));
+        java.awt.FontMetrics fm = g.getFontMetrics();
+        g.drawString(title, 256 - fm.stringWidth(title) / 2, 80);
+        g.dispose();
+        Material sm = G3.lit(ColorRGBA.White);
+        sm.setTexture("DiffuseMap", G3.tex(img));
+        sm.setColor("GlowColor", new ColorRGBA(0.12f, 0.08f, 0.03f, 1));
+        Geometry sign = new Geometry("cafeSign", new Quad(2.8f, 0.7f));
+        sign.setMaterial(sm);
+        sign.setLocalTranslation(-1.4f, 2.35f, doorZ + 0.2f);
+        body.attachChild(sign);
+        Material wood = G3.lit(new ColorRGBA(0.5f, 0.33f, 0.2f, 1));
+        Material cloth = G3.lit(new ColorRGBA(0.85f, 0.3f, 0.28f, 1));
+        for (int side = -1; side <= 1; side += 2) {
+            float tx = side * 2.6f, tz = doorZ + 2.6f;
+            Geometry top = cyl(0.6f, 0.6f, 0.06f, 18, wood);
+            top.setLocalTranslation(tx, 0.78f, tz);
+            body.attachChild(top);
+            Geometry leg = cyl(0.06f, 0.06f, 0.78f, 8, wood);
+            leg.setLocalTranslation(tx, 0.39f, tz);
+            body.attachChild(leg);
+            Geometry pole = cyl(0.03f, 0.03f, 2.2f, 6, wood);
+            pole.setLocalTranslation(tx, 1.1f, tz);
+            body.attachChild(pole);
+            Geometry shade = new Geometry("parasol", new Dome(Vector3f.ZERO, 4, 12, 1.1f, false));
+            shade.setMaterial(cloth);
+            shade.setLocalScale(1, 0.4f, 1);
+            shade.setLocalTranslation(tx, 2.15f, tz);
+            body.attachChild(shade);
+            Geometry lamp = new Geometry("lamp", new Sphere(8, 8, 0.14f));
+            lamp.setMaterial(windowWarm);
+            lamp.setLocalTranslation(side * 1.5f, 2.4f, doorZ + 0.3f);
+            body.attachChild(lamp);
+        }
     }
 
     // ---------------------------------------------------------------- Feste Häuser der Story-Region
@@ -274,6 +337,14 @@ public class House {
             Look.troll(Look.rgb(80, 96, 70), Look.rgb(60, 40, 50), Look.rgb(255, 70, 70), Look.rgb(30, 30, 30), true).hair(false, Look.WILD), 6));
         l.add(new House("fluestern", "Der Flüsternde", "Schwarzer Stamm an der Welke", 34, 44, -2.6f, true, true,
             new Look(Look.WRAITH, Color.BLACK, new Color(30, 20, 40), new Color(255, 90, 120), Color.BLACK, Color.BLACK, false), 7));
+        House c1 = new House("mooskessel", "Wirtin Hilde Steinkuchen", "Teestube Mooskessel", -70, 40, 1.9f, false, false,
+            Look.troll(Look.rgb(130, 140, 112), Look.rgb(160, 110, 80), Look.rgb(110, 190, 255), Look.rgb(150, 90, 50), false).hair(true, Look.BRAIDS), 8);
+        c1.cafe = true;
+        l.add(c1);
+        House c2 = new House("sternschnuppe", "Wirt Nim Blütenstaub", "Teehaus Sternschnuppe", 150, -70, -1.6f, true, false,
+            Look.fairy(Look.rgb(240, 225, 215), Look.rgb(90, 120, 170), Look.rgb(150, 200, 255), Look.rgb(200, 170, 90), Look.rgb(200, 230, 255)).hair(false, Look.SHORT), 9);
+        c2.cafe = true;
+        l.add(c2);
         return l;
     }
 }

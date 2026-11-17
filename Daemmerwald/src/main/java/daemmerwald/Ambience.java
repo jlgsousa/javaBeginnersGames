@@ -19,6 +19,65 @@ public class Ambience {
     private final List<Flyer> flyers = new ArrayList<>();
     private final ParticleEmitter leaves;
     private final Random rnd = new Random();
+    private final List<Pixie> pixies = new ArrayList<>();
+
+    /** Kleine leuchtende Feen, die in Schwärmen umherschwirren und eine Funkenspur ziehen. */
+    private class Pixie {
+        final Node node = new Node("pixie");
+        final Node wl = new Node("pwl"), wr = new Node("pwr");
+        final ParticleEmitter trail;
+        final Vector3f pos = new Vector3f();
+        float t = rnd.nextFloat() * 20, phase = rnd.nextFloat() * 6;
+        int slot;
+
+        Pixie(int slot) {
+            this.slot = slot;
+            ColorRGBA[] cols = {new ColorRGBA(0.7f, 0.9f, 1f, 1), new ColorRGBA(1f, 0.8f, 0.95f, 1), new ColorRGBA(0.85f, 1f, 0.75f, 1), new ColorRGBA(1f, 0.92f, 0.6f, 1)};
+            ColorRGBA c = cols[slot % cols.length];
+            Geometry core = G3.geom("pcore", new com.jme3.scene.shape.Sphere(8, 8, 0.05f), G3.emissive(c));
+            core.setLocalScale(0.7f, 1.6f, 0.7f);
+            node.attachChild(core);
+            Material wm = G3.additive(G3.wingTex(), c.mult(0.5f), false);
+            for (int side = -1; side <= 1; side += 2) {
+                Geometry q = G3.transparent(G3.geom("pw", new Quad(0.16f, 0.16f), wm));
+                if (side < 0) q.setLocalRotation(new Quaternion().fromAngleAxis(FastMath.PI, Vector3f.UNIT_Y));
+                (side < 0 ? wl : wr).attachChild(q);
+            }
+            wl.setLocalTranslation(0, 0.03f, -0.02f);
+            wr.setLocalTranslation(0, 0.03f, -0.02f);
+            node.attachChild(wl);
+            node.attachChild(wr);
+            trail = G3.particles("pixieTrail", 30, null, c.clone().setAlpha(0.9f), new ColorRGBA(c.r, c.g, c.b, 0), 0.06f, 0.01f, 0.6f, 1.2f);
+            trail.setParticlesPerSec(18);
+            trail.setShape(new com.jme3.effect.shapes.EmitterSphereShape(Vector3f.ZERO, 0.02f));
+            trail.getParticleInfluencer().setVelocityVariation(0.4f);
+            trail.setInWorldSpace(true);
+            node.attachChild(trail);
+            node.setCullHint(Spatial.CullHint.Always);
+            root.attachChild(node);
+        }
+
+        void update(float dt, Vector3f center, boolean on) {
+            t += dt;
+            node.setCullHint(on ? Spatial.CullHint.Inherit : Spatial.CullHint.Always);
+            trail.setParticlesPerSec(on ? 18 : 0);
+            if (!on) return;
+            float a = t * (0.6f + slot * 0.05f) + phase;
+            Vector3f target = center.add(FastMath.cos(a) * (3 + slot % 3), 1.6f + FastMath.sin(t * 1.7f + slot) * 0.8f, FastMath.sin(a * 1.3f) * (3 + slot % 4));
+            Vector3f d = target.subtract(pos);
+            if (d.length() > 25) pos.set(target);
+            pos.addLocal(d.multLocal(Math.min(1, dt * 2.5f)));
+            node.setLocalTranslation(pos);
+            Vector3f dir = new Vector3f(-FastMath.sin(a), 0, FastMath.cos(a * 1.3f));
+            node.setLocalRotation(new Quaternion().fromAngleAxis(FastMath.atan2(dir.x, dir.z), Vector3f.UNIT_Y));
+            float flap = FastMath.sin(t * 40) * 0.6f;
+            wl.setLocalRotation(new Quaternion().fromAngleAxis(flap, Vector3f.UNIT_Z));
+            wr.setLocalRotation(new Quaternion().fromAngleAxis(-flap, Vector3f.UNIT_Z));
+        }
+    }
+
+    private final Vector3f swarmCenter = new Vector3f();
+    private float swarmT;
 
     private class Flyer {
         final Node node = new Node("flyer");
@@ -95,6 +154,7 @@ public class Ambience {
         world.attachChild(root);
         for (int i = 0; i < 12; i++) flyers.add(new Flyer(false));
         for (int i = 0; i < 4; i++) flyers.add(new Flyer(true));
+        for (int i = 0; i < 9; i++) pixies.add(new Pixie(i));
         leaves = new ParticleEmitter("fallingLeaves", com.jme3.effect.ParticleMesh.Type.Triangle, 120);
         Material lm = new Material(G3.am, "Common/MatDefs/Misc/Particle.j3md");
         lm.setTexture("Texture", G3.leafTex());
@@ -123,6 +183,17 @@ public class Ambience {
     public void update(float dt, Vector3f player, DayNight dn, Weather w) {
         boolean day = dn.night < 0.45f && w.rain < 0.3f;
         for (Flyer f : flyers) f.update(dt, player, day);
+        // Feenschwarm: in der Dämmerung, nachts und an hellen Orten
+        float bright = WorldGen.brightness(player.x, player.z);
+        boolean pixiesOn = (dn.night > 0.3f || bright > 0.35f) && w.rain < 0.5f && WorldGen.darkness(player.x, player.z) < 0.4f;
+        swarmT -= dt;
+        if (swarmT <= 0 || swarmCenter.distance(player) > 40) {
+            float a = rnd.nextFloat() * FastMath.TWO_PI, d = 8 + rnd.nextFloat() * 10;
+            swarmCenter.set(player.x + FastMath.cos(a) * d, 0, player.z + FastMath.sin(a) * d);
+            swarmCenter.y = Math.max(WorldGen.height(swarmCenter.x, swarmCenter.z), WorldGen.WATER);
+            swarmT = 25 + rnd.nextFloat() * 20;
+        }
+        for (Pixie p : pixies) p.update(dt, swarmCenter, pixiesOn);
         float h = WorldGen.height(player.x, player.z);
         float forest = WorldGen.forest(player.x, player.z, h, 0);
         leaves.setLocalTranslation(player.x, h, player.z);
