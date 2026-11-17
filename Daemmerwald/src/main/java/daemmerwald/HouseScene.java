@@ -221,8 +221,8 @@ public class HouseScene implements Scene, Main.CameraDirector {
         resident.node.setLocalRotation(new Quaternion().fromAngleAxis(0.6f, Vector3f.UNIT_Y));
         interior.attachChild(resident.node);
         guest = new Figure(game.state.outfit.apply(game.state.hero.look), game.state.outfit.accessory);
-        guest.node.setLocalTranslation(1.6f, 0, 2.6f);
-        guest.node.setLocalRotation(new Quaternion().fromAngleAxis(FastMath.PI + 0.55f, Vector3f.UNIT_Y));
+        guest.node.setLocalTranslation(-2.0f, 0, 1.4f);
+        guest.node.setLocalRotation(new Quaternion().fromAngleAxis(FastMath.PI - 0.2f, Vector3f.UNIT_Y));
         interior.attachChild(guest.node);
     }
 
@@ -406,8 +406,8 @@ public class HouseScene implements Scene, Main.CameraDirector {
 
     @Override
     public void directCamera(Camera cam, float tpf) {
-        Vector3f eye = base.add(2.6f, 1.9f, 4.2f);
-        Vector3f look = base.add(-0.4f, 1.2f, -1.2f);
+        Vector3f eye = base.add(3.0f, 1.85f, 3.6f);
+        Vector3f look = base.add(-1.0f, 1.15f, -0.8f);
         Vector3f dir = look.subtract(eye);
         dir = new Quaternion().fromAngleAxis(lookYaw, Vector3f.UNIT_Y).mult(dir);
         cam.setLocation(eye);

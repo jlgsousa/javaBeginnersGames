@@ -11,6 +11,8 @@ Trolle und Feen, eine Zauberakademie in den Wurzeln eines uralten Baumes, ein st
 | ![Mondsee](screenshots/mondsee.png) | ![Café](screenshots/cafe_fenster.png) |
 | ![Fee mit Flügelmantel](screenshots/fee_fluegelmantel.png) | ![Karte](screenshots/karte.png) |
 | ![Figurenwahl](screenshots/figurenwahl.png) | ![Regen](screenshots/regen.png) |
+| ![Bei Oma Knorz](screenshots/haus_oma_knorz.png) | ![Bei Witwe Nachtschatten](screenshots/haus_nachtschatten.png) |
+| ![Namenseingabe](screenshots/namenseingabe.png) | ![Figuren](screenshots/figuren_nah.png) |
 
 ## Starten
 
@@ -46,7 +48,8 @@ Rechts am Bildschirmrand stehen immer deine **aktuellen Missionen**.
 
 ## Was es gibt
 
-* **10 Figuren** (5 Trolle, 5 Feen) mit eigener Geschichte und eigenen Werten. Trolle sind groß und springen kraftvoll, Feen sind klein und können flattern.
+* **Dein eigener Name:** Zu Beginn trägst du ein, wie du heißen möchtest. Alle Figuren sprechen dich so an.
+* **10 liebevoll gestaltete Figuren** (5 Trolle, 5 Feen, davon 5 weiblich) mit großen Augen, Wimpern, rosigen Wangen, verschiedenen Frisuren (lange Haare, Zöpfe, Dutt, Pferdeschwanz, Strubbelkopf, Bart), Kleidern oder Hosen. Sie blinzeln, atmen und schwingen beim Laufen Arme und Beine.
 * **Hauptgeschichte:** Sammle die sechs Splitter des Paktsteins und entscheide am Herzbaum über das Schicksal des Waldes. Es gibt zwei Enden, danach geht das Spiel **endlos** weiter.
 * **Eine endlose Welt:** Im Zentrum liegen die Story-Orte (Akademie, Herzbaum, Mondsee, Steinbruch, Moor, Pilzkreis, Dornenschlucht, Schattenhain, Lichtwiese), im Süden das Meer mit dem Café auf der Klippe. In alle anderen Richtungen setzen sich Wälder, Wiesen, Seen, Berge und geheimnisvolle Steinkreise ohne Ende fort.
 * **Fröhliche und dunkle Orte:** Auf Lichtungen leben Lichtfüchse, die dir Mana schenken. An Orten der Welke und nachts streifen Schattenwölfe und Welkenmotten umher.
@@ -56,6 +59,8 @@ Rechts am Bildschirmrand stehen immer deine **aktuellen Missionen**.
 * **Pimpernells Fadenwerk:** Der Kleiderladen einer großen, magischen Maus verkauft **18 Gewänder mit Gadgets**, zum Beispiel einen Flügelmantel zum Fliegen, eine Rüstung zur Verteidigung, einen Taucheranzug, Windläufer-Stiefel, einen Schattentarnmantel, Sprungfeder-Gamaschen, eine Glücksweste oder das Sternengewand.
 * **Stufen und Fähigkeiten:** Erfahrung bringt Stufen, Stufen bringen neue Fähigkeiten wie Windschritt, Lichtlanze, Seelenschild oder einen Irrlichtbegleiter.
 * **Viele Details:** Nadel- und Laubbäume mit Herbstfärbung, Farne, Büsche, bemooste Baumstämme, Pilzgruppen, Schilf und Seerosen, Schmetterlinge, Libellen, fallendes Laub, Hasen auf den Wiesen, Umgebungsverdeckung (SSAO) und Lichtstrahlen bei tief stehender Sonne.
+* **Begehbare Häuser:** Baumhäuser in hohlen Stämmen und Erdhöhlen unter Hügeln, mit runden Türen, leuchtenden Fenstern und rauchenden Schornsteinen. Drinnen wohnen Feen, Trolle, Mäuse oder Pilzwesen. Liebe Bewohner bieten Tee, Geschenke, Geschichten und Spiele an. Böse Bewohner an dunklen Orten fordern dich zu Duell oder Rätselwette heraus und werden nach einer Niederlage zahmer. Sieben feste Häuser stehen in der Story-Region, weitere entstehen überall in der endlosen Welt.
+* **Verschnörkelte Oberfläche:** Fenster mit Goldranken, Blättchen, Edelsteinen und funkelnden Sternen.
 * **Café Wolkenrand:** Ein Ort nur zum Entspannen. Die Fee Lumi fragt, was du trinken möchtest, du setzt dich ans Fenster, und das Spiel speichert. Draußen wechseln Sonne, Regen und Regenbogen, Vogelschwärme ziehen vorbei, in der Ferne springen Wale, und manchmal gleitet ein leuchtender Himmelsrochen vorüber. Im Bücherregal stehen **vier vollständige Geschichten** zum Lesen.
 
 ## Technik
@@ -72,7 +77,9 @@ Rechts am Bildschirmrand stehen immer deine **aktuellen Missionen**.
 | `World3D` | Bauwerke, Lichter, Wasser, Schatten, Nebel, Bloom |
 | `WorldGen` / `Chunks` | Höhenfunktion der endlosen Welt / Nachladen von Gelände, Bäumen, Gras, Zutaten |
 | `DayNight` / `Weather` / `Vista` | Tag und Nacht / Wolken, Regen, Regenbogen / Wale, Vögel, Himmelsrochen |
-| `Figure` | animierte Figuren, Gewand-Zubehör |
+| `Figure` / `Doll` | animierte Figuren, Puppen-Figuren mit Frisuren und Gesichtern, Gewand-Zubehör |
+| `House` / `HouseScene` | begehbare Häuser, Bewohner, Innenräume |
+| `NameScene` | Namenseingabe |
 | `WorldScene` | Third-Person-Steuerung, Kreaturen, Rennen, Laden, Brauen, Menü, Missionen |
 | `CafeScene` / `BookReader` / `Stories` | Café, Lesemodus, Geschichten |
 | `MiniGame` und Unterklassen | alle Prüfungen (als 2D-Oberfläche über der 3D-Welt) |

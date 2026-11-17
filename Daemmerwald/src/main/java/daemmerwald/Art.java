@@ -106,12 +106,14 @@ public final class Art {
         g.setStroke(new BasicStroke(1f));
         g.setColor(alpha(GOLD, 70));
         g.draw(new RoundRectangle2D.Double(x + 6, y + 6, w - 12, h - 12, 20, 20));
-        double cs = Math.min(34, Math.min(w, h) * 0.22);
-        corner(g, x + 6, y + 6, cs, 1, 1);
-        corner(g, x + w - 6, y + 6, cs, -1, 1);
-        corner(g, x + 6, y + h - 6, cs, 1, -1);
-        corner(g, x + w - 6, y + h - 6, cs, -1, -1);
-        if (w > 240) crest(g, x + w / 2, y + 2);
+        if (h >= 60) {
+            double cs = Math.min(34, Math.min(w, h) * (h < 160 ? 0.12 : 0.22));
+            corner(g, x + 6, y + 6, cs, 1, 1);
+            corner(g, x + w - 6, y + 6, cs, -1, 1);
+            corner(g, x + 6, y + h - 6, cs, 1, -1);
+            corner(g, x + w - 6, y + h - 6, cs, -1, -1);
+        }
+        if (w > 240 && h >= 60) crest(g, x + w / 2, y + 2);
         g.setStroke(os);
     }
 
