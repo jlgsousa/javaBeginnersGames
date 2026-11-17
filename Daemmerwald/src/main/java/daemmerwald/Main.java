@@ -197,7 +197,7 @@ public class Main extends SimpleApplication implements RawInputListener {
         int[][] m = {
             {KeyInput.KEY_W, KeyEvent.VK_W}, {KeyInput.KEY_A, KeyEvent.VK_A}, {KeyInput.KEY_S, KeyEvent.VK_S}, {KeyInput.KEY_D, KeyEvent.VK_D},
             {KeyInput.KEY_E, KeyEvent.VK_E}, {KeyInput.KEY_Q, KeyEvent.VK_Q}, {KeyInput.KEY_M, KeyEvent.VK_M}, {KeyInput.KEY_F, KeyEvent.VK_F},
-            {KeyInput.KEY_B, KeyEvent.VK_B}, {KeyInput.KEY_R, KeyEvent.VK_R}, {KeyInput.KEY_TAB, KeyEvent.VK_TAB},
+            {KeyInput.KEY_B, KeyEvent.VK_B}, {KeyInput.KEY_I, KeyEvent.VK_I}, {KeyInput.KEY_G, KeyEvent.VK_G}, {KeyInput.KEY_R, KeyEvent.VK_R}, {KeyInput.KEY_TAB, KeyEvent.VK_TAB},
             {KeyInput.KEY_UP, KeyEvent.VK_UP}, {KeyInput.KEY_DOWN, KeyEvent.VK_DOWN}, {KeyInput.KEY_LEFT, KeyEvent.VK_LEFT}, {KeyInput.KEY_RIGHT, KeyEvent.VK_RIGHT},
             {KeyInput.KEY_SPACE, KeyEvent.VK_SPACE}, {KeyInput.KEY_RETURN, KeyEvent.VK_ENTER}, {KeyInput.KEY_NUMPADENTER, KeyEvent.VK_ENTER},
             {KeyInput.KEY_ESCAPE, KeyEvent.VK_ESCAPE}, {KeyInput.KEY_LSHIFT, KeyEvent.VK_SHIFT}, {KeyInput.KEY_RSHIFT, Input.P2_CAST}, {KeyInput.KEY_RCONTROL, Input.P2_JUMP},

@@ -24,6 +24,9 @@ public class GameState {
     /** Sammelaufträge: Auftraggeber-ID -> {Zutat-Index, Anzahl, Belohnung}. */
     public final Map<String, int[]> quests = new LinkedHashMap<>();
     /** Eigenes Haus: Baustoffe, Ausbaustufe (0 = kleine Holzhütte), gekaufte Möbel, entdeckte Rezepte. */
+    /** Raritäten-Sammlung und Freundschaftspunkte je Figur. */
+    public final EnumMap<Treasure, Integer> treasures = new EnumMap<>(Treasure.class);
+    public final Map<String, Integer> friendship = new HashMap<>();
     public final EnumMap<Baustoff, Integer> mats = new EnumMap<>(Baustoff.class);
     public int homeLevel;
     public final Set<String> furniture = new LinkedHashSet<>();
@@ -63,6 +66,16 @@ public class GameState {
     public int stage(String key) { return stages.getOrDefault(key, 1); }
 
     public int xpNext() { return 60 + level * 50; }
+
+    public int treasure(Treasure t) { return treasures.getOrDefault(t, 0); }
+
+    public void addTreasure(Treasure t, int n) { treasures.merge(t, n, Integer::sum); }
+
+    public int treasureKinds() {
+        int k = 0;
+        for (Treasure t : Treasure.values()) if (treasure(t) > 0) k++;
+        return k;
+    }
 
     public int mats(Baustoff b) { return mats.getOrDefault(b, 0); }
 
@@ -125,6 +138,12 @@ public class GameState {
         mats.forEach((k, v) -> bm.append(k.name()).append('=').append(v).append(','));
         p.setProperty("mats", bm.toString());
         p.setProperty("home", String.valueOf(homeLevel));
+        StringBuilder tr = new StringBuilder();
+        treasures.forEach((k, v) -> tr.append(k.name()).append('=').append(v).append(','));
+        p.setProperty("treasures", tr.toString());
+        StringBuilder fr = new StringBuilder();
+        friendship.forEach((k, v) -> fr.append(k).append('=').append(v).append(','));
+        p.setProperty("friends", fr.toString());
         p.setProperty("furniture", join(furniture));
         p.setProperty("recipes", join(recipes));
         p.setProperty("outfits", join(owned.stream().map(Enum::name).toList()));
@@ -179,6 +198,14 @@ public class GameState {
                 s.mats.put(Baustoff.valueOf(a[0]), Integer.parseInt(a[1]));
             }
             s.homeLevel = Integer.parseInt(p.getProperty("home", "0"));
+            for (String kv : split(p.getProperty("treasures"))) {
+                String[] a = kv.split("=");
+                try { s.treasures.put(Treasure.valueOf(a[0]), Integer.parseInt(a[1])); } catch (IllegalArgumentException ignored) { }
+            }
+            for (String kv : split(p.getProperty("friends"))) {
+                String[] a = kv.split("=");
+                s.friendship.put(a[0], Integer.parseInt(a[1]));
+            }
             s.furniture.addAll(split(p.getProperty("furniture")));
             s.recipes.addAll(split(p.getProperty("recipes")));
             for (String x : split(p.getProperty("outfits"))) s.owned.add(Outfit.valueOf(x));

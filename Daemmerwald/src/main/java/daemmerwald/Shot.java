@@ -131,6 +131,17 @@ public class Shot {
         step("village_day2", 5f, () -> { teleport(-70, -38, -1.75f); app.world.dayNight.time = 0.62f; });
         step("village_night", 5f, () -> { teleport(-70, -38, -1.75f); app.world.dayNight.time = 0.9f; });
         step("village_bridge", 5f, () -> { teleport(-82, -37, -1.6f); app.world.dayNight.time = 0.8f; });
+        step("bag", 3f, () -> {
+            GameState gs = app.core.state;
+            gs.flags.add("intro"); gs.flags.add("home:seen");
+            app.core.setScene(new WorldScene(app.core));
+            gs.addTreasure(Treasure.GOLDENE_EICHEL, 2); gs.addTreasure(Treasure.MONDPERLE, 1); gs.addTreasure(Treasure.FEENKRONE, 1);
+            gs.addTreasure(Treasure.PHOENIXFEDER, 1); gs.addTreasure(Treasure.GLUEHGLAS, 3);
+            gs.addItem(Item.MONDBLUME, 4); gs.addMat(Baustoff.HOLZ, 7);
+            gs.friendship.put("aurin", 64); gs.friendship.put("borga", 25); gs.friendship.put("ilvy", 100); gs.friendship.put("vex", 8);
+        });
+        step("bag_open", 2.5f, () -> press(java.awt.event.KeyEvent.VK_I));
+        step("friends_open", 2.5f, () -> press(java.awt.event.KeyEvent.VK_RIGHT));
         step("players", 2f, () -> app.core.setScene(new PlayersScene(app.core)));
         step("two_players", 6f, () -> {
             GameState gs = app.core.state;

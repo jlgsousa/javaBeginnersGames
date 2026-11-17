@@ -48,6 +48,8 @@ public class Chunks {
         public final Item item;
         /** Baustoff statt Zutat (dann ist item null). */
         public Baustoff mat;
+        /** Rarität statt Zutat. */
+        public Treasure treasure;
         public final Vector3f pos;
         public Geometry geo;
         Spot(String key, Item item, Vector3f pos) { this.key = key; this.item = item; this.pos = pos; }
@@ -731,6 +733,28 @@ public class Chunks {
                 spots.add(sp);
             }
         }
+        // Super seltene Raritäten: pro Gebiet nur selten eine, die Art hängt vom Ort ab
+        Random tr = new Random(key(c.cx, c.cz) * 31 + 17);
+        float roll = tr.nextFloat();
+        float tx = x0 + 16 + tr.nextFloat() * (SIZE - 32), tz = z0 + 16 + tr.nextFloat() * (SIZE - 32);
+        float th = WorldGen.height(tx, tz);
+        String tk = "t" + c.cx + ":" + c.cz;
+        Treasure pick = pickTreasure(tx, tz, th, roll, tr);
+        if (pick != null && !picked.contains(tk) && th > WorldGen.WATER - 0.2f) {
+            Spot sp = new Spot(tk, null, new Vector3f(tx, Math.max(th, WorldGen.WATER) + 0.7f, tz));
+            sp.treasure = pick;
+            Geometry g = new Geometry("treasure", new com.jme3.scene.shape.Sphere(3, 4, 0.22f));
+            java.awt.Color gc = pick.glow();
+            ColorRGBA cc = new ColorRGBA(gc.getRed() / 255f, gc.getGreen() / 255f, gc.getBlue() / 255f, 1);
+            g.setMaterial(G3.litGlow(cc, cc.mult(0.9f)));
+            g.setLocalScale(1, 1.6f, 1);
+            g.setLocalTranslation(sp.pos);
+            g.setShadowMode(ShadowMode.Off);
+            g.setUserData("treasure", 1);
+            items.attachChild(g);
+            sp.geo = g;
+            spots.add(sp);
+        }
         c.spots = spots;
         near.attachChild(items);
         GeometryBatchFactory.optimize(trees);
@@ -740,6 +764,25 @@ public class Chunks {
         near.attachChild(trees);
         near.attachChild(grass);
         c.near = near;
+    }
+
+    /** Welche Rarität (wenn überhaupt) liegt in diesem Gebiet? */
+    private static Treasure pickTreasure(float x, float z, float h, float roll, Random r) {
+        double far = Math.hypot(x, z);
+        if (far > 420) {
+            if (roll < 0.006f) return Treasure.DRACHENEI;
+            if (roll < 0.018f) return Treasure.PHOENIXFEDER;
+            if (roll < 0.06f && h > 25) return Treasure.DRACHENSCHUPPE;
+        }
+        if (roll > 0.16f) return null;
+        boolean very = roll < 0.05f;
+        if (WorldGen.dist(x, z, WorldGen.LAKE) < 60) return very ? Treasure.MONDPERLE : Treasure.MONDMOOS;
+        if (WorldGen.dist(x, z, WorldGen.VILLAGE) < 60) return very ? Treasure.FEENKRONE : Treasure.UHRWERKKAEFER;
+        if (WorldGen.darkness(x, z) > 0.4f) return very ? Treasure.GEISTERLATERNE : null;
+        if (WorldGen.brightness(x, z) > 0.3f) return very ? Treasure.EINHORNHAAR : Treasure.GLUEHGLAS;
+        if (WorldGen.sea(x, z) > 0.02 || z > 200) return Treasure.FLUESTERMUSCHEL;
+        if (h < 2.5f) return Treasure.REGENSCHUPPE;
+        return very ? null : Treasure.GOLDENE_EICHEL;
     }
 
     private static Geometry deco(String name, Mesh mesh, Material m, float x, float y, float z, float s) {

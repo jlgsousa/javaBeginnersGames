@@ -191,6 +191,7 @@ public class WorldScene implements Scene, Main.CameraDirector {
         dialogNpc = null;
         if (in.wasPressed(KeyEvent.VK_ESCAPE, KeyEvent.VK_TAB)) { menuTab = 0; return; }
         if (in.wasPressed(KeyEvent.VK_M)) { menuTab = 0; return; }
+        if (in.wasPressed(KeyEvent.VK_I)) { menuTab = 1; return; }
 
         if (race != null && race.countdown > 0) {
             race.countdown -= dt;
@@ -493,6 +494,16 @@ public class WorldScene implements Scene, Main.CameraDirector {
             st.picked.add(s.key);
             world.chunks.picked.add(s.key);
             int n = st.gadget(Outfit.Gadget.LUCK) && rnd.nextFloat() < 0.35f ? 2 : 1;
+            if (s.treasure != null) {
+                if (!treasureVisible(s.treasure)) continue;
+                st.addTreasure(s.treasure, 1);
+                if (game.app.music != null) game.app.music.sfx("chime");
+                world.burst(s.pos, G3.rgb(s.treasure.glow()), 90);
+                floatText("✦ RARITÄT: " + s.treasure.title + " ✦", s.pos.add(0, 1.6f, 0), s.treasure.color());
+                floatText(Treasure.RARITY[s.treasure.rarity] + " · " + st.treasureKinds() + "/" + Treasure.values().length + " in deiner Sammlung", s.pos.add(0, 1.0f, 0), Art.PARCH);
+                saveNow(false);
+                continue;
+            }
             if (s.mat != null) {
                 n += s.mat == Baustoff.HOLZ ? rnd.nextInt(2) : 0;
                 st.addMat(s.mat, n);
@@ -565,8 +576,32 @@ public class WorldScene implements Scene, Main.CameraDirector {
     }
 
     /** Wird nach dem Welt-Update aufgerufen: Figuren, Kreaturen, Begleiter. */
+    private float treasureT;
+
+    /** Manche Raritäten zeigen sich nur nachts, bei Sonnenaufgang oder nach dem Regen. */
+    boolean treasureVisible(Treasure t) {
+        float night = world.dayNight.night, time = world.dayNight.time;
+        return switch (t) {
+            case GLUEHGLAS, MONDMOOS, MONDPERLE, FEENKRONE -> night > 0.5f;
+            case EINHORNHAAR -> time > 0.2f && time < 0.34f;
+            case REGENSCHUPPE -> world.weather.rainbow > 0.15f || world.weather.rain > 0.2f;
+            default -> true;
+        };
+    }
+
     public void update3D(float dt) {
         if (p2 != null) p2.update3D(dt);
+        treasureT += dt;
+        for (Chunks.Spot sp : world.chunks.spotsNear(pos.x, pos.z, 90)) {
+            if (sp.treasure == null || sp.geo == null) continue;
+            boolean vis = treasureVisible(sp.treasure);
+            sp.geo.setCullHint(vis ? Spatial.CullHint.Inherit : Spatial.CullHint.Always);
+            if (vis) {
+                sp.geo.setLocalRotation(new Quaternion().fromAngleAxis(treasureT * 1.6f, Vector3f.UNIT_Y));
+                sp.geo.setLocalTranslation(sp.pos.x, sp.pos.y + FastMath.sin(treasureT * 2.2f) * 0.15f, sp.pos.z);
+                if (FastMath.nextRandomFloat() < dt * 1.5f) world.burst(sp.pos, G3.rgb(sp.treasure.glow()), 6);
+            }
+        }
         fig.node.setLocalTranslation(pos);
         fig.face(yaw, dt);
         fig.flying = flyingNow;
@@ -918,7 +953,21 @@ public class WorldScene implements Scene, Main.CameraDirector {
         "aurin", new Item[]{Item.MONDBLUME, Item.FEDER},
         "borga", new Item[]{Item.KROETENMOOS, Item.STERNKRISTALL, Item.MONDBLUME});
 
+    private int today() { return (int) (st.playTime / DayNight.DAY_SECONDS); }
+
+    /** Tägliches Plaudern stärkt die Freundschaft. */
     private void interact(Npc n) {
+        if (Friends.get(n.id) != null && st.stage("talkday:" + n.id) != today() + 2) {
+            st.stages.put("talkday:" + n.id, today() + 2);
+            List<String> up = Friends.add(st, n.id, 4);
+            Vector3f np = world.npcPos.get(n.id);
+            if (np != null) floatText("♥ Freundschaft +", np.add(0, 3.2f, 0), new Color(255, 140, 180));
+            if (!up.isEmpty()) { sayNpc(n, up.toArray(new String[0]), () -> interactInner(n)); return; }
+        }
+        interactInner(n);
+    }
+
+    private void interactInner(Npc n) {
         switch (n.id) {
             case "heart" -> {
                 if (!st.allShards()) say(null, null, Story.heartNotReady(st.count()), null);
@@ -936,10 +985,11 @@ public class WorldScene implements Scene, Main.CameraDirector {
             case "brumm" -> {
                 sayNpc(n, st.stage("brumm") > 1 ? n.after : n.before, () -> choice = new Choice("Brumm der Läufer")
                     .add("Rennen starten (Stufe " + st.stage("brumm") + ")", () -> startRace(n))
+                    .add("Ein Geschenk überreichen (" + hearts(n.id) + ")", () -> openGift(n))
                     .add("Ein andermal", () -> { }));
                 return;
             }
-            case "rektor" -> { sayNpc(n, st.count() >= 3 ? n.after : n.before, null); return; }
+            case "rektor" -> { sayNpc(n, st.count() >= 3 ? n.after : n.before, () -> openChoice(n)); return; }
             default -> { }
         }
         boolean shardOpen = n.shard != null && !st.has(n.shard);
@@ -973,6 +1023,7 @@ public class WorldScene implements Scene, Main.CameraDirector {
                         world.burst(pos.add(0, 2, 0), new ColorRGBA(1f, 0.85f, 0.4f, 1), 50);
                         String[] l = {"Wunderbar! Genau, was ich brauchte. Hier, " + coins + " Glimmertaler."};
                         for (String s : m) l = append(l, s);
+                        for (String s : Friends.add(st, n.id, 12)) l = append(l, s);
                         sayNpc(n, l, null);
                     });
                 } else {
@@ -980,9 +1031,69 @@ public class WorldScene implements Scene, Main.CameraDirector {
                 }
             }
         }
+        if (Friends.get(n.id) != null) c.add("Ein Geschenk überreichen (" + hearts(n.id) + ")", () -> openGift(n));
         if (c.labels.isEmpty()) return;
         c.add("Auf Wiedersehen", () -> { });
         choice = c;
+    }
+
+    private String hearts(String id) {
+        int h = Friends.hearts(st, id);
+        return "♥".repeat(h) + "♡".repeat(Friends.MAX_HEARTS - h);
+    }
+
+    /** Geschenk aus der Tasche aussuchen. */
+    private void openGift(Npc n) {
+        Friends.Friend f = Friends.get(n.id);
+        if (f == null) return;
+        if (st.stage("giftday:" + n.id) == today() + 2) {
+            sayNpc(n, new String[]{"Du hast mir heute schon etwas geschenkt. Morgen freue ich mich wieder!"}, null);
+            return;
+        }
+        boolean knows = Friends.hearts(st, n.id) >= 1;
+        Choice c = new Choice("Geschenk für " + f.name());
+        List<String> keys = new ArrayList<>();
+        for (Treasure t : Treasure.values()) if (st.treasure(t) > 0) keys.add("T:" + t.name());
+        for (Item it : Item.values()) if (st.items(it) > 0) keys.add("I:" + it.name());
+        // Lieblingsgeschenke zuerst (wenn bekannt)
+        if (knows) keys.sort(Comparator.comparingInt(k -> -Friends.giftValue(f, k)));
+        int shown = 0;
+        for (String k : keys) {
+            if (shown++ >= 7) break;
+            boolean t = k.startsWith("T:");
+            String name = t ? Treasure.valueOf(k.substring(2)).title : Item.valueOf(k.substring(2)).title;
+            int have = t ? st.treasure(Treasure.valueOf(k.substring(2))) : st.items(Item.valueOf(k.substring(2)));
+            boolean fav = knows && Friends.giftValue(f, k) >= 12 && (t ? Friends.giftValue(f, k) >= 40 : true);
+            c.add((fav ? "♥ " : "") + name + "  (×" + have + ")" + (t ? "  – Rarität" : ""), () -> giveGift(n, f, k));
+        }
+        if (keys.isEmpty()) { sayNpc(n, new String[]{"*Deine Tasche ist leer. Sammle Zutaten oder Raritäten, um sie zu verschenken."}, null); return; }
+        c.add("Doch nicht", () -> { });
+        choice = c;
+    }
+
+    private void giveGift(Npc n, Friends.Friend f, String key) {
+        if (key.startsWith("T:")) st.treasures.merge(Treasure.valueOf(key.substring(2)), -1, Integer::sum);
+        else st.addItem(Item.valueOf(key.substring(2)), -1);
+        st.treasures.values().removeIf(v -> v <= 0);
+        st.stages.put("giftday:" + n.id, today() + 2);
+        int v = Friends.giftValue(f, key);
+        List<String> lines = new ArrayList<>();
+        lines.add(Friends.reaction(f, v));
+        lines.addAll(Friends.add(st, n.id, v));
+        Vector3f np = world.npcPos.get(n.id);
+        if (np != null) world.burst(np.add(0, 2.2f, 0), new ColorRGBA(1f, 0.5f, 0.75f, 1), 40);
+        if (game.app.music != null) game.app.music.sfx("chime");
+        sayNpc(n, lines.toArray(new String[0]), null);
+    }
+
+    /** Zufällige Rarität als Siegespreis (nicht die geheimen aus dem Palast oder von Freunden). */
+    private Treasure randomPrize() {
+        List<Treasure> pool = new ArrayList<>();
+        for (Treasure t : Treasure.values()) {
+            if (t.rarity == 2 || t == Treasure.STERNENSTAUB || t == Treasure.ZEITSAND || t == Treasure.KRISTALLROSE) continue;
+            for (int i = 0; i < (t.rarity == 0 ? 4 : 1); i++) pool.add(t);
+        }
+        return pool.get(rnd.nextInt(pool.size()));
     }
 
     private void updateChoice() {
@@ -1077,6 +1188,12 @@ public class WorldScene implements Scene, Main.CameraDirector {
                     lines = n.win;
                 }
                 for (String m : lvlMsgs) lines = append(lines, m);
+                for (String m : Friends.add(st, n.id, 8)) lines = append(lines, m);
+                if (rnd.nextFloat() < 0.12f) {
+                    Treasure t = randomPrize();
+                    st.addTreasure(t, 1);
+                    lines = append(lines, "*Im Siegerkranz glitzert etwas: " + t.title + " (" + Treasure.RARITY[t.rarity] + ")! Es liegt jetzt in deiner Tasche.");
+                }
                 sayNpc(n, lines, null);
             } else if (r == MiniGame.Result.LOSE) {
                 sayNpc(n, n.lose, null);
@@ -1307,7 +1424,7 @@ public class WorldScene implements Scene, Main.CameraDirector {
 
     // ================================================================ Menü
 
-    private static final String[] TABS = {"Karte", "Garderobe", "Inventar", "Missionen", "Fähigkeiten", "Tagebuch", "Spiel"};
+    private static final String[] TABS = {"Karte", "Tasche", "Freunde", "Garderobe", "Missionen", "Fähigkeiten", "Tagebuch", "Spiel"};
 
     private void updateMenu() {
         if (in.wasPressed(KeyEvent.VK_ESCAPE, KeyEvent.VK_TAB) || (menuTab == 0 && in.wasPressed(KeyEvent.VK_M))) { menuTab = -1; return; }
@@ -1315,11 +1432,11 @@ public class WorldScene implements Scene, Main.CameraDirector {
         if (in.wasPressed(KeyEvent.VK_LEFT, KeyEvent.VK_A)) menuTab = (menuTab + TABS.length - 1) % TABS.length;
         if (in.mouseClicked) {
             for (int i = 0; i < TABS.length; i++) {
-                double x = 70 + i * 162;
-                if (in.mouseX > x && in.mouseX < x + 152 && in.mouseY > 40 && in.mouseY < 84) menuTab = i;
+                double x = 40 + i * 152;
+                if (in.mouseX > x && in.mouseX < x + 144 && in.mouseY > 40 && in.mouseY < 84) menuTab = i;
             }
         }
-        if (menuTab == 1) {
+        if (menuTab == 3) {
             List<Outfit> owned = new ArrayList<>(st.owned);
             for (int i = 0; i < owned.size(); i++) {
                 double y = 150 + i * 40;
@@ -1329,8 +1446,8 @@ public class WorldScene implements Scene, Main.CameraDirector {
                 }
             }
         }
-        if (menuTab == 2) for (int i = 0; i < 4; i++) if (in.wasPressed(KeyEvent.VK_1 + i)) drink(Potion.values()[i]);
-        if (menuTab == 6) {
+        if (menuTab == 1) for (int i = 0; i < 4; i++) if (in.wasPressed(KeyEvent.VK_1 + i)) drink(Potion.values()[i]);
+        if (menuTab == 7) {
             if (in.wasPressed(KeyEvent.VK_Q) || (in.mouseClicked && hitButton(1))) {
                 fig.node.removeFromParent();
                 for (Creature c : creatures) c.remove();
@@ -1551,7 +1668,7 @@ public class WorldScene implements Scene, Main.CameraDirector {
             return;
         }
         g.drawString("WASD laufen · Maus schauen · Klick/Q zaubern · Leertaste " + (st.gadget(Outfit.Gadget.FLIGHT) ? "fliegen" : st.hero.isTroll() ? "springen" : "flattern")
-            + (st.has(Ability.SPRINT) ? " · Umschalt rennen" : "") + " · E sprechen · Tab Menü", 20, SH - 18);
+            + (st.has(Ability.SPRINT) ? " · Umschalt rennen" : "") + " · E sprechen · I Tasche · Tab Menü", 20, SH - 18);
     }
 
     /** Missionsliste am rechten Rand. */
@@ -1747,26 +1864,27 @@ public class WorldScene implements Scene, Main.CameraDirector {
         g.setColor(new Color(4, 6, 12, 200));
         g.fillRect(0, 0, SW, SH);
         for (int i = 0; i < TABS.length; i++) {
-            double x = 70 + i * 162;
+            double x = 40 + i * 152;
             boolean sel = i == menuTab;
             g.setColor(sel ? new Color(70, 56, 104, 230) : new Color(20, 22, 36, 220));
-            g.fill(new RoundRectangle2D.Double(x, 40, 152, 44, 16, 16));
+            g.fill(new RoundRectangle2D.Double(x, 40, 144, 44, 16, 16));
             g.setColor(sel ? Art.GOLD : Art.alpha(Art.GOLD, 90));
             g.setStroke(new BasicStroke(sel ? 2.5f : 1.2f));
-            g.draw(new RoundRectangle2D.Double(x, 40, 152, 44, 16, 16));
+            g.draw(new RoundRectangle2D.Double(x, 40, 144, 44, 16, 16));
             g.setFont(Art.UI);
-            Art.shadowCentered(g, TABS[i], x + 76, 68, sel ? Color.WHITE : Art.PARCH);
+            Art.shadowCentered(g, TABS[i], x + 72, 68, sel ? Color.WHITE : Art.PARCH);
         }
         g.setFont(Art.SMALL);
         g.setColor(new Color(170, 170, 190));
         Art.centered(g, "←/→ oder Klick: Reiter wechseln · Esc/Tab: schließen", SW / 2.0, SH - 18);
         switch (menuTab) {
             case 0 -> drawMapTab(g);
-            case 1 -> drawWardrobe(g);
-            case 2 -> drawInventory(g);
-            case 3 -> drawMissionsTab(g);
-            case 4 -> drawAbilities(g);
-            case 5 -> drawJournal(g);
+            case 1 -> drawBag(g);
+            case 2 -> drawFriends(g);
+            case 3 -> drawWardrobe(g);
+            case 4 -> drawMissionsTab(g);
+            case 5 -> drawAbilities(g);
+            case 6 -> drawJournal(g);
             default -> drawGameTab(g);
         }
     }
@@ -1813,7 +1931,7 @@ public class WorldScene implements Scene, Main.CameraDirector {
         if (st.effect(Potion.SICHT)) {
             for (Chunks.Spot s : world.chunks.spotsNear(pos.x, pos.z, 200)) {
                 double x = mx + (s.pos.x + range) / (2 * range) * ms, y = my + (s.pos.z + range) / (2 * range) * ms;
-                if (x > mx && x < mx + ms && y > my && y < my + ms) Art.dot(g, x, y, 1.5, (s.item != null ? s.item.color : s.mat.color), 255);
+                if (x > mx && x < mx + ms && y > my && y < my + ms) Art.dot(g, x, y, 1.5, (s.item != null ? s.item.color : s.mat != null ? s.mat.color : s.treasure.color()), 255);
             }
         }
         double px = mx + (pos.x + range) / (2 * range) * ms, py = my + (pos.z + range) / (2 * range) * ms;
@@ -1896,6 +2014,154 @@ public class WorldScene implements Scene, Main.CameraDirector {
         }
         g.setFont(Art.UI);
         Art.shadowText(g, st.coins + " Glimmertaler", 684, 640, Art.GOLD);
+    }
+
+    // ---------------------------------------------------------------- Tasche
+
+    private static final java.awt.geom.Path2D GEM = gemShape();
+
+    private static java.awt.geom.Path2D gemShape() {
+        java.awt.geom.Path2D p = new java.awt.geom.Path2D.Double();
+        p.moveTo(0, -1); p.lineTo(0.8, -0.35); p.lineTo(0.55, 0.75); p.lineTo(0, 1.05); p.lineTo(-0.55, 0.75); p.lineTo(-0.8, -0.35); p.closePath();
+        return p;
+    }
+
+    private void gem(Graphics2D g, double x, double y, double r, Color c, boolean found) {
+        java.awt.geom.AffineTransform at = new java.awt.geom.AffineTransform();
+        at.translate(x, y);
+        at.scale(r, r);
+        Shape sh = at.createTransformedShape(GEM);
+        if (found) {
+            Art.glow(g, x, y, r * 2.4, c, 90);
+            g.setPaint(new GradientPaint((float) (x - r), (float) (y - r), c.brighter(), (float) (x + r), (float) (y + r), c.darker()));
+            g.fill(sh);
+            g.setColor(new Color(255, 255, 255, 150));
+            g.fill(new java.awt.geom.Ellipse2D.Double(x - r * 0.35, y - r * 0.55, r * 0.35, r * 0.25));
+        } else {
+            g.setColor(new Color(30, 28, 44, 230));
+            g.fill(sh);
+        }
+        g.setColor(found ? Color.WHITE : Art.alpha(c, 140));
+        g.setStroke(new BasicStroke(1.4f));
+        g.draw(sh);
+    }
+
+    private void drawBag(Graphics2D g) {
+        // Links: alles Gesammelte
+        Art.panel(g, 30, 100, 450, 570);
+        g.setFont(Art.H2);
+        Art.shadowText(g, "Deine Tasche", 54, 138, Art.GOLD);
+        g.setFont(Art.UI);
+        Art.shadowText(g, st.coins + " Glimmertaler", 300, 138, new Color(255, 215, 120));
+        double y = 168;
+        g.setFont(Art.SMALL);
+        Art.shadowText(g, "ZUTATEN", 54, y, new Color(180, 175, 200));
+        Item[] its = Item.values();
+        for (int i = 0; i < its.length; i++) {
+            double x = 58 + (i % 2) * 210, yy = y + 26 + (i / 2) * 28;
+            Art.dot(g, x + 6, yy - 5, 6, its[i].color, st.items(its[i]) > 0 ? 255 : 80);
+            g.setFont(Art.UI);
+            Art.shadowText(g, its[i].title + "  ×" + st.items(its[i]), x + 18, yy, st.items(its[i]) > 0 ? Art.PARCH : new Color(120, 115, 135));
+        }
+        y += 26 + 3 * 28 + 14;
+        g.setFont(Art.SMALL);
+        Art.shadowText(g, "BAUSTOFFE FÜRS HAUS", 54, y, new Color(180, 175, 200));
+        Baustoff[] bs = Baustoff.values();
+        for (int i = 0; i < bs.length; i++) {
+            double x = 58 + (i % 2) * 210, yy = y + 26 + (i / 2) * 28;
+            Art.dot(g, x + 6, yy - 5, 6, bs[i].color, st.mats(bs[i]) > 0 ? 255 : 80);
+            g.setFont(Art.UI);
+            Art.shadowText(g, bs[i].title + "  ×" + st.mats(bs[i]), x + 18, yy, st.mats(bs[i]) > 0 ? Art.PARCH : new Color(120, 115, 135));
+        }
+        y += 26 + 3 * 28 + 14;
+        g.setFont(Art.SMALL);
+        Art.shadowText(g, "TRÄNKE (Taste 1–4 trinkt)", 54, y, new Color(180, 175, 200));
+        Potion[] ps = Potion.values();
+        for (int i = 0; i < ps.length; i++) {
+            double x = 58 + (i % 2) * 210, yy = y + 26 + (i / 2) * 28;
+            Art.shard(g, x + 6, yy - 6, 7, ps[i].color, true, game.time());
+            g.setFont(Art.UI);
+            Art.shadowText(g, "[" + (i + 1) + "] " + ps[i].title + " ×" + st.potions.getOrDefault(ps[i], 0), x + 18, yy, Art.PARCH);
+        }
+        // Rechts: Raritäten-Sammlung
+        Art.panel(g, 500, 100, 750, 570);
+        g.setFont(Art.H2);
+        Treasure[] all = Treasure.values();
+        Art.shadowText(g, "Raritäten-Sammlung  " + st.treasureKinds() + " / " + all.length, 524, 138, Art.GOLD);
+        g.setFont(Art.SMALL);
+        for (int r = 0; r < 3; r++) {
+            Treasure probe = r == 0 ? Treasure.GOLDENE_EICHEL : r == 1 ? Treasure.MONDPERLE : Treasure.PHOENIXFEDER;
+            Art.dot(g, 975 + r * 90, 132, 5, probe.color(), 255);
+            Art.shadowText(g, Treasure.RARITY[r], 984 + r * 90, 137, probe.color());
+        }
+        Treasure hover = null;
+        for (int i = 0; i < all.length; i++) {
+            Treasure t = all[i];
+            double cx = 524 + (i % 5) * 144, cy = 158 + (i / 5) * 112;
+            boolean found = st.treasure(t) > 0;
+            RoundRectangle2D card = new RoundRectangle2D.Double(cx, cy, 134, 102, 14, 14);
+            boolean hov = card.contains(in.mouseX, in.mouseY);
+            if (hov) hover = t;
+            g.setColor(hov ? new Color(60, 48, 92, 235) : found ? new Color(34, 28, 54, 220) : new Color(16, 14, 26, 210));
+            g.fill(card);
+            g.setColor(Art.alpha(t.color(), found ? 220 : 90));
+            g.setStroke(new BasicStroke(found ? 2f : 1.2f));
+            g.draw(card);
+            gem(g, cx + 67, cy + 38, 20, t.glow(), found);
+            g.setFont(new Font("SansSerif", Font.BOLD, 11));
+            String name = found ? t.title : "???";
+            Art.shadowCentered(g, name.length() > 22 ? name.substring(0, 21) + "…" : name, cx + 67, cy + 80, found ? Color.WHITE : new Color(130, 125, 150));
+            g.setFont(new Font("SansSerif", Font.PLAIN, 10));
+            Art.shadowCentered(g, found ? "×" + st.treasure(t) + " · " + Treasure.RARITY[t.rarity] : Treasure.RARITY[t.rarity], cx + 67, cy + 95, Art.alpha(t.color(), 220));
+        }
+        g.setFont(Art.SMALL);
+        if (hover != null) {
+            boolean found = st.treasure(hover) > 0;
+            Art.shadowText(g, found ? hover.title + ": " + hover.text : "Unentdeckt. Gerücht: " + hover.where, 524, 630, found ? Art.PARCH : new Color(200, 190, 230));
+            if (found) Art.shadowText(g, "Fundort: " + hover.where, 524, 650, new Color(180, 175, 200));
+        } else {
+            Art.shadowText(g, "Maus über eine Rarität halten. Manche zeigen sich nur nachts, bei Sonnenaufgang oder nach Regen.", 524, 640, new Color(180, 175, 200));
+        }
+    }
+
+    // ---------------------------------------------------------------- Freunde
+
+    private void drawFriends(Graphics2D g) {
+        Art.panel(g, 30, 100, 1220, 570);
+        g.setFont(Art.H2);
+        Art.shadowText(g, "Freundschaften", 54, 138, Art.GOLD);
+        g.setFont(Art.SMALL);
+        Art.shadowText(g, "Täglich plaudern, Lieblingsgeschenke, Aufträge und gemeinsame Spiele bringen Herzen.", 310, 136, new Color(190, 185, 210));
+        List<Friends.Friend> all = Friends.ALL;
+        for (int i = 0; i < all.size(); i++) {
+            Friends.Friend f = all.get(i);
+            double x = 54 + (i % 2) * 600, y = 168 + (i / 2) * 70;
+            int h = Friends.hearts(st, f.id()), pts = Friends.points(st, f.id());
+            g.setColor(new Color(24, 20, 38, 200));
+            g.fill(new RoundRectangle2D.Double(x, y - 6, 580, 62, 14, 14));
+            g.setFont(Art.UI);
+            Art.shadowText(g, f.name(), x + 14, y + 18, h >= 5 ? new Color(255, 200, 120) : Art.PARCH);
+            for (int k = 0; k < 5; k++) Art.shadowText(g, k < h ? "♥" : "♡", x + 300 + k * 22, y + 18, k < h ? new Color(255, 110, 160) : new Color(120, 100, 130));
+            Art.bar(g, x + 420, y + 6, 140, 8, h >= 5 ? 1 : (pts % Friends.PER_HEART) / (double) Friends.PER_HEART, new Color(255, 120, 170));
+            g.setFont(Art.SMALL);
+            String likes;
+            if (h >= 1) {
+                StringBuilder sb = new StringBuilder("mag: ");
+                for (Item it : f.likes()) sb.append(it.title).append(", ");
+                for (Treasure t : f.loves()) sb.append(t.title).append(", ");
+                likes = sb.substring(0, sb.length() - 2);
+            } else likes = "mag: ??? (ab 1 Herz)";
+            String next = switch (h) {
+                case 0, 1 -> "bei 2 ♥: ein Geschenk";
+                case 2 -> "bei 3 ♥: ein Geheimnis";
+                case 3 -> "bei 4 ♥: Taler & Trank";
+                case 4 -> "bei 5 ♥: Legendäres";
+                default -> "beste Freundschaft ✦";
+            };
+            Art.shadowText(g, likes.length() > 52 ? likes.substring(0, 51) + "…" : likes, x + 14, y + 40, new Color(190, 185, 210));
+            int nw = g.getFontMetrics().stringWidth(next);
+            Art.shadowText(g, next, x + 566 - nw, y + 40, new Color(255, 200, 220));
+        }
     }
 
     private void drawMissionsTab(Graphics2D g) {
