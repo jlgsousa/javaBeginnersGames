@@ -23,6 +23,11 @@ public class GameState {
     public final Set<String> picked = new HashSet<>();
     /** Sammelaufträge: Auftraggeber-ID -> {Zutat-Index, Anzahl, Belohnung}. */
     public final Map<String, int[]> quests = new LinkedHashMap<>();
+    /** Eigenes Haus: Baustoffe, Ausbaustufe (0 = kleine Holzhütte), gekaufte Möbel, entdeckte Rezepte. */
+    public final EnumMap<Baustoff, Integer> mats = new EnumMap<>(Baustoff.class);
+    public int homeLevel;
+    public final Set<String> furniture = new LinkedHashSet<>();
+    public final Set<String> recipes = new HashSet<>();
     public final EnumSet<Outfit> owned = EnumSet.of(Outfit.WANDERER);
     public Outfit outfit = Outfit.WANDERER;
     public int coins = 40;
@@ -58,6 +63,10 @@ public class GameState {
     public int stage(String key) { return stages.getOrDefault(key, 1); }
 
     public int xpNext() { return 60 + level * 50; }
+
+    public int mats(Baustoff b) { return mats.getOrDefault(b, 0); }
+
+    public void addMat(Baustoff b, int n) { mats.merge(b, n, Integer::sum); }
 
     public int items(Item i) { return items.getOrDefault(i, 0); }
 
@@ -112,6 +121,12 @@ public class GameState {
         StringBuilder q = new StringBuilder();
         quests.forEach((k, v) -> q.append(k).append('=').append(v[0]).append(':').append(v[1]).append(':').append(v[2]).append(','));
         p.setProperty("quests", q.toString());
+        StringBuilder bm = new StringBuilder();
+        mats.forEach((k, v) -> bm.append(k.name()).append('=').append(v).append(','));
+        p.setProperty("mats", bm.toString());
+        p.setProperty("home", String.valueOf(homeLevel));
+        p.setProperty("furniture", join(furniture));
+        p.setProperty("recipes", join(recipes));
         p.setProperty("outfits", join(owned.stream().map(Enum::name).toList()));
         p.setProperty("outfit", outfit.name());
         p.setProperty("coins", String.valueOf(coins));
@@ -159,6 +174,13 @@ public class GameState {
                 String[] v = a[1].split(":");
                 s.quests.put(a[0], new int[]{Integer.parseInt(v[0]), Integer.parseInt(v[1]), Integer.parseInt(v[2])});
             }
+            for (String kv : split(p.getProperty("mats"))) {
+                String[] a = kv.split("=");
+                s.mats.put(Baustoff.valueOf(a[0]), Integer.parseInt(a[1]));
+            }
+            s.homeLevel = Integer.parseInt(p.getProperty("home", "0"));
+            s.furniture.addAll(split(p.getProperty("furniture")));
+            s.recipes.addAll(split(p.getProperty("recipes")));
             for (String x : split(p.getProperty("outfits"))) s.owned.add(Outfit.valueOf(x));
             s.outfit = Outfit.valueOf(p.getProperty("outfit", "WANDERER"));
             s.coins = Integer.parseInt(p.getProperty("coins", "0"));

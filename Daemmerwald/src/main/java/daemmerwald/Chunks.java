@@ -46,6 +46,8 @@ public class Chunks {
     public static class Spot {
         public final String key;
         public final Item item;
+        /** Baustoff statt Zutat (dann ist item null). */
+        public Baustoff mat;
         public final Vector3f pos;
         public Geometry geo;
         Spot(String key, Item item, Vector3f pos) { this.key = key; this.item = item; this.pos = pos; }
@@ -56,6 +58,8 @@ public class Chunks {
     public static final List<House> STORY_HOUSES = House.storyHouses();
     private final Map<Item, Material> itemMats = new EnumMap<>(Item.class);
     private final Map<Item, Mesh> itemMeshes = new EnumMap<>(Item.class);
+    private final Map<Baustoff, Material> matMats = new EnumMap<>(Baustoff.class);
+    private final Map<Baustoff, Mesh> matMeshes = new EnumMap<>(Baustoff.class);
 
     static class Chunk {
         volatile List<Spot> spots = List.of();
@@ -161,6 +165,17 @@ public class Chunks {
         itemMeshes.put(Item.STERNKRISTALL, new com.jme3.scene.shape.Sphere(3, 4, 0.22f));
         itemMeshes.put(Item.SEEROSE, new com.jme3.scene.shape.Sphere(4, 8, 0.25f));
         itemMeshes.put(Item.FEDER, new com.jme3.scene.shape.Box(0.04f, 0.3f, 0.01f));
+        // Baustoffe: Holzbündel, Gesteinsbrocken, Lehmklumpen – mit leichtem Schimmer, damit man sie findet
+        Material wood = G3.litTex("Models/Tree/BarkColor.jpg", new ColorRGBA(1f, 0.85f, 0.7f, 1), null);
+        wood.setColor("GlowColor", new ColorRGBA(0.12f, 0.07f, 0.02f, 1));
+        matMats.put(Baustoff.HOLZ, wood);
+        Material stone = G3.litTex("Textures/Terrain/Rocky/RockyTexture.jpg", new ColorRGBA(0.85f, 0.85f, 0.88f, 1), null);
+        stone.setColor("GlowColor", new ColorRGBA(0.06f, 0.06f, 0.08f, 1));
+        matMats.put(Baustoff.STEIN, stone);
+        matMats.put(Baustoff.LEHM, G3.litGlow(new ColorRGBA(0.62f, 0.36f, 0.22f, 1), new ColorRGBA(0.12f, 0.05f, 0.02f, 1)));
+        matMeshes.put(Baustoff.HOLZ, new com.jme3.scene.shape.Cylinder(2, 8, 0.13f, 1.0f, true));
+        matMeshes.put(Baustoff.STEIN, rocks[0]);
+        matMeshes.put(Baustoff.LEHM, new com.jme3.scene.shape.Sphere(8, 10, 0.3f));
     }
 
     private static Material decoMat(Texture2D t, ColorRGBA tint) {
@@ -671,6 +686,43 @@ public class Chunks {
                 if (it == Item.KROETENMOOS) g.setLocalScale(1, 0.45f, 1);
                 if (it == Item.ASCHWURZ) g.setLocalRotation(new Quaternion().fromAngles(-FastMath.HALF_PI + 0.4f, 0, 0.3f));
                 g.setShadowMode(ShadowMode.Off);
+                items.attachChild(g);
+                sp.geo = g;
+                spots.add(sp);
+            }
+        }
+        // Baustoffe fürs eigene Haus: Totholz, Steine, Lehm
+        Random br = new Random(key(c.cx, c.cz) * 13 + 5);
+        int bidx = 0;
+        for (float gz = 9; gz < SIZE; gz += 13) {
+            for (float gx = 9; gx < SIZE; gx += 13) {
+                bidx++;
+                float wx = x0 + gx + (br.nextFloat() - 0.5f) * 10, wz = z0 + gz + (br.nextFloat() - 0.5f) * 10;
+                float roll = br.nextFloat();
+                String k = "b" + c.cx + ":" + c.cz + ":" + bidx;
+                float hh = WorldGen.height(wx, wz);
+                if (hh < WorldGen.WATER + 0.15f || picked.contains(k)) continue;
+                float slope = Math.abs(WorldGen.height(wx + 1, wz) - hh) + Math.abs(WorldGen.height(wx, wz + 1) - hh);
+                if (slope > 1.4f || WorldGen.pathDist(wx, wz) < 2.5f) continue;
+                float f = WorldGen.forest(wx, wz, hh, slope);
+                Baustoff m = null;
+                if (hh < 2.2f && roll < 0.45f) m = Baustoff.LEHM;
+                else if ((slope > 0.5f || WorldGen.dist(wx, wz, WorldGen.QUARRY) < 34 || hh > 20) && roll < 0.45f) m = Baustoff.STEIN;
+                else if (f > 0.25f && roll < 0.4f) m = Baustoff.HOLZ;
+                else if (roll < 0.1f) m = Baustoff.HOLZ;
+                else if (roll < 0.15f) m = Baustoff.STEIN;
+                if (m == null) continue;
+                Spot sp = new Spot(k, null, new Vector3f(wx, hh + 0.12f, wz));
+                sp.mat = m;
+                Geometry g = new Geometry("mat", matMeshes.get(m));
+                g.setMaterial(matMats.get(m));
+                g.setLocalTranslation(sp.pos);
+                float rot = br.nextFloat() * FastMath.TWO_PI;
+                if (m == Baustoff.HOLZ) g.setLocalRotation(new Quaternion().fromAngles(0, rot, FastMath.HALF_PI));
+                else g.setLocalRotation(new Quaternion().fromAngleAxis(rot, Vector3f.UNIT_Y));
+                if (m == Baustoff.LEHM) g.setLocalScale(1.3f, 0.35f, 1f);
+                if (m == Baustoff.STEIN) g.setLocalScale(0.32f);
+                g.setShadowMode(ShadowMode.Cast);
                 items.attachChild(g);
                 sp.geo = g;
                 spots.add(sp);

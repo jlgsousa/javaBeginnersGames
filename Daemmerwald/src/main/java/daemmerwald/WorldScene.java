@@ -35,6 +35,7 @@ public class WorldScene implements Scene, Main.CameraDirector {
     Mate p2;
     private Npc nearP2;
     private House nearHouseP2;
+    private boolean nearHome, nearHomeP2;
     private float velY, yaw, camYaw, camPitch = 0.28f, zoom = 1, moveSpeed;
     private boolean onGround = true, flyingNow;
     float mana;
@@ -95,6 +96,7 @@ public class WorldScene implements Scene, Main.CameraDirector {
         world.chunks.preload(pos.x, pos.z);
         if (st.flags.contains("blight")) world.setBlightCleared();
         rebuildFigure();
+        world.setHomeLevel(st.homeLevel);
         if (st.twoPlayers) p2 = new Mate(st, world, pos, yaw);
         else if (world.mate != null) { world.mate.remove(); world.mate = null; }
         mana = (float) st.hero.manaMax();
@@ -218,15 +220,31 @@ public class WorldScene implements Scene, Main.CameraDirector {
         near = nearNpc(pos);
         nearHouse = near == null ? nearHouseAt(pos) : null;
         boolean use1 = p2 == null ? in.wasPressed(KeyEvent.VK_E, KeyEvent.VK_ENTER) : in.wasPressed(KeyEvent.VK_E);
+        Vector3f homeDoor = Home.door(st.homeLevel);
+        nearHome = near == null && nearHouse == null && homeDoor.distance(pos) < 3.4f;
         Npc useNpc = null;
         House useHouse = null;
-        if (use1) { useNpc = near; useHouse = nearHouse; }
+        boolean useHome = false;
+        if (use1) { useNpc = near; useHouse = nearHouse; useHome = nearHome; }
         if (p2 != null) {
             nearP2 = nearNpc(p2.pos);
             nearHouseP2 = nearP2 == null ? nearHouseAt(p2.pos) : null;
-            if (p2.useNow && useNpc == null && useHouse == null) { useNpc = nearP2; useHouse = nearHouseP2; }
+            nearHomeP2 = nearP2 == null && nearHouseP2 == null && homeDoor.distance(p2.pos) < 3.4f;
+            if (p2.useNow && useNpc == null && useHouse == null && !useHome) { useNpc = nearP2; useHouse = nearHouseP2; useHome = nearHomeP2; }
         }
-        if (useNpc != null && race == null) interact(useNpc);
+        if (!st.flags.contains("home:seen") && FastMath.sqr(pos.x - Home.X) + FastMath.sqr(pos.z - Home.Z) < 15 * 15) {
+            st.flags.add("home:seen");
+            say(null, null, new String[]{
+                "*Da steht sie: deine kleine Holzhütte. Schief, zugig – aber deine.",
+                "*Sammle in der Welt Holz, Stein und Lehm. An der Werkbank drinnen kombinierst du sie zu Brettern, Ziegeln und Kristallglas.",
+                "*Damit baust du dein Zuhause Stufe um Stufe aus – bis zur Baumvilla. Möbel kannst du dir auch kaufen. Drück E an der Tür."
+            }, null);
+            return;
+        }
+        if (useHome && race == null) {
+            in.releaseAll();
+            game.setScene(new HomeScene(game, this));
+        } else if (useNpc != null && race == null) interact(useNpc);
         else if (useHouse != null && race == null) {
             in.releaseAll();
             game.setScene(new HouseScene(game, this, useHouse));
@@ -469,6 +487,14 @@ public class WorldScene implements Scene, Main.CameraDirector {
             st.picked.add(s.key);
             world.chunks.picked.add(s.key);
             int n = st.gadget(Outfit.Gadget.LUCK) && rnd.nextFloat() < 0.35f ? 2 : 1;
+            if (s.mat != null) {
+                n += s.mat == Baustoff.HOLZ ? rnd.nextInt(2) : 0;
+                st.addMat(s.mat, n);
+                if (game.app.music != null) game.app.music.sfx("chime");
+                world.burst(s.pos, G3.rgb(s.mat.color), 16);
+                floatText("+" + n + " " + s.mat.title, s.pos.add(0, 1.0f, 0), s.mat.color);
+                continue;
+            }
             st.addItem(s.item, n);
             st.collected += n;
             int c = st.earn(2);
@@ -1344,6 +1370,11 @@ public class WorldScene implements Scene, Main.CameraDirector {
             label(g, "[Enter] " + (nearHouseP2.cafe ? nearHouseP2.title + " betreten" : (nearHouseP2.evil ? "Anklopfen bei " : "Besuch bei ") + nearHouseP2.owner),
                 s, Art.GOLD, new Color(40, 26, 14, 210));
         }
+        if (nearHomeP2 && calm()) {
+            double[] sc = screen(Home.door(st.homeLevel).add(0, 2.6f, 0), world.cam2);
+            if (sc == null) sc = new double[]{mx + SW / 4.0, SH - 140};
+            label(g, "[Enter] Nach Hause", sc, new Color(255, 215, 150), new Color(40, 26, 14, 210));
+        }
         if (p2.leashHint > 0) {
             g.setFont(Art.UI);
             Art.shadowCentered(g, "Bleib in der Nähe von " + st.displayName() + "!", mx + SW / 4.0, SH / 2.0 - 120,
@@ -1397,6 +1428,11 @@ public class WorldScene implements Scene, Main.CameraDirector {
             g.setColor(nearHouse.evil ? new Color(40, 10, 50, 210) : new Color(40, 26, 14, 210));
             g.fill(new RoundRectangle2D.Double(s[0] - w / 2.0, s[1] - 20, w, 28, 14, 14));
             Art.shadowCentered(g, label, s[0], s[1], nearHouse.evil ? new Color(220, 150, 255) : Art.GOLD);
+        }
+        if (nearHome && calm()) {
+            double[] sc = screen(Home.door(st.homeLevel).add(0, 2.6f, 0));
+            if (sc == null) sc = new double[]{SW / 2.0, SH - 140};
+            label(g, "[E] Nach Hause", sc, new Color(255, 215, 150), new Color(40, 26, 14, 210));
         }
         drawSplit(g);
         drawHud(g);
@@ -1488,6 +1524,14 @@ public class WorldScene implements Scene, Main.CameraDirector {
         Outfit cheapest = null;
         for (Outfit o : Outfit.values()) if (!st.owned.contains(o) && (cheapest == null || o.price < cheapest.price)) cheapest = o;
         if (cheapest != null) m.add(new String[]{"Laden", "Nächstes Gewand: " + cheapest.title, cheapest.price + " Taler bei Pimpernell (Hof)"});
+        if (st.homeLevel + 1 < Home.LEVELS.size()) {
+            Home.Level nx = Home.LEVELS.get(st.homeLevel + 1);
+            StringBuilder need = new StringBuilder();
+            for (Map.Entry<String, Integer> e : nx.needs().entrySet())
+                need.append(Math.min(Home.have(st, e.getKey()), e.getValue())).append("/").append(e.getValue()).append(" ").append(Home.title(e.getKey())).append(" · ");
+            need.append(nx.coins()).append(" Taler");
+            m.add(new String[]{"Zuhause", "Ausbau: " + nx.title(), need.toString()});
+        }
         m.add(new String[]{"Speichern", "Nächstes Café: " + nearestCafeText(), "Im Café ins Gästebuch eintragen"});
         if (!st.flags.contains("cafe")) m.add(new String[]{"Ruhe", "Besuche das Café Wolkenrand", "Auf der Klippe im Süden"});
         if (!st.flags.contains("visit:knorz")) m.add(new String[]{"Besuch", "Oma Knorz wohnt in einer Hügelhöhle", "beim Steinbruch – sie hat immer Tee"});
@@ -1697,10 +1741,22 @@ public class WorldScene implements Scene, Main.CameraDirector {
             if (open) Art.shard(g, x, y - 10, 7, n.shard.color, true, game.time());
             else Art.dot(g, x, y, 3, n.id.startsWith("kessel") ? new Color(120, 255, 140) : new Color(255, 220, 140), 255);
         }
+        {
+            // Eigenes Haus
+            double hx = mx + (Home.X + range) / (2 * range) * ms, hy = my + (Home.Z + range) / (2 * range) * ms;
+            java.awt.geom.Path2D hp = new java.awt.geom.Path2D.Double();
+            hp.moveTo(hx - 7, hy + 6); hp.lineTo(hx - 7, hy - 1); hp.lineTo(hx, hy - 8); hp.lineTo(hx + 7, hy - 1); hp.lineTo(hx + 7, hy + 6); hp.closePath();
+            g.setColor(new Color(255, 210, 140));
+            g.fill(hp);
+            g.setColor(new Color(60, 30, 10));
+            g.draw(hp);
+            g.setFont(Art.SMALL);
+            Art.shadowText(g, "Zuhause", hx + 10, hy + 4, new Color(255, 220, 160));
+        }
         if (st.effect(Potion.SICHT)) {
             for (Chunks.Spot s : world.chunks.spotsNear(pos.x, pos.z, 200)) {
                 double x = mx + (s.pos.x + range) / (2 * range) * ms, y = my + (s.pos.z + range) / (2 * range) * ms;
-                if (x > mx && x < mx + ms && y > my && y < my + ms) Art.dot(g, x, y, 1.5, s.item.color, 255);
+                if (x > mx && x < mx + ms && y > my && y < my + ms) Art.dot(g, x, y, 1.5, (s.item != null ? s.item.color : s.mat.color), 255);
             }
         }
         double px = mx + (pos.x + range) / (2 * range) * ms, py = my + (pos.z + range) / (2 * range) * ms;
@@ -1757,6 +1813,15 @@ public class WorldScene implements Scene, Main.CameraDirector {
             g.setColor(new Color(170, 170, 190));
             g.drawString(it.where, 124, (float) y + 18);
             y += 52;
+        }
+        g.setFont(Art.H2);
+        Art.shadowText(g, "Baustoffe fürs Haus", 94, 524, Art.GOLD);
+        Baustoff[] bs = Baustoff.values();
+        for (int i = 0; i < bs.length; i++) {
+            double bx = 104 + (i % 2) * 260, by = 560 + (i / 2) * 32;
+            Art.dot(g, bx, by - 5, 4, bs[i].color, 255);
+            g.setFont(Art.UI);
+            Art.shadowText(g, bs[i].title + "   ×" + st.mats(bs[i]), bx + 18, by, bs[i].raw ? Art.PARCH : new Color(200, 230, 255));
         }
         Art.panel(g, 660, 104, 560, 560);
         g.setFont(Art.H2);

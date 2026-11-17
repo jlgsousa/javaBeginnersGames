@@ -103,6 +103,7 @@ public class World3D {
             root.attachChild(h.buildExterior());
             solid(h.x, h.z, h.radius());
         }
+        setHomeLevel(0);
         buildNpcs();
         buildParticles();
         setupFilters();
@@ -115,6 +116,25 @@ public class World3D {
     public Vector3f ground(float x, float z) { return new Vector3f(x, height(x, z), z); }
 
     private void solid(float x, float z, float r) { statics.add(new float[]{x, z, r}); }
+
+    // ---------------------------------------------------------------- Eigenes Haus
+
+    private com.jme3.scene.Node homeNode;
+    private int homeLevel = -1;
+    private final float[] homeSolid = new float[]{Home.X, Home.Z, 0};
+
+    /** Zeigt das eigene Haus in der passenden Ausbaustufe (baut es bei Änderung neu). */
+    public void setHomeLevel(int level) {
+        if (level == homeLevel) return;
+        homeLevel = level;
+        if (homeNode != null) homeNode.removeFromParent();
+        homeNode = Home.build(level);
+        root.attachChild(homeNode);
+        homeSolid[2] = Home.radius(level);
+        if (!statics.contains(homeSolid)) statics.add(homeSolid);
+    }
+
+    public int homeLevel() { return homeLevel; }
 
     public boolean blocked(float x, float z, float r) {
         return height(x, z) < WorldGen.WATER - 1.3f || blockedIgnoringWater(x, z, r);

@@ -14,17 +14,18 @@ public final class WorldGen {
     // Story-Orte (x, z)
     public static final float[] ACADEMY = {0, -112}, COURTYARD = {0, -66}, HEART = {0, 12}, LAKE = {-124, -4},
         QUARRY = {120, -36}, SWAMP = {0, 92}, MUSHROOMS = {-120, 92}, RAVINE = {128, 84}, SHADOW = {-124, -92},
-        MEADOW = {116, -104}, CAFE = {34, 194};
+        MEADOW = {116, -104}, CAFE = {34, 194}, HOME = {-66, -52};
 
     /** Pfade als Polylinien {x1,z1,x2,z2}. */
     public static final float[][] PATHS = {
         {0, -92, 0, -14}, {0, 30, 0, 66}, {-26, 14, -88, -2}, {26, 6, 92, -30}, {-100, 22, -114, 74},
-        {26, 94, 100, 84}, {20, -62, 94, -44}, {-20, -66, -100, -86}, {20, -74, 92, -98}, {12, 104, 30, 182}
+        {26, 94, 100, 84}, {20, -62, 94, -44}, {-20, -66, -100, -86}, {20, -74, 92, -98}, {12, 104, 30, 182},
+        {-16, -64, -58, -50}
     };
 
     private static final Feature[] FLAT = {
         new Feature(0, -100, 54), new Feature(COURTYARD, 30), new Feature(HEART, 34), new Feature(MEADOW, 36),
-        new Feature(MUSHROOMS, 22), new Feature(SHADOW, 28), new Feature(CAFE, 22), new Feature(LAKE, 46)
+        new Feature(MUSHROOMS, 22), new Feature(SHADOW, 28), new Feature(CAFE, 22), new Feature(LAKE, 46), new Feature(HOME, 28)
     };
 
     private record Feature(float x, float z, float r) {

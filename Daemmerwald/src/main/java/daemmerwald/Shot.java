@@ -82,6 +82,46 @@ public class Shot {
             app.core.setScene(new WorldScene(app.core));
             app.world.dayNight.time = 0.3f;
         });
+        step("home_out0", 4f, () -> {
+            GameState gs = app.core.state;
+            gs.twoPlayers = false;
+            gs.hero = CharacterDef.ALL.get(5);
+            gs.flags.add("intro");
+            gs.flags.add("home:seen");
+            gs.homeLevel = 0;
+            app.core.setScene(new WorldScene(app.core));
+        });
+        step("home_out0b", 4f, () -> {
+            Vector3f d = Home.door(0);
+            teleport(d.x + FastMath.sin(Home.YAW) * 7 + 3, d.z + FastMath.cos(Home.YAW) * 7, Home.YAW + FastMath.PI + 0.35f);
+            app.world.dayNight.time = 0.4f;
+        });
+        for (int lv = 1; lv <= 5; lv++) {
+            final int L = lv;
+            step("home_out" + lv, 3.5f, () -> {
+                app.core.state.homeLevel = L;
+                app.world.setHomeLevel(L);
+                Vector3f d = Home.door(L);
+                float back = L >= 2 ? 11 : 8;
+                teleport(d.x + FastMath.sin(Home.YAW) * back + 3, d.z + FastMath.cos(Home.YAW) * back, Home.YAW + FastMath.PI + 0.3f);
+            });
+        }
+        step("home_in", 4f, () -> {
+            GameState gs = app.core.state;
+            gs.homeLevel = 3;
+            app.world.setHomeLevel(3);
+            gs.furniture.addAll(java.util.List.of("teppich", "regal", "schaukelstuhl", "pflanzen", "kamin", "himmelbett", "lampe", "sofa", "gemaelde", "trankregal", "harfe", "mondlaterne"));
+            WorldScene ws = (WorldScene) app.core.scene();
+            app.core.setScene(new HomeScene(app.core, ws));
+        });
+        step("home_menu", 2.5f, () -> { if (app.core.scene() instanceof HomeScene hs) hs.debugMode("menu"); });
+        step("home_bench", 2.5f, () -> {
+            GameState gs = app.core.state;
+            gs.addMat(Baustoff.HOLZ, 9); gs.addMat(Baustoff.STEIN, 5); gs.addMat(Baustoff.LEHM, 4); gs.addItem(Item.STERNKRISTALL, 2); gs.recipes.add("bretter");
+            if (app.core.scene() instanceof HomeScene hs) hs.debugMode("bench");
+        });
+        step("home_build", 2.5f, () -> { if (app.core.scene() instanceof HomeScene hs) hs.debugMode("build"); });
+        step("home_shop", 2.5f, () -> { if (app.core.scene() instanceof HomeScene hs) hs.debugMode("shop"); });
         step("players", 2f, () -> app.core.setScene(new PlayersScene(app.core)));
         step("two_players", 6f, () -> {
             GameState gs = app.core.state;
