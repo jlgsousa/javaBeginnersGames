@@ -53,6 +53,8 @@ public class WorldScene implements Scene, Main.CameraDirector {
     private final List<Creature> creatures = new ArrayList<>();
     private float spawnT;
     private Geometry companion;
+    private com.jme3.effect.ParticleEmitter dust;
+    private boolean wasAir;
 
     // Rennen
     private Race race;
@@ -94,6 +96,15 @@ public class WorldScene implements Scene, Main.CameraDirector {
         companion.setCullHint(Spatial.CullHint.Always);
         world.root.attachChild(companion);
         new Thread(this::buildMap, "map").start();
+        dust = G3.particles("dust", 40, "Effects/Smoke/Smoke.png", new ColorRGBA(0.55f, 0.48f, 0.38f, 0.28f), new ColorRGBA(0.5f, 0.45f, 0.38f, 0), 0.25f, 0.9f, 0.7f, 1.2f);
+        dust.setImagesX(15);
+        dust.getMaterial().getAdditionalRenderState().setBlendMode(com.jme3.material.RenderState.BlendMode.Alpha);
+        dust.setShape(new com.jme3.effect.shapes.EmitterSphereShape(Vector3f.ZERO, 0.25f));
+        dust.getParticleInfluencer().setInitialVelocity(new Vector3f(0, 0.4f, 0));
+        dust.getParticleInfluencer().setVelocityVariation(1f);
+        dust.setParticlesPerSec(0);
+        dust.setInWorldSpace(true);
+        world.root.attachChild(dust);
     }
 
     void rebuildFigure() {
@@ -179,6 +190,7 @@ public class WorldScene implements Scene, Main.CameraDirector {
             castT -= dt;
             if (castT <= 0) releaseSpell();
         }
+        updateBolts(dt);
         if ((in.mouseClicked || in.wasPressed(KeyEvent.VK_Q, KeyEvent.VK_F)) && castT <= 0 && !fig.casting()) castSpell();
 
         for (int i = 0; i < 4; i++) if (in.wasPressed(KeyEvent.VK_1 + i)) drink(Potion.values()[i]);
@@ -301,13 +313,76 @@ public class WorldScene implements Scene, Main.CameraDirector {
         castT = 0.32f;
     }
 
+    /** Fliegendes Lichtgeschoss mit Leuchtspur und eigenem Licht. */
+    private class Bolt {
+        final Node node = new Node("bolt");
+        final com.jme3.light.PointLight light = new com.jme3.light.PointLight();
+        final com.jme3.effect.ParticleEmitter trail;
+        final Vector3f p, target;
+        float trailLife = -1;
+
+        Bolt(Vector3f from, Vector3f to) {
+            p = from.clone();
+            target = to.clone();
+            node.attachChild(G3.geom("boltCore", new Sphere(10, 10, 0.16f), G3.emissive(new ColorRGBA(0.85f, 0.95f, 1f, 1))));
+            trail = G3.particles("boltTrail", 60, null, new ColorRGBA(0.6f, 0.85f, 1f, 1), new ColorRGBA(0.3f, 0.5f, 1f, 0), 0.22f, 0.02f, 0.3f, 0.6f);
+            trail.setParticlesPerSec(90);
+            trail.setShape(new com.jme3.effect.shapes.EmitterSphereShape(Vector3f.ZERO, 0.06f));
+            trail.getParticleInfluencer().setVelocityVariation(0.3f);
+            trail.setInWorldSpace(true);
+            node.attachChild(trail);
+            light.setColor(new ColorRGBA(0.6f, 0.85f, 1f, 1).multLocal(2.5f));
+            light.setRadius(9);
+            world.root.addLight(light);
+            world.root.attachChild(node);
+        }
+
+        /** @return true, wenn das Ziel erreicht ist. */
+        boolean fly(float dt) {
+            if (trailLife >= 0) {
+                trailLife -= dt;
+                if (trailLife < 0) node.removeFromParent();
+                return false;
+            }
+            Vector3f d = target.subtract(p);
+            float step = 24 * dt;
+            if (d.length() <= step) {
+                p.set(target);
+                node.getChild("boltCore").removeFromParent();
+                trail.setParticlesPerSec(0);
+                world.root.removeLight(light);
+                trailLife = 0.7f;
+                return true;
+            }
+            p.addLocal(d.normalizeLocal().multLocal(step));
+            node.setLocalTranslation(p);
+            light.setPosition(p);
+            return false;
+        }
+    }
+
+    private final List<Bolt> bolts = new ArrayList<>();
+
+    private void updateBolts(float dt) {
+        for (Iterator<Bolt> it = bolts.iterator(); it.hasNext(); ) {
+            Bolt b = it.next();
+            if (b.fly(dt)) spellImpact(b.target);
+            if (b.trailLife < 0 && b.node.getParent() == null) it.remove();
+        }
+    }
+
     private void releaseSpell() {
         float reach = st.has(Ability.LANZE) ? 9 : 5;
         Vector3f fwd = new Vector3f(FastMath.sin(yaw), 0, FastMath.cos(yaw));
         Vector3f target = pos.add(fwd.mult(reach)).addLocal(0, 1.2f, 0);
-        world.burst(target, new ColorRGBA(0.6f, 0.9f, 1f, 1), 70);
-        world.burst(pos.add(fwd.mult(1)).addLocal(0, fig.height * 0.7f, 0), new ColorRGBA(1f, 0.95f, 0.8f, 1), 25);
+        Vector3f hand = pos.add(fwd.mult(0.7f)).addLocal(0, fig.height * 0.72f, 0);
+        world.burst(hand, new ColorRGBA(1f, 0.95f, 0.8f, 1), 20);
+        bolts.add(new Bolt(hand, target));
         lightBoost = 3;
+    }
+
+    private void spellImpact(Vector3f target) {
+        world.burst(target, new ColorRGBA(0.6f, 0.9f, 1f, 1), 70);
         float r = st.has(Ability.LANZE) ? 16 : 10;
         for (Iterator<Creature> it = creatures.iterator(); it.hasNext(); ) {
             Creature c = it.next();
@@ -412,6 +487,11 @@ public class WorldScene implements Scene, Main.CameraDirector {
         fig.face(yaw, dt);
         fig.flying = flyingNow;
         fig.update(dt, moveSpeed, !onGround);
+        dust.setLocalTranslation(pos.add(0, 0.1f, 0));
+        boolean wet = world.height(pos.x, pos.z) < WorldGen.WATER + 0.2f;
+        dust.setParticlesPerSec(onGround && !wet && st.hero.isTroll() ? moveSpeed * 2.2f : onGround && !wet ? moveSpeed * 0.8f : 0);
+        if (wasAir && onGround && !wet) dust.emitParticles(st.hero.isTroll() ? 14 : 6);
+        wasAir = !onGround;
         for (Map.Entry<String, Figure> e : world.figures.entrySet()) {
             Figure f = e.getValue();
             if (race != null && e.getKey().equals("brumm")) continue;
@@ -441,7 +521,7 @@ public class WorldScene implements Scene, Main.CameraDirector {
     // ================================================================ Kreaturen
 
     private class Creature {
-        static final int WOLF = 0, MOTH = 1, FOX = 2;
+        static final int WOLF = 0, MOTH = 1, FOX = 2, RABBIT = 3;
         final int type;
         final Vector3f pos = new Vector3f(), vel = new Vector3f();
         final Node node = new Node("creature");
@@ -455,7 +535,7 @@ public class WorldScene implements Scene, Main.CameraDirector {
             world.root.attachChild(node);
         }
 
-        boolean dark() { return type != FOX; }
+        boolean dark() { return type == WOLF || type == MOTH; }
 
         void build() {
             if (type == WOLF) {
@@ -507,6 +587,28 @@ public class WorldScene implements Scene, Main.CameraDirector {
                 wingR = r;
                 Geometry core = G3.geom("core", new Sphere(8, 8, 0.1f), G3.emissive(new ColorRGBA(0.85f, 0.4f, 1f, 1)));
                 node.attachChild(core);
+            } else if (type == RABBIT) {
+                Material fur = G3.lit(new ColorRGBA(0.55f, 0.45f, 0.36f, 1));
+                Geometry body = G3.geom("rBody", new Sphere(10, 12, 1), fur);
+                body.setLocalScale(0.14f, 0.13f, 0.2f);
+                body.setLocalTranslation(0, 0.14f, 0);
+                node.attachChild(body);
+                Geometry head = G3.geom("rHead", new Sphere(10, 12, 0.09f), fur);
+                head.setLocalTranslation(0, 0.24f, 0.17f);
+                node.attachChild(head);
+                for (int sd = -1; sd <= 1; sd += 2) {
+                    Geometry ear = G3.geom("rEar", new Sphere(6, 8, 1), fur);
+                    ear.setLocalScale(0.025f, 0.09f, 0.015f);
+                    ear.setLocalTranslation(sd * 0.04f, 0.36f, 0.14f);
+                    ear.setLocalRotation(new Quaternion().fromAngleAxis(sd * 0.15f, Vector3f.UNIT_Z));
+                    node.attachChild(ear);
+                    Geometry eye = G3.geom("rEye", new Sphere(5, 5, 0.012f), G3.lit(new ColorRGBA(0.02f, 0.02f, 0.02f, 1)));
+                    eye.setLocalTranslation(sd * 0.055f, 0.26f, 0.23f);
+                    node.attachChild(eye);
+                }
+                Geometry tail = G3.geom("rTail", new Sphere(6, 6, 0.045f), G3.lit(new ColorRGBA(0.95f, 0.93f, 0.9f, 1)));
+                tail.setLocalTranslation(0, 0.17f, -0.2f);
+                node.attachChild(tail);
             } else {
                 Material furM = G3.litGlow(new ColorRGBA(0.95f, 0.55f, 0.2f, 1), new ColorRGBA(0.45f, 0.22f, 0.05f, 1));
                 Geometry body = G3.geom("foxBody", new Sphere(10, 12, 1), furM);
@@ -540,6 +642,7 @@ public class WorldScene implements Scene, Main.CameraDirector {
             float y = world.height(pos.x, pos.z);
             if (type == MOTH) y += 1.8f + FastMath.sin(t * 2) * 0.4f;
             if (type == FOX) y += Math.abs(FastMath.sin(t * 7)) * 0.08f * Math.min(1, vel.length());
+            if (type == RABBIT) y += Math.abs(FastMath.sin(t * 9)) * 0.22f * Math.min(1, vel.length());
             node.setLocalTranslation(pos.x, Math.max(y, WorldGen.WATER), pos.z);
             if (vel.lengthSquared() > 0.01f) node.setLocalRotation(new Quaternion().fromAngleAxis(FastMath.atan2(vel.x, vel.z), Vector3f.UNIT_Y));
             if (wingL != null) {
@@ -557,8 +660,8 @@ public class WorldScene implements Scene, Main.CameraDirector {
         hurtT = Math.max(0, hurtT - dt);
         foxT = Math.max(0, foxT - dt);
         spawnT -= dt;
-        int darkN = 0, foxN = 0;
-        for (Creature c : creatures) { if (c.dark()) darkN++; else foxN++; }
+        int darkN = 0, foxN = 0, rabbitN = 0;
+        for (Creature c : creatures) { if (c.dark()) darkN++; else if (c.type == Creature.RABBIT) rabbitN++; else foxN++; }
         float night = world.dayNight.night;
         int darkCap = (int) Math.min(14, 3 + st.level / 2 + st.count() + night * 4);
         if (spawnT <= 0) {
@@ -573,6 +676,10 @@ public class WorldScene implements Scene, Main.CameraDirector {
                 boolean nightForest = night > 0.6f && rnd.nextFloat() < 0.25f && br < 0.3f;
                 if ((dk > 0.45f || nightForest) && darkN < darkCap) {
                     creatures.add(new Creature(rnd.nextFloat() < 0.55f ? Creature.WOLF : Creature.MOTH, new Vector3f(x, h, z)));
+                    break;
+                } else if (night < 0.5f && dk < 0.2f && rabbitN < 6 && (br > 0.2f || G3.fbm(x * 0.03 + 7, z * 0.03, 3) > 0.5)
+                    && WorldGen.forest(x, z, h, 0) < 0.4f && rnd.nextFloat() < 0.6f) {
+                    creatures.add(new Creature(Creature.RABBIT, new Vector3f(x, h, z)));
                     break;
                 } else if (br > 0.4f && foxN < (st.gadget(Outfit.Gadget.FRIENDS) ? 8 : 4)) {
                     creatures.add(new Creature(Creature.FOX, new Vector3f(x, h, z)));
@@ -612,6 +719,12 @@ public class WorldScene implements Scene, Main.CameraDirector {
             } else if (c.type == Creature.MOTH) {
                 Vector3f tgt = dist < chaseR * 1.3f ? d.normalize().multLocal(2.4f) : Vector3f.ZERO;
                 c.vel.set(tgt.x + FastMath.cos(c.t * 2.3f) * 2.5f, 0, tgt.z + FastMath.sin(c.t * 3.1f) * 2);
+            } else if (c.type == Creature.RABBIT) {
+                if (dist < 7 && dist > 0.1f) c.vel.set(d.normalize().multLocal(-5.5f));
+                else if (rnd.nextFloat() < dt * 0.9f) {
+                    if (rnd.nextFloat() < 0.5f) c.vel.set(0, 0, 0);
+                    else { float a = rnd.nextFloat() * 6.28f; c.vel.set(FastMath.cos(a) * 1.6f, 0, FastMath.sin(a) * 1.6f); }
+                }
             } else {
                 boolean follow = st.gadget(Outfit.Gadget.FRIENDS) && dist < 25;
                 if (follow && dist > 3) c.vel.set(d.normalize().multLocal(4.5f));
@@ -640,7 +753,7 @@ public class WorldScene implements Scene, Main.CameraDirector {
                         Vector3f push = d.normalize().multLocal(2.2f);
                         if (!world.blocked(pos.x + push.x, pos.z + push.z, 0.4f)) { pos.x += push.x; pos.z += push.z; }
                     }
-                } else if (!c.dark() && foxT <= 0) {
+                } else if (c.type == Creature.FOX && foxT <= 0) {
                     foxT = 6;
                     float gain = st.gadget(Outfit.Gadget.FRIENDS) ? 40 : 20;
                     mana = Math.min(maxMana(), mana + gain);

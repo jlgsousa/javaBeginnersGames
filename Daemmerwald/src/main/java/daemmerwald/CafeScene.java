@@ -71,6 +71,7 @@ public class CafeScene implements Scene, Main.CameraDirector {
         t += dt;
         game.state.playTime += dt;
         w3.waitress.update(dt, 0, false);
+        w3.animateCafe(t);
         savedT = Math.max(0, savedT - dt);
         switch (stage) {
             case GREET -> {
@@ -114,6 +115,12 @@ public class CafeScene implements Scene, Main.CameraDirector {
                 if (!book.update(in)) stage = Stage.SEATED;
             }
         }
+    }
+
+    /** Für automatische Tests: direkt Platz nehmen. */
+    void debugSeat() {
+        choose(1);
+        stage = Stage.SEATED;
     }
 
     private void choose(int i) {

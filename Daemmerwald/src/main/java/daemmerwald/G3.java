@@ -266,6 +266,123 @@ public final class G3 {
         return sunTex;
     }
 
+    private static Texture2D fernTex, reedTex, needleTex, lilyTex, leafTex;
+
+    /** Farnwedel: mehrere gefiederte Blätter, die aus einem Punkt wachsen. */
+    static Texture2D fernTex() {
+        if (fernTex == null) {
+            BufferedImage img = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g = img.createGraphics();
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            Random r = new Random(12);
+            for (int f = 0; f < 7; f++) {
+                double ang = -Math.PI / 2 + (f - 3) * 0.32 + (r.nextDouble() - 0.5) * 0.1;
+                double len = 150 + r.nextDouble() * 80;
+                int gr = 110 + r.nextInt(50);
+                for (int k = 0; k < 26; k++) {
+                    double t = k / 26.0, bend = t * t * 0.6 * Math.signum(f - 3);
+                    double x = 128 + Math.cos(ang + bend) * len * t, y = 252 + Math.sin(ang + bend) * len * t;
+                    double leaf = (1 - t) * 26 + 4;
+                    g.setColor(new Color(30 + r.nextInt(20), gr - (int) (t * 30), 30, 255));
+                    for (int side = -1; side <= 1; side += 2) {
+                        double la = ang + bend + side * 1.2;
+                        g.setStroke(new BasicStroke((float) (3.2 - t * 2)));
+                        g.draw(new Line2D.Double(x, y, x + Math.cos(la) * leaf, y + Math.sin(la) * leaf));
+                    }
+                }
+                g.setColor(new Color(60, 90, 40));
+                g.setStroke(new BasicStroke(2f));
+                g.draw(new QuadCurve2D.Double(128, 252, 128 + Math.cos(ang) * len * 0.5, 252 + Math.sin(ang) * len * 0.5,
+                    128 + Math.cos(ang + 0.6 * Math.signum(f - 3)) * len, 252 + Math.sin(ang + 0.6 * Math.signum(f - 3)) * len));
+            }
+            g.dispose();
+            fernTex = tex(img);
+        }
+        return fernTex;
+    }
+
+    static Texture2D reedTex() {
+        if (reedTex == null) {
+            BufferedImage img = new BufferedImage(128, 256, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g = img.createGraphics();
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            Random r = new Random(3);
+            for (int i = 0; i < 22; i++) {
+                double x = 8 + r.nextDouble() * 112, h = 140 + r.nextDouble() * 110, lean = (r.nextDouble() - 0.5) * 30;
+                g.setColor(new Color(90 + r.nextInt(40), 120 + r.nextInt(30), 60));
+                g.setStroke(new BasicStroke(2.2f));
+                g.draw(new QuadCurve2D.Double(x, 256, x + lean * 0.3, 256 - h * 0.5, x + lean, 256 - h));
+                if (r.nextDouble() < 0.45) {
+                    g.setColor(new Color(110, 70, 40));
+                    g.fill(new Ellipse2D.Double(x + lean - 3.5, 256 - h - 4, 7, 26));
+                }
+            }
+            g.dispose();
+            reedTex = tex(img);
+        }
+        return reedTex;
+    }
+
+    /** Nadelwerk für Tannen: dunkle Nadeln mit ausgefranstem unterem Rand. */
+    static Texture2D needleTex() {
+        if (needleTex == null) {
+            BufferedImage img = new BufferedImage(256, 128, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g = img.createGraphics();
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            Random r = new Random(8);
+            g.setColor(new Color(18, 42, 30));
+            g.fillRect(0, 0, 256, 96);
+            for (int i = 0; i < 2600; i++) {
+                double x = r.nextDouble() * 256, y = r.nextDouble() * 120;
+                int gr = 40 + r.nextInt(55);
+                g.setColor(new Color(15 + r.nextInt(25), gr, 25 + r.nextInt(25)));
+                g.setStroke(new BasicStroke(1.3f));
+                g.draw(new Line2D.Double(x, y, x + (r.nextDouble() - 0.5) * 6, y + 5 + r.nextDouble() * 8));
+            }
+            g.dispose();
+            needleTex = tex(img);
+            needleTex.setWrap(Texture.WrapMode.Repeat);
+        }
+        return needleTex;
+    }
+
+    static Texture2D lilyTex() {
+        if (lilyTex == null) {
+            BufferedImage img = new BufferedImage(128, 128, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g = img.createGraphics();
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            Arc2D pad = new Arc2D.Double(8, 8, 112, 112, 20, 330, Arc2D.PIE);
+            g.setPaint(new RadialGradientPaint(64, 64, 60, new float[]{0f, 1f}, new Color[]{new Color(90, 150, 70), new Color(50, 100, 45)}));
+            g.fill(pad);
+            g.setColor(new Color(110, 170, 90, 140));
+            for (int k = 0; k < 9; k++) {
+                double a = Math.toRadians(30 + k * 36);
+                g.draw(new Line2D.Double(64, 64, 64 + Math.cos(a) * 54, 64 - Math.sin(a) * 54));
+            }
+            g.dispose();
+            lilyTex = tex(img);
+        }
+        return lilyTex;
+    }
+
+    /** Einzelnes Blatt (für fallendes Laub). */
+    static Texture2D leafTex() {
+        if (leafTex == null) {
+            BufferedImage img = new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g = img.createGraphics();
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            Path2D p = new Path2D.Double();
+            p.moveTo(32, 4);
+            p.curveTo(56, 18, 54, 46, 32, 60);
+            p.curveTo(10, 46, 8, 18, 32, 4);
+            g.setColor(Color.WHITE);
+            g.fill(p);
+            g.dispose();
+            leafTex = tex(img);
+        }
+        return leafTex;
+    }
+
     // ---------------------------------------------------------------- Meshes
 
     /** Zwei gekreuzte Quads (für Gras und Blumen), Fuß bei (0,0,0). */
@@ -370,4 +487,60 @@ public final class G3 {
     }
 
     static java.nio.FloatBuffer floats(float[] f) { return BufferUtils.createFloatBuffer(f); }
+
+    /** Tanne: Stamm + gestaffelte Nadelkegel (Höhe ≈ 1, wird skaliert). */
+    static Mesh pine() {
+        java.util.List<float[]> pos = new java.util.ArrayList<>(), uv = new java.util.ArrayList<>();
+        java.util.List<Integer> idx = new java.util.ArrayList<>();
+        int seg = 10;
+        int layers = 7;
+        for (int L = 0; L < layers; L++) {
+            float yb = 0.18f + L * 0.115f, yt = yb + 0.24f;
+            float rb = 0.34f * (1 - L / (float) (layers + 0.6f)) + 0.04f;
+            int base = pos.size();
+            pos.add(new float[]{0, yt, 0});
+            uv.add(new float[]{0.5f, 0f});
+            for (int i = 0; i <= seg; i++) {
+                double a = Math.PI * 2 * i / seg + L * 0.4;
+                float rr = rb * (0.9f + (float) ((i * 7 + L * 3) % 5) * 0.05f);
+                pos.add(new float[]{(float) Math.cos(a) * rr, yb + ((i + L) % 2) * 0.02f, (float) Math.sin(a) * rr});
+                uv.add(new float[]{(float) i / seg * 2, 1f});
+            }
+            for (int i = 0; i < seg; i++) { idx.add(base); idx.add(base + 2 + i); idx.add(base + 1 + i); }
+        }
+        // Stamm
+        int base = pos.size();
+        for (int i = 0; i <= 6; i++) {
+            double a = Math.PI * 2 * i / 6;
+            pos.add(new float[]{(float) Math.cos(a) * 0.025f, 0, (float) Math.sin(a) * 0.025f});
+            pos.add(new float[]{(float) Math.cos(a) * 0.012f, 0.4f, (float) Math.sin(a) * 0.012f});
+            uv.add(new float[]{0.02f, 0.99f});
+            uv.add(new float[]{0.02f, 0.99f});
+        }
+        for (int i = 0; i < 6; i++) {
+            int a = base + i * 2;
+            idx.add(a); idx.add(a + 1); idx.add(a + 2);
+            idx.add(a + 2); idx.add(a + 1); idx.add(a + 3);
+        }
+        float[] p = new float[pos.size() * 3], t = new float[uv.size() * 2];
+        for (int i = 0; i < pos.size(); i++) { System.arraycopy(pos.get(i), 0, p, i * 3, 3); System.arraycopy(uv.get(i), 0, t, i * 2, 2); }
+        short[] ix = new short[idx.size()];
+        for (int i = 0; i < ix.length; i++) ix[i] = (short) (int) idx.get(i);
+        Mesh m = new Mesh();
+        m.setBuffer(VertexBuffer.Type.Position, 3, p);
+        m.setBuffer(VertexBuffer.Type.TexCoord, 2, t);
+        m.setBuffer(VertexBuffer.Type.Index, 3, ix);
+        float[] n = computeNormals(p, ix);
+        for (int i = 0; i < n.length; i += 3) { n[i + 1] = Math.abs(n[i + 1]) * 0.6f + 0.4f; }
+        m.setBuffer(VertexBuffer.Type.Normal, 3, n);
+        m.updateBound();
+        return m;
+    }
+
+    /** Liegender, bemooster Baumstamm entlang der x-Achse. */
+    static Mesh log(float len, float r) {
+        com.jme3.scene.shape.Cylinder c = new com.jme3.scene.shape.Cylinder(2, 10, r, r * 0.85f, len, true, false);
+        c.scaleTextureCoordinates(new com.jme3.math.Vector2f(2, len / 2));
+        return c;
+    }
 }

@@ -19,6 +19,9 @@ import java.util.concurrent.*;
 /** Endlose Welt: lädt 128-m-Kacheln um den Spieler nach und entfernt ferne Kacheln. */
 public class Chunks {
     public static final int SIZE = 128, RES = 128;
+    /** Splat-Texel liegen genau auf den Gitterpunkten (RES+1 je Seite), damit benachbarte Kacheln an der Grenze denselben Wert haben. */
+    private static final int AS = RES + 1;
+    private static final float TILE = AS / (float) RES;
     private static final int LOAD_R = 2, KEEP_R = 3;
 
     private final Node root = new Node("chunks");
@@ -33,6 +36,10 @@ public class Chunks {
 
     private final Material terrainBase, trunkMat, leavesMat, deadMat, grassMat, flowerMat, rockMat, farTreeMat, farTrunkMat, runeMat, stoneMat;
     private final Mesh trunkMesh, leavesMesh, farTree, grassMesh, flowerMesh;
+    private final Mesh pineMesh = G3.pine(), fernMesh = G3.crossQuads(1.6f, 1.15f), bushMesh = G3.crossQuads(2.4f, 1.7f),
+        reedMesh = G3.crossQuads(1.0f, 1.9f), lilyMesh = new com.jme3.scene.shape.Quad(1.1f, 1.1f);
+    private final Material[] leafVariants = new Material[3];
+    private Material pineMat, fernMat, bushMat, reedMat, lilyMat, logMat, capMat, capMat2, stemMat, lilyFlowerMat;
     private final Mesh[] rocks = new Mesh[4];
 
     /** Eine sammelbare Zutat in der Welt. */
@@ -61,10 +68,10 @@ public class Chunks {
     public Chunks(Node world) {
         world.attachChild(root);
         terrainBase = new Material(G3.am, "Common/MatDefs/Terrain/TerrainLighting.j3md");
-        setTex(terrainBase, "DiffuseMap", "Textures/Terrain/PBR/Ground037_1K_Color.png", "DiffuseMap_0_scale", 30f);
-        setTex(terrainBase, "DiffuseMap_1", "Textures/Terrain/splat/dirt.jpg", "DiffuseMap_1_scale", 52f);
-        setTex(terrainBase, "DiffuseMap_2", "Textures/Terrain/PBR/Rock035_1K_Color.jpg", "DiffuseMap_2_scale", 22f);
-        setTex(terrainBase, "DiffuseMap_3", "Textures/Terrain/splat/grass.jpg", "DiffuseMap_3_scale", 48f);
+        setTex(terrainBase, "DiffuseMap", "Textures/Terrain/PBR/Ground037_1K_Color.png", "DiffuseMap_0_scale", 30f * TILE);
+        setTex(terrainBase, "DiffuseMap_1", "Textures/Terrain/splat/dirt.jpg", "DiffuseMap_1_scale", 52f * TILE);
+        setTex(terrainBase, "DiffuseMap_2", "Textures/Terrain/PBR/Rock035_1K_Color.jpg", "DiffuseMap_2_scale", 22f * TILE);
+        setTex(terrainBase, "DiffuseMap_3", "Textures/Terrain/splat/grass.jpg", "DiffuseMap_3_scale", 48f * TILE);
         Texture n0 = G3.am.loadTexture("Textures/Terrain/splat/dirt_normal.png");
         n0.setWrap(Texture.WrapMode.Repeat);
         terrainBase.setTexture("NormalMap", n0);
@@ -94,6 +101,26 @@ public class Chunks {
         leavesMesh = parts[1].getMesh();
         leavesMat = parts[1].getMaterial();
         leavesMat.getAdditionalRenderState().setFaceCullMode(RenderState.FaceCullMode.Off);
+        ColorRGBA[] tints = {new ColorRGBA(1, 1, 1, 1), new ColorRGBA(1.2f, 1.15f, 0.65f, 1), new ColorRGBA(1.45f, 0.78f, 0.38f, 1)};
+        for (int i = 0; i < 3; i++) {
+            leafVariants[i] = leavesMat.clone();
+            leafVariants[i].setBoolean("UseMaterialColors", true);
+            leafVariants[i].setColor("Diffuse", tints[i]);
+            leafVariants[i].setColor("Ambient", tints[i]);
+        }
+        pineMat = G3.lit(new ColorRGBA(0.95f, 1f, 0.95f, 1));
+        pineMat.setTexture("DiffuseMap", G3.needleTex());
+        pineMat.setFloat("AlphaDiscardThreshold", 0.3f);
+        pineMat.getAdditionalRenderState().setFaceCullMode(RenderState.FaceCullMode.Off);
+        fernMat = decoMat(G3.fernTex(), new ColorRGBA(0.9f, 1f, 0.85f, 1));
+        bushMat = decoMat(canopyTex(), new ColorRGBA(0.85f, 0.95f, 0.8f, 1));
+        reedMat = decoMat(G3.reedTex(), ColorRGBA.White);
+        lilyMat = decoMat(G3.lilyTex(), ColorRGBA.White);
+        logMat = G3.litTex("Models/Tree/BarkColor.jpg", new ColorRGBA(0.55f, 0.6f, 0.42f, 1), null);
+        capMat = G3.litGlow(new ColorRGBA(0.75f, 0.18f, 0.12f, 1), new ColorRGBA(0.05f, 0.01f, 0, 1));
+        capMat2 = G3.lit(new ColorRGBA(0.55f, 0.38f, 0.22f, 1));
+        stemMat = G3.lit(new ColorRGBA(0.92f, 0.88f, 0.8f, 1));
+        lilyFlowerMat = G3.litGlow(new ColorRGBA(1f, 0.75f, 0.85f, 1), new ColorRGBA(0.15f, 0.08f, 0.1f, 1));
         deadMat = trunkMat.clone();
         deadMat.setColor("Diffuse", new ColorRGBA(0.32f, 0.27f, 0.34f, 1));
         deadMat.setColor("Ambient", new ColorRGBA(0.32f, 0.27f, 0.34f, 1));
@@ -132,6 +159,14 @@ public class Chunks {
         itemMeshes.put(Item.STERNKRISTALL, new com.jme3.scene.shape.Sphere(3, 4, 0.22f));
         itemMeshes.put(Item.SEEROSE, new com.jme3.scene.shape.Sphere(4, 8, 0.25f));
         itemMeshes.put(Item.FEDER, new com.jme3.scene.shape.Box(0.04f, 0.3f, 0.01f));
+    }
+
+    private static Material decoMat(Texture2D t, ColorRGBA tint) {
+        Material m = G3.lit(tint);
+        m.setTexture("DiffuseMap", t);
+        m.setFloat("AlphaDiscardThreshold", 0.4f);
+        m.getAdditionalRenderState().setFaceCullMode(RenderState.FaceCullMode.Off);
+        return m;
     }
 
     private void setTex(Material m, String name, String path, String scaleName, float scale) {
@@ -284,8 +319,8 @@ public class Chunks {
                 nor[v * 3] = nn.x; nor[v * 3 + 1] = nn.y; nor[v * 3 + 2] = nn.z;
                 Vector3f t = new Vector3f(2 * step, hr - hl, 0).normalizeLocal();
                 tan[v * 4] = t.x; tan[v * 4 + 1] = t.y; tan[v * 4 + 2] = t.z; tan[v * 4 + 3] = 1;
-                uv[v * 2] = (float) i / RES;
-                uv[v * 2 + 1] = (float) j / RES;
+                uv[v * 2] = (i + 0.5f) / AS;
+                uv[v * 2 + 1] = (j + 0.5f) / AS;
             }
         }
         short[] idx = new short[RES * RES * 6];
@@ -306,12 +341,12 @@ public class Chunks {
         m.updateBound();
 
         // Splatmap: R Waldboden, G Kies/Pfad, B Fels, A Gras
-        int as = 128;
+        int as = AS;
         ByteBuffer alpha = BufferUtils.createByteBuffer(as * as * 4);
         for (int j = 0; j < as; j++) {
             for (int i = 0; i < as; i++) {
-                double wx = x0 + (i + 0.5) * SIZE / as, wz = z0 + (j + 0.5) * SIZE / as;
-                int gi = Math.min(n - 1, (int) ((i + 0.5) * RES / as)), gj = Math.min(n - 1, (int) ((j + 0.5) * RES / as));
+                double wx = x0 + i * step, wz = z0 + j * step;
+                int gi = i, gj = j;
                 float hh = h[(gj + 1) * (n + 2) + gi + 1];
                 float slope = Math.abs(h[(gj + 1) * (n + 2) + gi + 2] - h[(gj + 1) * (n + 2) + gi]) / (2 * step)
                     + Math.abs(h[(gj + 2) * (n + 2) + gi + 1] - h[gj * (n + 2) + gi + 1]) / (2 * step);
@@ -357,7 +392,22 @@ public class Chunks {
                 float rot = rnd.nextFloat() * FastMath.TWO_PI;
                 if (roll < f * 0.9f) {
                     boolean dead = WorldGen.darkness(wx, wz) > 0.45f && rnd.nextFloat() < 0.75f;
-                    obst.add(new float[]{wx, wz, 0.22f * scale, dead ? 1 : 0, hh, scale, rot});
+                    float pineN = (float) G3.fbm(wx * 0.006 + 50, wz * 0.006 - 20, 3) + (hh > 14 ? 0.25f : 0);
+                    boolean pine = !dead && pineN > 0.58f && rnd.nextFloat() < 0.85f;
+                    float autumn = (float) G3.fbm(wx * 0.004 - 20, wz * 0.004 + 5, 3);
+                    int variant = autumn > 0.63f ? 2 : autumn > 0.5f ? 1 : 0;
+                    if (pine) {
+                        float ps = 9 + rnd.nextFloat() * 9;
+                        obst.add(new float[]{wx, wz, 0.35f, 4, hh, ps, rot, 0});
+                        Geometry g = new Geometry("pine", pineMesh);
+                        g.setMaterial(pineMat);
+                        g.setLocalTranslation(wx, hh - 0.2f, wz);
+                        g.setLocalScale(ps * 0.75f, ps, ps * 0.75f);
+                        g.setLocalRotation(new Quaternion().fromAngleAxis(rot, Vector3f.UNIT_Y));
+                        farBatch.attachChild(g);
+                        continue;
+                    }
+                    obst.add(new float[]{wx, wz, 0.22f * scale, dead ? 1 : 0, hh, scale, rot, variant});
                     if (!dead) {
                         Geometry g = new Geometry("ft", farTree);
                         g.setMaterial(farTreeMat);
@@ -368,7 +418,7 @@ public class Chunks {
                     }
                 } else if (roll > 0.985f - G3.smooth(0.6f, 1.4f, slope) * 0.05f && hh > WorldGen.WATER - 1) {
                     float rs = 0.6f + rnd.nextFloat() * 1.6f;
-                    obst.add(new float[]{wx, wz, rs * 0.9f, 2, hh, rs, rot});
+                    obst.add(new float[]{wx, wz, rs * 0.9f, 2, hh, rs, rot, 0});
                     Geometry g = new Geometry("rock", rocks[rnd.nextInt(rocks.length)]);
                     g.setMaterial(rockMat);
                     g.setLocalTranslation(wx, hh - 0.2f * rs, wz);
@@ -395,7 +445,7 @@ public class Chunks {
                     rune.setLocalTranslation(px - (float) Math.cos(a) * 0.42f, ph + 2.2f, pz - (float) Math.sin(a) * 0.42f);
                     rune.setLocalRotation(new Quaternion().fromAngles(0, (float) a, 0));
                     farBatch.attachChild(rune);
-                    obst.add(new float[]{px, pz, 0.8f, 3, ph, 1, 0});
+                    obst.add(new float[]{px, pz, 0.8f, 3, ph, 1, 0, 0});
                 }
             }
         }
@@ -428,12 +478,19 @@ public class Chunks {
                 trees.attachChild(t);
                 if (o[3] == 0) {
                     Geometry l = new Geometry("leaves", leavesMesh);
-                    l.setMaterial(leavesMat);
+                    l.setMaterial(leafVariants[(int) o[7]]);
                     l.setLocalTranslation(o[0], o[4] - 0.3f, o[1]);
                     l.setLocalScale(o[5]);
                     l.setLocalRotation(q);
                     trees.attachChild(l);
                 }
+            } else if (o[3] == 4) {
+                Geometry g = new Geometry("pine", pineMesh);
+                g.setMaterial(pineMat);
+                g.setLocalTranslation(o[0], o[4] - 0.2f, o[1]);
+                g.setLocalScale(o[5] * 0.75f, o[5], o[5] * 0.75f);
+                g.setLocalRotation(new Quaternion().fromAngleAxis(o[6], Vector3f.UNIT_Y));
+                trees.attachChild(g);
             } else if (o[3] == 2) {
                 Geometry g = new Geometry("rock", rocks[(int) (Math.abs(o[0] * 13 + o[1] * 7)) % rocks.length]);
                 g.setMaterial(rockMat);
@@ -468,6 +525,66 @@ public class Chunks {
                 }
             }
         }
+        // Unterholz & Details: Farne, Büsche, Baumstämme, Pilze, Schilf, Seerosen, Steinchen
+        Random dr = new Random(key(c.cx, c.cz) * 13 + 5);
+        for (float gz = 1.5f; gz < SIZE; gz += 3.4f) {
+            for (float gx = 1.5f; gx < SIZE; gx += 3.4f) {
+                float wx = x0 + gx + (dr.nextFloat() - 0.5f) * 3, wz = z0 + gz + (dr.nextFloat() - 0.5f) * 3;
+                float hh = WorldGen.height(wx, wz);
+                float roll = dr.nextFloat(), rot = dr.nextFloat() * FastMath.TWO_PI;
+                Quaternion q = new Quaternion().fromAngleAxis(rot, Vector3f.UNIT_Y);
+                if (hh < WorldGen.WATER - 0.4f && hh > WorldGen.WATER - 3f && WorldGen.sea(wx, wz) < 0.2) {
+                    if (roll < 0.22f) {
+                        Geometry g = deco("lily", lilyMesh, lilyMat, wx, WorldGen.WATER + 0.03f, wz, 0.6f + dr.nextFloat() * 0.6f);
+                        g.setLocalRotation(new Quaternion().fromAngles(-FastMath.HALF_PI, rot, 0));
+                        grass.attachChild(g);
+                        if (dr.nextFloat() < 0.3f) grass.attachChild(deco("lilyFlower", new com.jme3.scene.shape.Sphere(6, 8, 0.12f), lilyFlowerMat, wx + 0.2f, WorldGen.WATER + 0.1f, wz + 0.2f, 1));
+                    }
+                    continue;
+                }
+                if (hh < WorldGen.WATER + 0.05f) continue;
+                if (hh < WorldGen.WATER + 1.0f && roll < 0.45f) {
+                    Geometry g = deco("reed", reedMesh, reedMat, wx, hh - 0.1f, wz, 0.8f + dr.nextFloat() * 0.6f);
+                    g.setLocalRotation(q);
+                    grass.attachChild(g);
+                    continue;
+                }
+                float slope = Math.abs(WorldGen.height(wx + 1, wz) - hh) + Math.abs(WorldGen.height(wx, wz + 1) - hh);
+                float f = WorldGen.forest(wx, wz, hh, slope);
+                double pd = Math.hypot(wx, wz) < 300 ? WorldGen.pathDist(wx, wz) : 99;
+                if (pd < 3) continue;
+                if (f > 0.3f && roll < 0.22f) {
+                    Geometry g = deco("fern", fernMesh, fernMat, wx, hh - 0.05f, wz, 0.7f + dr.nextFloat() * 0.7f);
+                    g.setLocalRotation(q);
+                    grass.attachChild(g);
+                } else if (f > 0.15f && roll < 0.29f) {
+                    Geometry g = deco("bush", bushMesh, bushMat, wx, hh - 0.15f, wz, 0.7f + dr.nextFloat() * 0.6f);
+                    g.setLocalRotation(q);
+                    grass.attachChild(g);
+                } else if (f > 0.3f && roll < 0.302f) {
+                    float len = 4 + dr.nextFloat() * 5;
+                    Geometry g = deco("log", G3.log(len, 0.3f + dr.nextFloat() * 0.15f), logMat, wx, hh + 0.25f, wz, 1);
+                    g.setLocalRotation(new Quaternion().fromAngles(0, rot, 0));
+                    trees.attachChild(g);
+                } else if (f > 0.2f && roll < 0.33f) {
+                    Material cap = dr.nextBoolean() ? capMat : capMat2;
+                    for (int k = 0; k < 3 + dr.nextInt(4); k++) {
+                        float mx = wx + (dr.nextFloat() - 0.5f) * 0.9f, mz = wz + (dr.nextFloat() - 0.5f) * 0.9f, ms = 0.5f + dr.nextFloat() * 0.8f;
+                        float mh = WorldGen.height(mx, mz);
+                        Geometry st = deco("mstem", new com.jme3.scene.shape.Cylinder(2, 6, 0.025f, 0.03f, 0.14f, true, false), stemMat, mx, mh + 0.07f * ms, mz, ms);
+                        st.setLocalRotation(new Quaternion().fromAngleAxis(-FastMath.HALF_PI, Vector3f.UNIT_X));
+                        grass.attachChild(st);
+                        Geometry cp = deco("mcap", new com.jme3.scene.shape.Dome(Vector3f.ZERO, 5, 10, 0.08f, false), cap, mx, mh + 0.13f * ms, mz, ms);
+                        grass.attachChild(cp);
+                    }
+                } else if (roll > 0.985f) {
+                    Geometry g = deco("pebble", rocks[dr.nextInt(rocks.length)], rockMat, wx, hh - 0.05f, wz, 0.15f + dr.nextFloat() * 0.25f);
+                    g.setLocalRotation(q);
+                    grass.attachChild(g);
+                }
+            }
+        }
+
         // Zutaten
         List<Spot> spots = new ArrayList<>();
         Node items = new Node("items");
@@ -515,6 +632,14 @@ public class Chunks {
         near.attachChild(trees);
         near.attachChild(grass);
         c.near = near;
+    }
+
+    private static Geometry deco(String name, Mesh mesh, Material m, float x, float y, float z, float s) {
+        Geometry g = new Geometry(name, mesh);
+        g.setMaterial(m);
+        g.setLocalTranslation(x, y, z);
+        g.setLocalScale(s);
+        return g;
     }
 
     private static Mesh makeFarTree() {

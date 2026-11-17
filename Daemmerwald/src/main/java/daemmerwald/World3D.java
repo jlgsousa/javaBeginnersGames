@@ -29,6 +29,8 @@ public class World3D {
     public final Weather weather;
     public final Chunks chunks;
     public final Vista vista;
+    public final Ambience ambience;
+    private com.jme3.post.filters.LightScatteringFilter sunRays;
     public final Map<String, Figure> figures = new HashMap<>();
     public final Map<String, Vector3f> npcPos = new HashMap<>();
     public Figure corvina, waitress;
@@ -56,6 +58,7 @@ public class World3D {
     // Café
     public final Vector3f cafeSeat = new Vector3f(), cafeLook = new Vector3f(), cafeDoor = new Vector3f();
     private Node cafeCup;
+    private Geometry cafeCat;
     private PointLight cafeLight;
 
     public static boolean lowGraphics = Boolean.getBoolean("dw.low");
@@ -68,6 +71,7 @@ public class World3D {
         weather = new Weather(root);
         chunks = new Chunks(root);
         vista = new Vista(root);
+        ambience = new Ambience(root);
         lantern.setColor(new ColorRGBA(1f, 0.78f, 0.5f, 1));
         lantern.setRadius(14);
         root.addLight(lantern);
@@ -580,7 +584,8 @@ public class World3D {
         float fy = Math.max(height(cx - 7, cz - 5), Math.max(height(cx + 7, cz + 5), height(cx, cz))) + 0.35f;
         Node n = new Node("cafe");
         float w = 8, d = 5.5f, wh = 4.2f;
-        Material wall = G3.lit(new ColorRGBA(0.86f, 0.78f, 0.64f, 1));
+        Material wall = G3.lit(new ColorRGBA(0.95f, 0.88f, 0.76f, 1));
+        wall.setTexture("DiffuseMap", plasterTex());
         Material stone = G3.litTex("Textures/Terrain/BrickWall/BrickWall.jpg", new ColorRGBA(0.8f, 0.76f, 0.72f, 1), "Textures/Terrain/BrickWall/BrickWall_normal.jpg");
         Material planks = G3.lit(new ColorRGBA(1, 1, 1, 1));
         planks.setTexture("DiffuseMap", plankTex());
@@ -653,6 +658,83 @@ public class World3D {
         fire.setParticlesPerSec(40);
         fire.setLocalTranslation(cx - w + 1.2f, fy + 0.35f, cz + 1.8f);
         n.attachChild(fire);
+        // Deckenbalken
+        for (float bx = -w + 1; bx <= w - 1; bx += 2.6f) box(n, dark, cx + bx, fy + wh - 0.15f, cz, 0.12f, 0.12f, d);
+        // Teppich
+        Material rug = G3.lit(ColorRGBA.White);
+        rug.setTexture("DiffuseMap", rugTex());
+        add(n, G3.geom("rug", new Box(5.5f, 0.01f, 2.2f), rug), cx, fy + 0.07f, cz + 1.4f);
+        // Hängelampen über den Tischen
+        Material brass = G3.lit(new ColorRGBA(0.7f, 0.55f, 0.3f, 1));
+        brass.setColor("Specular", new ColorRGBA(1f, 0.9f, 0.6f, 1));
+        brass.setFloat("Shininess", 40);
+        for (int i = -1; i <= 1; i++) {
+            float lx = cx + i * 5, lz = cz + d - 1.6f;
+            box(n, dark, lx, fy + wh - 0.6f, lz, 0.01f, 0.6f, 0.01f);
+            Geometry shade = G3.geom("shade", new Dome(Vector3f.ZERO, 6, 16, 0.32f, true), brass);
+            shade.setLocalTranslation(lx, fy + wh - 1.45f, lz);
+            n.attachChild(shade);
+            add(n, G3.geom("bulb", new Sphere(8, 8, 0.09f), G3.emissive(new ColorRGBA(1f, 0.82f, 0.55f, 1))), lx, fy + wh - 1.42f, lz);
+        }
+        // Pflanzen in Töpfen
+        Material pot = G3.lit(new ColorRGBA(0.72f, 0.38f, 0.22f, 1));
+        Material leaves = G3.lit(new ColorRGBA(0.85f, 1f, 0.85f, 1));
+        leaves.setTexture("DiffuseMap", G3.fernTex());
+        leaves.setFloat("AlphaDiscardThreshold", 0.4f);
+        leaves.getAdditionalRenderState().setFaceCullMode(RenderState.FaceCullMode.Off);
+        float[][] plants = {{cx - w + 0.7f, cz + d - 0.7f, 1.3f}, {cx + w - 0.7f, cz + d - 0.7f, 1.3f}, {cx + w - 0.7f, cz - d + 0.7f, 1.1f}, {cx + 6.2f, cz - d + 1.4f, 0.55f}};
+        for (float[] pl : plants) {
+            float py = pl[2] < 1 ? fy + 1.12f : fy;
+            Geometry pg = cylY("pot", 0.22f * pl[2], 0.16f * pl[2], 0.42f * pl[2], 14, pot);
+            pg.setLocalTranslation(pl[0], py + 0.21f * pl[2], pl[1]);
+            n.attachChild(pg);
+            Geometry fern = G3.geom("plant", G3.crossQuads(1.2f * pl[2], 1.0f * pl[2]), leaves);
+            fern.setLocalTranslation(pl[0], py + 0.38f * pl[2], pl[1]);
+            n.attachChild(fern);
+        }
+        // Gemälde
+        Material frame = G3.lit(new ColorRGBA(0.45f, 0.3f, 0.12f, 1));
+        frame.setColor("Specular", new ColorRGBA(0.6f, 0.5f, 0.3f, 1));
+        frame.setFloat("Shininess", 30);
+        for (int side = -1; side <= 1; side += 2) {
+            float px = cx + side * (w - 0.18f), pz = cz + (side < 0 ? -1.5f : 1.8f);
+            Geometry fr = G3.geom("frame", new Box(0.04f, 0.62f, 0.85f), frame);
+            fr.setLocalTranslation(px, fy + 2.4f, pz);
+            n.attachChild(fr);
+            Material art = G3.lit(ColorRGBA.White);
+            art.setTexture("DiffuseMap", paintingTex(side < 0 ? 1 : 2));
+            Geometry pic = G3.geom("painting", new com.jme3.scene.shape.Quad(1.5f, 1.05f), art);
+            pic.setLocalRotation(new Quaternion().fromAngleAxis(side * -FastMath.HALF_PI, Vector3f.UNIT_Y));
+            pic.setLocalTranslation(px - side * 0.05f, fy + 2.4f - 0.525f, pz + side * 0.75f);
+            n.attachChild(pic);
+        }
+        // Schlafende Katze vor dem Kamin
+        Material catFur = G3.lit(new ColorRGBA(0.85f, 0.55f, 0.25f, 1));
+        Node cat = new Node("cat");
+        Geometry cb = G3.geom("catBody", new Sphere(12, 14, 1), catFur);
+        cb.setLocalScale(0.28f, 0.14f, 0.24f);
+        cb.setLocalTranslation(0, 0.13f, 0);
+        cat.attachChild(cb);
+        Geometry ch = G3.geom("catHead", new Sphere(10, 12, 0.11f), catFur);
+        ch.setLocalTranslation(0.2f, 0.14f, 0.12f);
+        cat.attachChild(ch);
+        for (int sd = -1; sd <= 1; sd += 2) {
+            Geometry ear = G3.geom("catEar", new Cylinder(2, 4, 0.04f, 0.005f, 0.07f, true, false), catFur);
+            ear.setLocalRotation(new Quaternion().fromAngleAxis(-FastMath.HALF_PI, Vector3f.UNIT_X));
+            ear.setLocalTranslation(0.2f + sd * 0.05f, 0.25f, 0.13f);
+            cat.attachChild(ear);
+        }
+        Geometry tail = G3.geom("catTail", new Torus(10, 6, 0.035f, 0.2f), catFur);
+        tail.setLocalRotation(new Quaternion().fromAngleAxis(FastMath.HALF_PI, Vector3f.UNIT_X));
+        tail.setLocalTranslation(-0.05f, 0.05f, 0.05f);
+        cat.attachChild(tail);
+        Geometry cushion = G3.geom("cushion", new Cylinder(2, 18, 0.42f, 0.42f, 0.08f, true, false), G3.lit(new ColorRGBA(0.5f, 0.15f, 0.2f, 1)));
+        cushion.setLocalRotation(new Quaternion().fromAngleAxis(-FastMath.HALF_PI, Vector3f.UNIT_X));
+        cat.attachChild(cushion);
+        cat.setLocalTranslation(cx - w + 2.1f, fy + 0.08f, cz + 1.9f);
+        n.attachChild(cat);
+        cafeCat = cb;
+
         // Schild & Laterne außen
         Geometry sign = G3.geom("sign", new Box(1.6f, 0.4f, 0.05f), G3.litGlow(new ColorRGBA(0.35f, 0.22f, 0.12f, 1), new ColorRGBA(0.35f, 0.25f, 0.1f, 1)));
         sign.setLocalTranslation(cx, fy + wh - 0.3f, cz - d - 0.25f);
@@ -700,6 +782,11 @@ public class World3D {
         root.attachChild(cafeCup);
     }
 
+    /** Atmende Katze im Café. */
+    public void animateCafe(float t) {
+        if (cafeCat != null) cafeCat.setLocalScale(0.28f, 0.14f + FastMath.sin(t * 1.6f) * 0.006f, 0.24f);
+    }
+
     public void showCup(ColorRGBA drinkColor) {
         cafeCup.setCullHint(drinkColor == null ? Spatial.CullHint.Always : Spatial.CullHint.Inherit);
         if (drinkColor != null) ((Geometry) cafeCup.getChild("drink")).getMaterial().setColor("Diffuse", drinkColor);
@@ -709,6 +796,67 @@ public class World3D {
         Geometry g = G3.geom("b", new Box(ex, ey, ez), m);
         g.setLocalTranslation(x, y, z);
         n.attachChild(g);
+    }
+
+    private static Texture plasterTex() {
+        BufferedImage img = new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB);
+        for (int y = 0; y < 256; y++) for (int x = 0; x < 256; x++) {
+            double n = G3.fbm(x * 0.05, y * 0.05, 4) * 0.6 + G3.vnoise(x * 0.4, y * 0.4) * 0.15;
+            int v = (int) (205 + n * 45);
+            img.setRGB(x, y, (Math.min(255, v) << 16) | (Math.min(255, (int) (v * 0.93)) << 8) | Math.min(255, (int) (v * 0.82)));
+        }
+        com.jme3.texture.Texture2D t = G3.tex(img);
+        t.setWrap(Texture.WrapMode.Repeat);
+        return t;
+    }
+
+    private static Texture rugTex() {
+        BufferedImage img = new BufferedImage(512, 256, BufferedImage.TYPE_INT_RGB);
+        java.awt.Graphics2D g = img.createGraphics();
+        g.setColor(new java.awt.Color(120, 30, 35));
+        g.fillRect(0, 0, 512, 256);
+        g.setColor(new java.awt.Color(200, 150, 70));
+        g.setStroke(new java.awt.BasicStroke(6));
+        g.drawRect(14, 14, 484, 228);
+        g.setStroke(new java.awt.BasicStroke(2));
+        g.drawRect(28, 28, 456, 200);
+        for (int i = 0; i < 7; i++) {
+            int x = 70 + i * 62;
+            java.awt.geom.Path2D d = new java.awt.geom.Path2D.Double();
+            d.moveTo(x, 128 - 50); d.lineTo(x + 26, 128); d.lineTo(x, 128 + 50); d.lineTo(x - 26, 128); d.closePath();
+            g.setColor(i % 2 == 0 ? new java.awt.Color(40, 60, 100) : new java.awt.Color(210, 170, 90));
+            g.fill(d);
+        }
+        g.dispose();
+        return G3.tex(img);
+    }
+
+    /** Kleine Landschaftsbilder für das Café. */
+    private static Texture paintingTex(int variant) {
+        BufferedImage img = new BufferedImage(256, 180, BufferedImage.TYPE_INT_RGB);
+        java.awt.Graphics2D g = img.createGraphics();
+        g.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING, java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
+        java.awt.Color top = variant == 1 ? new java.awt.Color(250, 160, 90) : new java.awt.Color(40, 50, 100);
+        java.awt.Color bottom = variant == 1 ? new java.awt.Color(250, 220, 160) : new java.awt.Color(120, 90, 150);
+        g.setPaint(new java.awt.GradientPaint(0, 0, top, 0, 110, bottom));
+        g.fillRect(0, 0, 256, 120);
+        g.setColor(variant == 1 ? new java.awt.Color(255, 240, 200) : new java.awt.Color(240, 240, 220));
+        g.fill(new java.awt.geom.Ellipse2D.Double(variant == 1 ? 150 : 60, variant == 1 ? 70 : 30, 34, 34));
+        g.setColor(variant == 1 ? new java.awt.Color(60, 90, 120) : new java.awt.Color(20, 30, 60));
+        g.fillRect(0, 110, 256, 70);
+        Random r = new Random(variant);
+        g.setColor(new java.awt.Color(255, 255, 255, 70));
+        for (int i = 0; i < 40; i++) g.fillRect(r.nextInt(256), 112 + r.nextInt(60), 8 + r.nextInt(18), 2);
+        g.setColor(variant == 1 ? new java.awt.Color(70, 60, 60) : new java.awt.Color(15, 20, 30));
+        java.awt.geom.Path2D cliff = new java.awt.geom.Path2D.Double();
+        cliff.moveTo(0, 180); cliff.lineTo(0, 80); cliff.lineTo(30, 70); cliff.lineTo(60, 90); cliff.lineTo(78, 112); cliff.lineTo(90, 180); cliff.closePath();
+        g.fill(cliff);
+        if (variant == 2) {
+            g.setColor(new java.awt.Color(255, 220, 140));
+            g.fillRect(40, 60, 6, 10);
+        }
+        g.dispose();
+        return G3.tex(img);
     }
 
     private static Texture plankTex() {
@@ -826,8 +974,20 @@ public class World3D {
         shadows.setShadowZExtend(140);
         shadows.setShadowZFadeLength(30);
         fpp.addFilter(shadows);
+        if (!lowGraphics) {
+            // Umgebungsverdeckung: weiche Schatten in Ecken, unter Bäumen und an Wurzeln
+            com.jme3.post.ssao.SSAOFilter ssao = new com.jme3.post.ssao.SSAOFilter(2.2f, 1.6f, 0.25f, 0.08f);
+            ssao.setApproximateNormals(true);
+            fpp.addFilter(ssao);
+        }
         fog = new SkyFogFilter();
         fpp.addFilter(fog);
+        // Lichtstrahlen der tief stehenden Sonne
+        sunRays = new com.jme3.post.filters.LightScatteringFilter(new Vector3f(0, 500, 0));
+        sunRays.setLightDensity(0.9f);
+        sunRays.setBlurWidth(1.1f);
+        sunRays.setNbSamples(lowGraphics ? 30 : 50);
+        fpp.addFilter(sunRays);
         BloomFilter bloom = new BloomFilter(BloomFilter.GlowMode.Objects);
         bloom.setBloomIntensity(1.15f);
         bloom.setExposurePower(4.5f);
@@ -856,6 +1016,14 @@ public class World3D {
         dayNight.update(tpf, cam, zoneDark, zoneBright);
         weather.update(tpf, cam, dayNight, indoors);
         vista.update(tpf, cam, dayNight);
+        ambience.update(tpf, focus, dayNight, weather);
+        Vector3f sd = dayNight.sunDir;
+        boolean raysOn = sd.y > -0.02f && sd.y < 0.45f && cam.getDirection().dot(sd) > 0.2f && weather.cover < 0.75f;
+        sunRays.setEnabled(raysOn);
+        if (raysOn) {
+            sunRays.setLightPosition(cam.getLocation().add(sd.mult(800)));
+            sunRays.setLightDensity((0.55f + 0.6f * (1 - sd.y / 0.45f)) * (1 - weather.cover * 0.8f));
+        }
 
         float night = dayNight.night;
         float density = 0.0024f + night * 0.0028f + zoneDark * 0.012f + weather.rain * 0.006f + weather.cover * 0.0012f - zoneBright * 0.0008f;

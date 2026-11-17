@@ -50,6 +50,9 @@ public class Shot {
         });
         step("courtyard_day", 3f, () -> { skipDialog(); app.world.dayNight.time = 0.38f; });
         step("academy_noon", 3f, () -> { teleport(0, -60, FastMath.PI); app.world.dayNight.time = 0.5f; });
+        step("sunrise_rays", 4f, () -> { teleport(30, -70, FastMath.HALF_PI); app.world.dayNight.time = 0.262f; });
+        step("forest_detail", 4f, () -> { teleport(-60, -40, FastMath.PI * 0.8f); app.world.dayNight.time = 0.4f; });
+        step("lake_day", 4f, () -> { teleport(-96, 8, -FastMath.HALF_PI); app.world.dayNight.time = 0.45f; });
         step("heart_sunset", 4f, () -> { teleport(0, 40, FastMath.PI); app.world.dayNight.time = 0.745f; });
         step("lake_night", 4f, () -> { teleport(-90, -14, -FastMath.HALF_PI); app.world.dayNight.time = 0.92f; });
         step("meadow_day", 4f, () -> { teleport(112, -80, FastMath.PI); app.world.dayNight.time = 0.42f; });
@@ -61,6 +64,7 @@ public class Shot {
             WorldScene ws = (WorldScene) app.core.scene();
             app.core.setScene(new CafeScene(app.core, ws));
         });
+        step("cafe_seated", 6f, () -> { if (app.core.scene() instanceof CafeScene cs) cs.debugSeat(); app.world.dayNight.time = 0.72f; });
         step("wild_far", 6f, () -> {
             WorldScene ws = new WorldScene(app.core);
             app.core.state.flags.add("intro");
