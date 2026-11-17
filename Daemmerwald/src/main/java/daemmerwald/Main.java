@@ -47,6 +47,7 @@ public class Main extends SimpleApplication implements RawInputListener {
         s.setVSync(true);
         s.setRenderer(AppSettings.LWJGL_OPENGL32);
         s.setGammaCorrection(false);
+        s.setUseJoysticks(true);
         if (Boolean.getBoolean("dw.noaudio")) s.setAudioRenderer(null);
         app.setSettings(s);
         app.setShowSettings(false);
@@ -88,6 +89,9 @@ public class Main extends SimpleApplication implements RawInputListener {
 
         Vector3f focus;
         boolean indoors = false;
+        Mate p2 = s instanceof WorldScene w2 ? w2.p2 : null;
+        world.setSplit(p2 != null);
+        if (p2 != null) p2.directCamera(world.cam2, dt);
         if (s instanceof CameraDirector d) {
             d.directCamera(cam, dt);
             focus = d.focus();
@@ -149,7 +153,7 @@ public class Main extends SimpleApplication implements RawInputListener {
             {KeyInput.KEY_B, KeyEvent.VK_B}, {KeyInput.KEY_R, KeyEvent.VK_R}, {KeyInput.KEY_TAB, KeyEvent.VK_TAB},
             {KeyInput.KEY_UP, KeyEvent.VK_UP}, {KeyInput.KEY_DOWN, KeyEvent.VK_DOWN}, {KeyInput.KEY_LEFT, KeyEvent.VK_LEFT}, {KeyInput.KEY_RIGHT, KeyEvent.VK_RIGHT},
             {KeyInput.KEY_SPACE, KeyEvent.VK_SPACE}, {KeyInput.KEY_RETURN, KeyEvent.VK_ENTER}, {KeyInput.KEY_NUMPADENTER, KeyEvent.VK_ENTER},
-            {KeyInput.KEY_ESCAPE, KeyEvent.VK_ESCAPE}, {KeyInput.KEY_LSHIFT, KeyEvent.VK_SHIFT}, {KeyInput.KEY_RSHIFT, KeyEvent.VK_SHIFT},
+            {KeyInput.KEY_ESCAPE, KeyEvent.VK_ESCAPE}, {KeyInput.KEY_LSHIFT, KeyEvent.VK_SHIFT}, {KeyInput.KEY_RSHIFT, Input.P2_CAST}, {KeyInput.KEY_RCONTROL, Input.P2_JUMP},
             {KeyInput.KEY_1, KeyEvent.VK_1}, {KeyInput.KEY_2, KeyEvent.VK_2}, {KeyInput.KEY_3, KeyEvent.VK_3},
             {KeyInput.KEY_4, KeyEvent.VK_4}, {KeyInput.KEY_5, KeyEvent.VK_5}, {KeyInput.KEY_6, KeyEvent.VK_6},
             {KeyInput.KEY_NUMPAD1, KeyEvent.VK_NUMPAD1}, {KeyInput.KEY_NUMPAD2, KeyEvent.VK_NUMPAD2}, {KeyInput.KEY_NUMPAD3, KeyEvent.VK_NUMPAD3},
@@ -188,7 +192,20 @@ public class Main extends SimpleApplication implements RawInputListener {
 
     @Override public void beginInput() { }
     @Override public void endInput() { }
-    @Override public void onJoyAxisEvent(JoyAxisEvent e) { }
-    @Override public void onJoyButtonEvent(JoyButtonEvent e) { }
+    /** Gamepad: steuert Spieler 2 (linker Stick laufen, A springen/fliegen, B zaubern, X/Y sprechen). */
+    @Override public void onJoyAxisEvent(JoyAxisEvent e) {
+        String id = e.getAxis().getLogicalId();
+        float v = Math.abs(e.getValue()) < 0.22f ? 0 : e.getValue();
+        if ("x".equals(id)) core.input.padX = v;
+        else if ("y".equals(id)) core.input.padY = -v;
+    }
+
+    @Override public void onJoyButtonEvent(JoyButtonEvent e) {
+        int b = e.getButtonIndex();
+        int code = b == 0 ? Input.P2_JUMP : b == 1 ? Input.P2_CAST : b <= 3 ? Input.P2_USE : b == 7 ? KeyEvent.VK_ESCAPE : -1;
+        if (code < 0) return;
+        if (e.isPressed()) core.input.keyDown(code);
+        else core.input.keyUp(code);
+    }
     @Override public void onTouchEvent(TouchEvent e) { }
 }

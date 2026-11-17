@@ -12,10 +12,15 @@ public class CharacterSelectScene implements Scene {
     private final List<CharacterDef> all = CharacterDef.ALL;
     private int sel;
     private double t;
+    private final int player;
 
-    public CharacterSelectScene(GamePanel game) {
+    public CharacterSelectScene(GamePanel game) { this(game, 1); }
+
+    public CharacterSelectScene(GamePanel game, int player) {
         this.game = game;
         this.in = game.input;
+        this.player = player;
+        if (player == 2) sel = game.state.hero.isTroll() ? 5 : 0;
     }
 
     public int selected() { return sel; }
@@ -35,11 +40,21 @@ public class CharacterSelectScene implements Scene {
         }
         if (in.mouseClicked && in.mouseX > 60 && in.mouseX < 300 && in.mouseY > 504 && in.mouseY < 552) { choose(); return; }
         if (in.wasPressed(KeyEvent.VK_ENTER, KeyEvent.VK_SPACE)) choose();
-        if (in.wasPressed(KeyEvent.VK_ESCAPE)) game.setScene(new TitleScene(game));
+        if (in.wasPressed(KeyEvent.VK_ESCAPE)) game.setScene(player == 2 ? new CharacterSelectScene(game, 1) : new TitleScene(game));
     }
 
     private void choose() {
+        if (player == 2) {
+            game.state.hero2 = all.get(sel);
+            game.setScene(new WorldScene(game));
+            return;
+        }
         game.state.hero = all.get(sel);
+        if (game.state.twoPlayers) {
+            game.state.dayTime = 0.235f;
+            game.setScene(new CharacterSelectScene(game, 2));
+            return;
+        }
         game.state.dayTime = 0.235f;
         game.setScene(new WorldScene(game));
     }
@@ -49,7 +64,14 @@ public class CharacterSelectScene implements Scene {
         g.setPaint(new GradientPaint(0, 0, new Color(0, 0, 0, 170), 560, 0, new Color(0, 0, 0, 0)));
         g.fillRect(0, 0, 640, 720);
         g.setFont(Art.H1);
-        Art.shadowText(g, "Wähle deine Figur", 40, 66, Art.GOLD);
+        String who = !game.state.twoPlayers ? "Wähle deine Figur"
+            : "Figur für " + (player == 1 ? game.state.displayName() : game.state.displayName2());
+        Art.shadowText(g, who, 40, 66, Art.GOLD);
+        if (game.state.twoPlayers) {
+            g.setFont(Art.SMALL);
+            Art.shadowText(g, player == 1 ? "Spieler 1 · Tastatur & Maus" : "Spieler 2 · Pfeiltasten oder Gamepad", 42, 90,
+                player == 1 ? new Color(150, 200, 255) : new Color(255, 190, 120));
+        }
         CharacterDef c = all.get(sel);
         g.setFont(new Font("Serif", Font.BOLD, 34));
         Art.shadowText(g, c.name, 40, 130, Color.WHITE);

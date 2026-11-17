@@ -9,6 +9,10 @@ public class GameState {
     public CharacterDef hero = CharacterDef.ALL.get(0);
     /** Der Name, den sich die Spielerin oder der Spieler gegeben hat. */
     public String playerName = "";
+    /** Zwei Spieler am geteilten Bildschirm. Spieler 2 teilt Taler, Gepäck und Missionen. */
+    public boolean twoPlayers;
+    public CharacterDef hero2 = CharacterDef.ALL.get(5);
+    public String player2Name = "";
     public final EnumSet<Shard> shards = EnumSet.noneOf(Shard.class);
     public final Set<String> flags = new HashSet<>();
     public final List<String> notes = new ArrayList<>();
@@ -29,6 +33,8 @@ public class GameState {
 
     /** Anzeigename: eigener Name oder der Vorname der Figur. */
     public String displayName() { return playerName == null || playerName.isBlank() ? hero.name.split(" ")[0] : playerName; }
+
+    public String displayName2() { return player2Name == null || player2Name.isBlank() ? hero2.name.split(" ")[0] : player2Name; }
 
     public boolean has(Shard s) { return shards.contains(s); }
 
@@ -87,6 +93,9 @@ public class GameState {
         Properties p = new Properties();
         p.setProperty("hero", String.valueOf(CharacterDef.ALL.indexOf(hero)));
         p.setProperty("name", playerName);
+        p.setProperty("two", String.valueOf(twoPlayers));
+        p.setProperty("hero2", String.valueOf(CharacterDef.ALL.indexOf(hero2)));
+        p.setProperty("name2", player2Name);
         p.setProperty("shards", join(shards.stream().map(Enum::name).toList()));
         p.setProperty("flags", join(flags));
         p.setProperty("notes", String.join("\u0001", notes));
@@ -125,6 +134,9 @@ public class GameState {
             p.load(r);
             s.hero = CharacterDef.ALL.get(Integer.parseInt(p.getProperty("hero", "0")));
             s.playerName = p.getProperty("name", "");
+            s.twoPlayers = Boolean.parseBoolean(p.getProperty("two", "false"));
+            s.hero2 = CharacterDef.ALL.get(Integer.parseInt(p.getProperty("hero2", "5")));
+            s.player2Name = p.getProperty("name2", "");
             for (String x : split(p.getProperty("shards"))) s.shards.add(Shard.valueOf(x));
             s.flags.addAll(split(p.getProperty("flags")));
             String notes = p.getProperty("notes", "");

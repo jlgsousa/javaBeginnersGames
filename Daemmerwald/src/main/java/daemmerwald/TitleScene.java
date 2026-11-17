@@ -53,7 +53,7 @@ public class TitleScene implements Scene {
         switch (idx) {
             case 0 -> {
                 game.state = new GameState();
-                game.setScene(new NameScene(game));
+                game.setScene(new PlayersScene(game));
             }
             case 1 -> help = true;
             default -> System.exit(0);

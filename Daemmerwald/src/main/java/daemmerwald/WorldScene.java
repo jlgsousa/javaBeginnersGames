@@ -31,6 +31,10 @@ public class WorldScene implements Scene, Main.CameraDirector {
     // Spielfigur
     Figure fig;
     final Vector3f pos = new Vector3f();
+    /** Spieler 2 (nur im 2-Spieler-Modus, sonst null). */
+    Mate p2;
+    private Npc nearP2;
+    private House nearHouseP2;
     private float velY, yaw, camYaw, camPitch = 0.28f, zoom = 1, moveSpeed;
     private boolean onGround = true, flyingNow;
     float mana;
@@ -91,6 +95,8 @@ public class WorldScene implements Scene, Main.CameraDirector {
         world.chunks.preload(pos.x, pos.z);
         if (st.flags.contains("blight")) world.setBlightCleared();
         rebuildFigure();
+        if (st.twoPlayers) p2 = new Mate(st, world, pos, yaw);
+        else if (world.mate != null) { world.mate.remove(); world.mate = null; }
         mana = (float) st.hero.manaMax();
         Material cm = G3.emissive(new ColorRGBA(1f, 0.9f, 0.6f, 1));
         companion = G3.geom("companion", new Sphere(10, 10, 0.12f), cm);
@@ -155,6 +161,10 @@ public class WorldScene implements Scene, Main.CameraDirector {
             if (r > 0) st.effects.put(p, Math.max(0, r - dt));
         }
         updateTexts(dt);
+        if (p2 != null) {
+            boolean frozen = dialog != null || choice != null || shop || brew || menuTab >= 0 || (race != null && race.countdown > 0);
+            p2.update(dt, in, frozen, pos);
+        }
         if (dialog != null) {
             dialog.update(dt, in);
             if (dialog.done) {
@@ -193,34 +203,61 @@ public class WorldScene implements Scene, Main.CameraDirector {
         }
         updateBolts(dt);
         if ((in.mouseClicked || in.wasPressed(KeyEvent.VK_Q, KeyEvent.VK_F)) && castT <= 0 && !fig.casting()) castSpell();
+        if (p2 != null && p2.castNow) {
+            if (p2.mana < 16) floatText("Zu wenig Mana", p2.pos.add(0, p2.fig.height + 0.8f, 0), Art.DANGER);
+            else {
+                p2.mana -= 16;
+                p2.fig.cast();
+                if (game.app.music != null) game.app.music.sfx("spell");
+                releaseSpell(p2.pos, p2.yaw, p2.fig.height);
+            }
+        }
 
         for (int i = 0; i < 4; i++) if (in.wasPressed(KeyEvent.VK_1 + i)) drink(Potion.values()[i]);
 
-        near = null;
+        near = nearNpc(pos);
+        nearHouse = near == null ? nearHouseAt(pos) : null;
+        boolean use1 = p2 == null ? in.wasPressed(KeyEvent.VK_E, KeyEvent.VK_ENTER) : in.wasPressed(KeyEvent.VK_E);
+        Npc useNpc = null;
+        House useHouse = null;
+        if (use1) { useNpc = near; useHouse = nearHouse; }
+        if (p2 != null) {
+            nearP2 = nearNpc(p2.pos);
+            nearHouseP2 = nearP2 == null ? nearHouseAt(p2.pos) : null;
+            if (p2.useNow && useNpc == null && useHouse == null) { useNpc = nearP2; useHouse = nearHouseP2; }
+        }
+        if (useNpc != null && race == null) interact(useNpc);
+        else if (useHouse != null && race == null) {
+            in.releaseAll();
+            game.setScene(new HouseScene(game, this, useHouse));
+        }
+
+        pickups(pos);
+        if (p2 != null) pickups(p2.pos);
+        updateCreatures(dt);
+        world.updateMarkers(st, npcs);
+
+    }
+
+    private Npc nearNpc(Vector3f at) {
+        Npc found = null;
         float best = 1e9f;
         for (Npc n : npcs) {
             Vector3f p = world.npcPos.get(n.id);
             if (p == null) continue;
             float r = n.id.equals("heart") ? 10 : n.id.equals("cafe") ? 4.5f : n.id.startsWith("kessel") ? 3.2f : 3.8f;
-            float d = p.distance(pos);
-            if (d < r && d < best) { best = d; near = n; }
+            float d = p.distance(at);
+            if (d < r && d < best) { best = d; found = n; }
         }
-        nearHouse = null;
-        if (near == null) {
-            List<House> hs = new ArrayList<>(world.houses);
-            hs.addAll(world.chunks.housesNear(pos.x, pos.z));
-            for (House h : hs) if (h.door().distance(pos) < 3.2f) nearHouse = h;
-        }
-        if (near != null && in.wasPressed(KeyEvent.VK_E, KeyEvent.VK_ENTER) && race == null) interact(near);
-        else if (nearHouse != null && in.wasPressed(KeyEvent.VK_E, KeyEvent.VK_ENTER) && race == null) {
-            in.releaseAll();
-            game.setScene(new HouseScene(game, this, nearHouse));
-        }
+        return found;
+    }
 
-        pickups();
-        updateCreatures(dt);
-        world.updateMarkers(st, npcs);
-
+    private House nearHouseAt(Vector3f at) {
+        List<House> hs = new ArrayList<>(world.houses);
+        hs.addAll(world.chunks.housesNear(at.x, at.z));
+        House found = null;
+        for (House h : hs) if (h.door().distance(at) < 3.2f) found = h;
+        return found;
     }
 
     private void idle(float dt) {
@@ -240,10 +277,12 @@ public class WorldScene implements Scene, Main.CameraDirector {
         }
         if (in.wheel != 0) zoom = FastMath.clamp(zoom - (float) in.wheel * 0.0012f, 0.45f, 1.9f);
         float fx = 0, fz = 0;
-        if (in.isDown(KeyEvent.VK_W, KeyEvent.VK_UP)) fz += 1;
-        if (in.isDown(KeyEvent.VK_S, KeyEvent.VK_DOWN)) fz -= 1;
-        if (in.isDown(KeyEvent.VK_A, KeyEvent.VK_LEFT)) fx -= 1;
-        if (in.isDown(KeyEvent.VK_D, KeyEvent.VK_RIGHT)) fx += 1;
+        // Im 2-Spieler-Modus gehören die Pfeiltasten Spieler 2
+        boolean arrows = p2 == null;
+        if (in.isDown(KeyEvent.VK_W) || (arrows && in.isDown(KeyEvent.VK_UP))) fz += 1;
+        if (in.isDown(KeyEvent.VK_S) || (arrows && in.isDown(KeyEvent.VK_DOWN))) fz -= 1;
+        if (in.isDown(KeyEvent.VK_A) || (arrows && in.isDown(KeyEvent.VK_LEFT))) fx -= 1;
+        if (in.isDown(KeyEvent.VK_D) || (arrows && in.isDown(KeyEvent.VK_RIGHT))) fx += 1;
         Vector3f fwd = new Vector3f(FastMath.sin(camYaw), 0, FastMath.cos(camYaw));
         Vector3f right = new Vector3f(-fwd.z, 0, fwd.x);
         Vector3f dir = fwd.mult(fz).addLocal(right.mult(fx));
@@ -381,11 +420,13 @@ public class WorldScene implements Scene, Main.CameraDirector {
         }
     }
 
-    private void releaseSpell() {
+    private void releaseSpell() { releaseSpell(pos, yaw, fig.height); }
+
+    private void releaseSpell(Vector3f pos, float yaw, float figH) {
         float reach = st.has(Ability.LANZE) ? 9 : 5;
         Vector3f fwd = new Vector3f(FastMath.sin(yaw), 0, FastMath.cos(yaw));
         Vector3f target = pos.add(fwd.mult(reach)).addLocal(0, 1.2f, 0);
-        Vector3f hand = pos.add(fwd.mult(0.7f)).addLocal(0, fig.height * 0.72f, 0);
+        Vector3f hand = pos.add(fwd.mult(0.7f)).addLocal(0, figH * 0.72f, 0);
         world.burst(hand, new ColorRGBA(1f, 0.95f, 0.8f, 1), 20);
         bolts.add(new Bolt(hand, target));
         lightBoost = 3;
@@ -419,7 +460,7 @@ public class WorldScene implements Scene, Main.CameraDirector {
 
     // ---------------------------------------------------------------- Sammeln
 
-    private void pickups() {
+    private void pickups(Vector3f pos) {
         float r = st.gadget(Outfit.Gadget.MAGNET) ? 6 : 1.7f;
         for (Chunks.Spot s : world.chunks.spotsNear(pos.x, pos.z, r + 1)) {
             float d = FastMath.sqrt((s.pos.x - pos.x) * (s.pos.x - pos.x) + (s.pos.z - pos.z) * (s.pos.z - pos.z));
@@ -493,6 +534,7 @@ public class WorldScene implements Scene, Main.CameraDirector {
 
     /** Wird nach dem Welt-Update aufgerufen: Figuren, Kreaturen, Begleiter. */
     public void update3D(float dt) {
+        if (p2 != null) p2.update3D(dt);
         fig.node.setLocalTranslation(pos);
         fig.face(yaw, dt);
         fig.flying = flyingNow;
@@ -1248,12 +1290,73 @@ public class WorldScene implements Scene, Main.CameraDirector {
     // ================================================================ Darstellung
 
     private double[] screen(Vector3f p) {
-        Camera cam = game.app.getCamera();
+        double[] a = screen(p, game.app.getCamera());
+        if (!world.split() || world.cam2 == null) return a;
+        if (a != null && a[0] <= SW / 2.0) return a;
+        a = screen(p, world.cam2);
+        return a != null && a[0] >= SW / 2.0 ? a : null;
+    }
+
+    private double[] screen(Vector3f p, Camera cam) {
+        if (cam == null) return null;
         Vector3f s = cam.getScreenCoordinates(p);
         if (s.z < 0 || s.z > 1) return null;
         Vector3f toP = p.subtract(cam.getLocation());
         if (toP.dot(cam.getDirection()) < 0) return null;
         return new double[]{s.x * SW / cam.getWidth(), SH - s.y * SH / cam.getHeight()};
+    }
+
+    private boolean calm() { return dialog == null && choice == null && menuTab < 0 && !shop && !brew && race == null; }
+
+    /** Trennlinie, Statusleiste und Hinweise für Spieler 2. */
+    private void drawSplit(Graphics2D g) {
+        if (p2 == null || !world.split()) return;
+        int mx = SW / 2;
+        g.setColor(new Color(8, 6, 14));
+        g.fillRect(mx - 3, 0, 6, SH);
+        g.setColor(Art.alpha(Art.GOLD, 200));
+        g.setStroke(new BasicStroke(1.4f));
+        g.drawLine(mx - 3, 0, mx - 3, SH);
+        g.drawLine(mx + 3, 0, mx + 3, SH);
+        for (int y = 90; y < SH; y += 180) Art.star(g, mx, y, 7, Art.GOLD);
+
+        double x = mx + 16;
+        Art.panel(g, x, 16, 280, 92);
+        g.setFont(Art.UI);
+        Art.shadowText(g, st.displayName2(), x + 16, 42, new Color(255, 200, 130));
+        g.setFont(Art.SMALL);
+        g.setColor(new Color(190, 190, 210));
+        g.drawString(st.hero2.name.split(" ")[0] + ", " + st.hero2.epithet, (float) x + 16, 61);
+        Art.bar(g, x + 16, 70, 248, 14, p2.mana / p2.maxMana(), Art.MAGIC);
+        g.setColor(Color.WHITE);
+        g.setFont(new Font("SansSerif", Font.BOLD, 11));
+        g.drawString("Mana " + (int) p2.mana, (float) x + 22, 81);
+
+        if (nearP2 != null && calm()) {
+            Vector3f p = world.npcPos.get(nearP2.id);
+            Figure nf = world.figures.get(nearP2.id);
+            double[] s = screen(p.add(0, (nf != null ? nf.height : 2.5f) + 0.5f, 0), world.cam2);
+            if (s == null) s = new double[]{mx + SW / 4.0, SH - 140};
+            label(g, "[Enter] " + nearP2.name, s, Art.GOLD, new Color(10, 12, 20, 200));
+        } else if (nearHouseP2 != null && calm()) {
+            double[] s = screen(nearHouseP2.door().add(0, 2.4f, 0), world.cam2);
+            if (s == null) s = new double[]{mx + SW / 4.0, SH - 140};
+            label(g, "[Enter] " + (nearHouseP2.cafe ? nearHouseP2.title + " betreten" : (nearHouseP2.evil ? "Anklopfen bei " : "Besuch bei ") + nearHouseP2.owner),
+                s, Art.GOLD, new Color(40, 26, 14, 210));
+        }
+        if (p2.leashHint > 0) {
+            g.setFont(Art.UI);
+            Art.shadowCentered(g, "Bleib in der Nähe von " + st.displayName() + "!", mx + SW / 4.0, SH / 2.0 - 120,
+                Art.alpha(new Color(255, 200, 130), (int) (Math.min(1, p2.leashHint) * 255)));
+        }
+    }
+
+    private void label(Graphics2D g, String text, double[] s, Color fg, Color bg) {
+        g.setFont(Art.UI);
+        int w = g.getFontMetrics().stringWidth(text) + 26;
+        g.setColor(bg);
+        g.fill(new RoundRectangle2D.Double(s[0] - w / 2.0, s[1] - 20, w, 28, 14, 14));
+        Art.shadowCentered(g, text, s[0], s[1], fg);
     }
 
     @Override
@@ -1295,6 +1398,7 @@ public class WorldScene implements Scene, Main.CameraDirector {
             g.fill(new RoundRectangle2D.Double(s[0] - w / 2.0, s[1] - 20, w, 28, 14, 14));
             Art.shadowCentered(g, label, s[0], s[1], nearHouse.evil ? new Color(220, 150, 255) : Art.GOLD);
         }
+        drawSplit(g);
         drawHud(g);
         if (race != null) drawRace(g);
         if (dialog == null && menuTab < 0 && !shop && !brew) drawTracker(g);
@@ -1324,8 +1428,9 @@ public class WorldScene implements Scene, Main.CameraDirector {
         String clock = world.dayNight.clock() + "  ·  " + world.dayNight.phaseName() + "  ·  " + world.weather.describe();
         g.setFont(Art.UI);
         int w = g.getFontMetrics().stringWidth(clock) + 40;
-        Art.panel(g, SW / 2.0 - w / 2.0, 14, w, 36);
-        Art.shadowCentered(g, clock, SW / 2.0, 38, Art.PARCH);
+        double cy = p2 != null ? SH - 104 : 14;   // geteilter Bildschirm: Uhr unten in der Mitte
+        Art.panel(g, SW / 2.0 - w / 2.0, cy, w, 36);
+        Art.shadowCentered(g, clock, SW / 2.0, cy + 24, Art.PARCH);
 
         // Splitter
         Shard[] all = Shard.values();
@@ -1345,6 +1450,13 @@ public class WorldScene implements Scene, Main.CameraDirector {
         StringBuilder pot = new StringBuilder();
         for (Potion p : Potion.values()) pot.append("[").append(p.ordinal() + 1).append("] ").append(p.title).append(" ×").append(st.potions.getOrDefault(p, 0)).append("   ");
         g.drawString(pot.toString(), 20, SH - 40);
+        if (p2 != null) {
+            g.drawString("WASD · Maus · Klick/Q zaubern · Leertaste " + (st.hero.isTroll() ? "springen" : "fliegen") + " · E sprechen · Tab Menü", 20, SH - 18);
+            g.drawString("Pfeile laufen · R-Strg " + (st.hero2.isTroll() ? "springen" : "fliegen") + " · R-Umschalt zaubern · Enter sprechen",
+                SW / 2 + 20, SH - 18);
+            g.drawString("oder Gamepad: Stick · A " + (st.hero2.isTroll() ? "springen" : "fliegen") + " · B zaubern · X sprechen", SW / 2 + 20, SH - 40);
+            return;
+        }
         g.drawString("WASD laufen · Maus schauen · Klick/Q zaubern · Leertaste " + (st.gadget(Outfit.Gadget.FLIGHT) ? "fliegen" : st.hero.isTroll() ? "springen" : "flattern")
             + (st.has(Ability.SPRINT) ? " · Umschalt rennen" : "") + " · E sprechen · Tab Menü", 20, SH - 18);
     }
@@ -1408,6 +1520,11 @@ public class WorldScene implements Scene, Main.CameraDirector {
     private void drawTracker(Graphics2D g) {
         List<String[]> m = missions();
         double x = SW - 330, y = 62, w = 314;
+        if (p2 != null) {
+            // geteilter Bildschirm: nur die wichtigsten Missionen, unter der Leiste von Spieler 2
+            if (m.size() > 3) m = new ArrayList<>(m.subList(0, 3));
+            y = 122;
+        }
         double h = 34 + m.size() * 50;
         g.setColor(new Color(8, 10, 18, 150));
         g.fill(new RoundRectangle2D.Double(x, y, w, h, 16, 16));

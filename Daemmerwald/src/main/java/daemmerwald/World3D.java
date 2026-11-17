@@ -51,6 +51,16 @@ public class World3D {
     private SkyFogFilter fog;
     private DirectionalLightShadowFilter shadows;
     private WaterFilter water;
+    // Zweite Kamera für den geteilten Bildschirm (Spieler 2)
+    public Camera cam2;
+    /** Die aktuelle Figur von Spieler 2 (damit beim Neuladen keine alte Figur stehen bleibt). */
+    Mate mate;
+    private com.jme3.renderer.ViewPort vp2;
+    private WaterFilter water2;
+    private SkyFogFilter fog2;
+    private DirectionalLightShadowFilter shadows2;
+    private boolean split;
+    private FilterPostProcessor fpp1, fpp2;
     private Material heartLeaves, heartVeins;
     private PointLight heartLight;
     private Geometry crystal;
@@ -956,29 +966,9 @@ public class World3D {
         FilterPostProcessor fpp = new FilterPostProcessor(app.getAssetManager());
         int samples = app.getContext().getSettings().getSamples();
         if (samples > 1) fpp.setNumSamples(samples);
-        water = new WaterFilter(app.getRootNode(), new Vector3f(-0.4f, -0.6f, -0.5f));
-        water.setWaterHeight(WorldGen.WATER);
-        water.setWaterColor(new ColorRGBA(0.04f, 0.13f, 0.18f, 1));
-        water.setDeepWaterColor(new ColorRGBA(0.01f, 0.05f, 0.09f, 1));
-        water.setWaterTransparency(0.12f);
-        water.setMaxAmplitude(0.35f);
-        water.setWaveScale(0.006f);
-        water.setSpeed(0.5f);
-        water.setShoreHardness(0.25f);
-        water.setRefractionStrength(0.12f);
-        water.setFoamHardness(0.6f);
-        water.setFoamIntensity(0.4f);
-        water.setReflectionMapSize(lowGraphics ? 256 : 512);
-        water.setUnderWaterFogDistance(40);
-        water.setSunScale(1.6f);
+        water = makeWater();
         fpp.addFilter(water);
-        shadows = new DirectionalLightShadowFilter(app.getAssetManager(), lowGraphics ? 1024 : 2048, 3);
-        shadows.setLight(dayNight.light);
-        shadows.setLambda(0.65f);
-        shadows.setShadowIntensity(0.55f);
-        shadows.setEdgeFilteringMode(EdgeFilteringMode.PCFPOISSON);
-        shadows.setShadowZExtend(140);
-        shadows.setShadowZFadeLength(30);
+        shadows = makeShadows(lowGraphics ? 1024 : 2048, 3);
         fpp.addFilter(shadows);
         if (!lowGraphics) {
             // Umgebungsverdeckung: weiche Schatten in Ecken, unter Bäumen und an Wurzeln
@@ -1002,7 +992,97 @@ public class World3D {
         fpp.addFilter(bloom);
         fpp.addFilter(new FXAAFilter());
         app.getViewPort().addProcessor(fpp);
+        fpp1 = fpp;
     }
+
+    private WaterFilter makeWater() {
+        WaterFilter w = new WaterFilter(app.getRootNode(), new Vector3f(-0.4f, -0.6f, -0.5f));
+        w.setWaterHeight(WorldGen.WATER);
+        w.setWaterColor(new ColorRGBA(0.04f, 0.13f, 0.18f, 1));
+        w.setDeepWaterColor(new ColorRGBA(0.01f, 0.05f, 0.09f, 1));
+        w.setWaterTransparency(0.12f);
+        w.setMaxAmplitude(0.35f);
+        w.setWaveScale(0.006f);
+        w.setSpeed(0.5f);
+        w.setShoreHardness(0.25f);
+        w.setRefractionStrength(0.12f);
+        w.setFoamHardness(0.6f);
+        w.setFoamIntensity(0.4f);
+        w.setReflectionMapSize(lowGraphics ? 256 : 512);
+        w.setUnderWaterFogDistance(40);
+        w.setSunScale(1.6f);
+        return w;
+    }
+
+    private DirectionalLightShadowFilter makeShadows(int size, int splits) {
+        DirectionalLightShadowFilter sh = new DirectionalLightShadowFilter(app.getAssetManager(), size, splits);
+        sh.setLight(dayNight.light);
+        sh.setLambda(0.65f);
+        sh.setShadowIntensity(0.55f);
+        sh.setEdgeFilteringMode(EdgeFilteringMode.PCFPOISSON);
+        sh.setShadowZExtend(140);
+        sh.setShadowZFadeLength(30);
+        return sh;
+    }
+
+    /** Schaltet den geteilten Bildschirm ein oder aus (links Spieler 1, rechts Spieler 2). */
+    public void setSplit(boolean on) {
+        if (on == split) return;
+        split = on;
+        Camera cam = app.getCamera();
+        float aspect = (float) cam.getWidth() / cam.getHeight();
+        if (on && cam2 == null) {
+            cam2 = cam.clone();
+            vp2 = app.getRenderManager().createMainView("spieler2", cam2);
+            vp2.setClearFlags(true, true, true);
+            vp2.setBackgroundColor(app.getViewPort().getBackgroundColor());
+            vp2.attachScene(app.getRootNode());
+            FilterPostProcessor fpp = new FilterPostProcessor(app.getAssetManager());
+            water2 = makeWater();
+            if (lowGraphics) water2.setReflectionMapSize(128);
+            fpp.addFilter(water2);
+            shadows2 = makeShadows(1024, 2);
+            fpp.addFilter(shadows2);
+            fog2 = new SkyFogFilter();
+            fpp.addFilter(fog2);
+            fpp.addFilter(new FXAAFilter());
+            vp2.addProcessor(fpp);
+            fpp2 = fpp;
+        }
+        if (on) {
+            cam.setViewPort(0f, 0.5f, 0f, 1f);
+            cam.setFrustumPerspective(58, aspect * 0.5f, 0.25f, 1000f);
+            cam2.setViewPort(0.5f, 1f, 0f, 1f);
+            cam2.setFrustumPerspective(58, aspect * 0.5f, 0.25f, 1000f);
+            vp2.setEnabled(true);
+        } else {
+            cam.setViewPort(0f, 1f, 0f, 1f);
+            cam.setFrustumPerspective(58, aspect, 0.25f, 1000f);
+            if (vp2 != null) vp2.setEnabled(false);
+        }
+        // Die Nachbearbeitung merkt sich den Bildausschnitt der Kamera – neu einlesen lassen
+        refit(fpp1, app.getViewPort());
+        if (on) refit(fpp2, vp2);
+    }
+
+    /** jME merkt sich den Bildausschnitt beim Start der Nachbearbeitung; hier wird er auf den neuen Ausschnitt gesetzt. */
+    private static void refit(FilterPostProcessor fpp, com.jme3.renderer.ViewPort vp) {
+        if (fpp == null || !fpp.isInitialized()) return;
+        Camera c = vp.getCamera();
+        try {
+            for (String[] f : new String[][]{{"left", "" + c.getViewPortLeft()}, {"right", "" + c.getViewPortRight()},
+                {"top", "" + c.getViewPortTop()}, {"bottom", "" + c.getViewPortBottom()}}) {
+                java.lang.reflect.Field fl = FilterPostProcessor.class.getDeclaredField(f[0]);
+                fl.setAccessible(true);
+                fl.setFloat(fpp, Float.parseFloat(f[1]));
+            }
+        } catch (ReflectiveOperationException e) {
+            System.err.println("Bildausschnitt nicht anpassbar: " + e);
+        }
+        fpp.reshape(vp, c.getWidth(), c.getHeight());
+    }
+
+    public boolean split() { return split; }
 
     // ================================================================ Update
 
@@ -1035,13 +1115,19 @@ public class World3D {
         float density = 0.0024f + night * 0.0028f + zoneDark * 0.012f + weather.rain * 0.006f + weather.cover * 0.0012f - zoneBright * 0.0008f;
         ColorRGBA fc = dayNight.fogColor.clone();
         fc = G3.lerp(fc, new ColorRGBA(0.42f, 0.44f, 0.47f, 1).multLocal(0.3f + 0.7f * (1 - night)), weather.rain * 0.6f);
-        fog.set(fc, Math.max(0.0012f, density), 0.06f + weather.cover * 0.25f + zoneDark * 0.3f);
-        shadows.setShadowIntensity(0.25f + 0.4f * (1 - night) * (1 - weather.cover * 0.6f));
-        water.setLightDirection(dayNight.light.getDirection());
-        water.setLightColor(dayNight.light.getColor());
         ColorRGBA wc = G3.lerp(new ColorRGBA(0.01f, 0.03f, 0.06f, 1), new ColorRGBA(0.05f, 0.16f, 0.22f, 1), 1 - night);
-        water.setWaterColor(wc);
-        water.setDeepWaterColor(wc.mult(0.4f));
+        for (int i = 0; i < 2; i++) {
+            SkyFogFilter f = i == 0 ? fog : fog2;
+            DirectionalLightShadowFilter sh = i == 0 ? shadows : shadows2;
+            WaterFilter w = i == 0 ? water : water2;
+            if (f == null) continue;
+            f.set(fc, Math.max(0.0012f, density), 0.06f + weather.cover * 0.25f + zoneDark * 0.3f);
+            sh.setShadowIntensity(0.25f + 0.4f * (1 - night) * (1 - weather.cover * 0.6f));
+            w.setLightDirection(dayNight.light.getDirection());
+            w.setLightColor(dayNight.light.getColor());
+            w.setWaterColor(wc);
+            w.setDeepWaterColor(wc.mult(0.4f));
+        }
 
         lantern.setPosition(focus.add(0, 2.4f, 0));
         lantern.setColor(new ColorRGBA(1f, 0.76f, 0.48f, 1).multLocal(0.15f + 1.1f * night));

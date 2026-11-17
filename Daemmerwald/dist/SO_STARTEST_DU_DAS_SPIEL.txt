@@ -24,6 +24,18 @@ WASD laufen · Maus umsehen · Mausrad Zoom · Linksklick/Q zaubern
 Leertaste springen / flattern / fliegen · Umschalt rennen · E sprechen/betreten
 Tab oder Esc: Menü (Karte, Garderobe, Inventar, Missionen …) · 1–4 Tränke
 
+Zu zweit spielen (geteilter Bildschirm)
+---------------------------------------
+Bei „Neues Spiel“ „2 Spieler“ wählen. Links spielt Spieler 1 (Tastatur & Maus wie oben),
+rechts Spieler 2:
+  Pfeiltasten  hoch/runter laufen, links/rechts drehen
+  rechte Strg  springen / fliegen
+  rechte Umschalt  zaubern
+  Enter        sprechen / Haus betreten
+Oder ein Gamepad: linker Stick laufen, A springen/fliegen, B zaubern, X sprechen.
+Taler, Gepäck und Missionen teilen sich beide. Spieler 2 kann sich bis 70 m
+von Spieler 1 entfernen.
+
 Speichern
 ---------
 Automatisch nach jedem gewonnenen Spiel – und von Hand in jedem Café

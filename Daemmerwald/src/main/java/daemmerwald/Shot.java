@@ -82,6 +82,25 @@ public class Shot {
             app.core.setScene(new WorldScene(app.core));
             app.world.dayNight.time = 0.3f;
         });
+        step("players", 2f, () -> app.core.setScene(new PlayersScene(app.core)));
+        step("two_players", 6f, () -> {
+            GameState gs = app.core.state;
+            gs.hero = CharacterDef.ALL.get(0);
+            gs.outfit = Outfit.WANDERER;
+            gs.twoPlayers = true;
+            gs.hero2 = CharacterDef.ALL.get(5);
+            gs.playerName = "Liora";
+            gs.player2Name = "Bramwen";
+            gs.flags.add("intro");
+            app.core.setScene(new WorldScene(app.core));
+            app.world.dayNight.time = 0.4f;
+        });
+        step("two_players_walk", 4f, () -> { app.core.input.keyDown(java.awt.event.KeyEvent.VK_UP); app.core.input.keyDown(java.awt.event.KeyEvent.VK_LEFT); });
+        step("one_player_again", 3f, () -> {
+            app.core.input.keyUp(java.awt.event.KeyEvent.VK_UP); app.core.input.keyUp(java.awt.event.KeyEvent.VK_LEFT);
+            app.core.state.twoPlayers = false;
+            app.core.setScene(new WorldScene(app.core));
+        });
         step("houses_knorz_out", 4f, () -> { House h = app.world.houses.get(1); Vector3f d = h.door(); teleport(d.x + (d.x - h.x) * 0.9f, d.z + (d.z - h.z) * 0.9f, FastMath.atan2(h.x - d.x, h.z - d.z)); app.world.dayNight.time = 0.7f; });
         step("houses_knorz_in", 4f, () -> { WorldScene ws = (WorldScene) app.core.scene(); app.core.setScene(new HouseScene(app.core, ws, app.world.houses.get(1))); });
         step("houses_evil_out", 4f, () -> { app.core.setScene(new WorldScene(app.core)); House h = app.world.houses.get(4); Vector3f d = h.door(); teleport(d.x + (d.x - h.x) * 0.9f, d.z + (d.z - h.z) * 0.9f, FastMath.atan2(h.x - d.x, h.z - d.z)); app.world.dayNight.time = 0.85f; });

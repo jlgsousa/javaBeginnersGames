@@ -16,6 +16,10 @@ public class Input {
     /** Mausbewegung seit dem letzten Frame (Pixel) – für die Kamera. */
     public double lookDX, lookDY;
     public double wheel;
+    /** Eigene Codes für Spieler 2 (rechte Strg / rechte Umschalt / Gamepad-Knöpfe). */
+    public static final int P2_JUMP = 1001, P2_CAST = 1002, P2_USE = 1003;
+    /** Linker Stick des Gamepads (-1..1), y positiv = vorwärts. */
+    public float padX, padY;
     /** In diesem Frame getippte Zeichen (für Namenseingabe). */
     public final StringBuilder typed = new StringBuilder();
 
