@@ -1,0 +1,20 @@
+package daemmerwald;
+
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
+
+/** Einstiegspunkt: "Das Flüstern im Dämmerwald". */
+public class Main {
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            JFrame frame = new JFrame("Das Flüstern im Dämmerwald");
+            GamePanel panel = new GamePanel();
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.setContentPane(panel);
+            frame.pack();
+            frame.setLocationRelativeTo(null);
+            frame.setVisible(true);
+            panel.start();
+        });
+    }
+}
