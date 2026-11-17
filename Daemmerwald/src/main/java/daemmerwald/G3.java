@@ -351,7 +351,8 @@ public final class G3 {
         Material m = new Material(am, "Common/MatDefs/Misc/Particle.j3md");
         Texture t = texture == null ? glowTex() : am.loadTexture(texture);
         m.setTexture("Texture", t);
-        m.setTexture("GlowMap", t);
+        // Nur leuchtende Partikel (Lichtfunken, Feuer) dürfen glühen – Rauch und Nebel nicht
+        if (texture == null || texture.contains("flame")) m.setTexture("GlowMap", t);
         e.setMaterial(m);
         e.setImagesX(1);
         e.setImagesY(1);

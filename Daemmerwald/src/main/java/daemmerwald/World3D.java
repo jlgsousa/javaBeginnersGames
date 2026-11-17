@@ -829,8 +829,8 @@ public class World3D {
         fog = new SkyFogFilter();
         fpp.addFilter(fog);
         BloomFilter bloom = new BloomFilter(BloomFilter.GlowMode.Objects);
-        bloom.setBloomIntensity(1.7f);
-        bloom.setExposurePower(3.5f);
+        bloom.setBloomIntensity(1.15f);
+        bloom.setExposurePower(4.5f);
         bloom.setBlurScale(1.6f);
         bloom.setDownSamplingFactor(2);
         fpp.addFilter(bloom);

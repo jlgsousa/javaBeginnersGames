@@ -62,7 +62,7 @@ public class Chunks {
         world.attachChild(root);
         terrainBase = new Material(G3.am, "Common/MatDefs/Terrain/TerrainLighting.j3md");
         setTex(terrainBase, "DiffuseMap", "Textures/Terrain/PBR/Ground037_1K_Color.png", "DiffuseMap_0_scale", 30f);
-        setTex(terrainBase, "DiffuseMap_1", "Textures/Terrain/PBR/Gravel015_1K_Color.png", "DiffuseMap_1_scale", 40f);
+        setTex(terrainBase, "DiffuseMap_1", "Textures/Terrain/splat/dirt.jpg", "DiffuseMap_1_scale", 52f);
         setTex(terrainBase, "DiffuseMap_2", "Textures/Terrain/PBR/Rock035_1K_Color.jpg", "DiffuseMap_2_scale", 22f);
         setTex(terrainBase, "DiffuseMap_3", "Textures/Terrain/splat/grass.jpg", "DiffuseMap_3_scale", 48f);
         Texture n0 = G3.am.loadTexture("Textures/Terrain/splat/dirt_normal.png");
@@ -317,7 +317,8 @@ public class Chunks {
                     + Math.abs(h[(gj + 2) * (n + 2) + gi + 1] - h[gj * (n + 2) + gi + 1]) / (2 * step);
                 float rock = G3.smooth(0.75f, 1.25f, slope);
                 double pd = WorldGen.pathDist(wx, wz);
-                float path = Math.hypot(wx, wz) < 300 ? G3.smooth(3.6f, 1.2f, (float) pd) : 0;
+                float edge = (float) G3.fbm(wx * 0.25 + 3, wz * 0.25, 2);
+                float path = Math.hypot(wx, wz) < 300 ? G3.smooth(3.4f + edge * 2.6f, 0.6f, (float) pd) * 0.92f : 0;
                 if (hh < 1.3f && hh > -3f) path = Math.max(path, G3.smooth(1.3f, 0.4f, hh));
                 if (WorldGen.dist(wx, wz, WorldGen.QUARRY) < 24 || WorldGen.dist(wx, wz, WorldGen.RAVINE) < 25) rock = Math.max(rock, 0.55f);
                 float bright = WorldGen.brightness(wx, wz);

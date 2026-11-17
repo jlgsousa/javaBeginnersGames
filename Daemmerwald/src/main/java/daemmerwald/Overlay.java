@@ -27,8 +27,9 @@ public class Overlay {
         Texture2D tex = new Texture2D(image);
         tex.setMagFilter(Texture.MagFilter.Bilinear);
         tex.setMinFilter(Texture.MinFilter.BilinearNoMipMaps);
-        Material m = new Material(app.getAssetManager(), "Common/MatDefs/Gui/Gui.j3md");
-        m.setTexture("Texture", tex);
+        // Gui.j3md wird im OpenGL-3.2-Kernprofil nicht korrekt gezeichnet – Unshaded funktioniert überall.
+        Material m = new Material(app.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
+        m.setTexture("ColorMap", tex);
         m.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
         m.getAdditionalRenderState().setFaceCullMode(RenderState.FaceCullMode.Off);
         pic = new Picture("overlay");

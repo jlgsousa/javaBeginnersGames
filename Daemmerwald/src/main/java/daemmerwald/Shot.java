@@ -20,12 +20,26 @@ public class Shot {
     private final File dir;
     private final List<Object[]> steps = new ArrayList<>();
     private int idx = -1;
+    private volatile String pending;
     private float wait;
 
     public Shot(Main app, String dir) {
         this.app = app;
         this.dir = new File(dir);
         this.dir.mkdirs();
+        // Aufnahme erst nach der 2D-Ebene, damit HUD und Menüs mit im Bild sind
+        app.getGuiViewPort().addProcessor(new com.jme3.post.SceneProcessor() {
+            public void initialize(com.jme3.renderer.RenderManager rm, com.jme3.renderer.ViewPort vp) { }
+            public void reshape(com.jme3.renderer.ViewPort vp, int w, int h) { }
+            public boolean isInitialized() { return true; }
+            public void preFrame(float tpf) { }
+            public void postQueue(com.jme3.renderer.queue.RenderQueue rq) { }
+            public void postFrame(com.jme3.texture.FrameBuffer out) {
+                if (pending != null) { capture(pending, out); pending = null; }
+            }
+            public void cleanup() { }
+            public void setProfiler(com.jme3.profile.AppProfiler p) { }
+        });
         // {Name, Wartezeit, Aktion}
         step("title", 2.5f, () -> { });
         step("select_troll", 2f, () -> app.core.setScene(new CharacterSelectScene(app.core)));
@@ -100,17 +114,21 @@ public class Shot {
     public void update(float dt) {
         wait -= 1;
         if (wait > 0) return;
-        if (idx >= 0) capture((String) steps.get(idx)[0]);
+        if (pending != null) return;
+        if (idx >= 0 && !captured) { pending = (String) steps.get(idx)[0]; captured = true; return; }
+        captured = false;
         idx++;
         if (idx >= steps.size()) { app.stop(); return; }
         ((Runnable) steps.get(idx)[2]).run();
         wait = Math.max(3, (Float) steps.get(idx)[1] * 2);
     }
 
-    private void capture(String name) {
+    private boolean captured;
+
+    private void capture(String name, com.jme3.texture.FrameBuffer out) {
         int w = app.getCamera().getWidth(), h = app.getCamera().getHeight();
         ByteBuffer buf = BufferUtils.createByteBuffer(w * h * 4);
-        app.getRenderer().readFrameBufferWithFormat(null, buf, Image.Format.RGBA8);
+        app.getRenderer().readFrameBufferWithFormat(out, buf, Image.Format.RGBA8);
         BufferedImage img = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
         for (int y = 0; y < h; y++) for (int x = 0; x < w; x++) {
             int i = ((h - 1 - y) * w + x) * 4;
