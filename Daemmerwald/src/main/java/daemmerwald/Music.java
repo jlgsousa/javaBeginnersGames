@@ -127,7 +127,7 @@ public class Music {
     public static float musicVolume = 0.7f;
     private AudioNode current, fading;
     private String currentMood = "";
-    private float currentVol, fadingVol, moodHold;
+    private float currentVol, fadingVol, moodHold, trackTime;
     private final Map<String, Integer> nextIndex = new HashMap<>();
     private final Random rnd = new Random();
 
@@ -145,7 +145,9 @@ public class Music {
             moodHold = 0;
         }
         // Ende eines Stücks: das nächste derselben Stimmung
-        if (current != null && current.getStatus() == com.jme3.audio.AudioSource.Status.Stopped && currentVol > 0.05f) startTrack(currentMood);
+        trackTime += dt;
+        // (erst nach ein paar Sekunden – falls ein Tongerät Stücke sofort beendet, nicht ständig neu starten)
+        if (current != null && trackTime > 8 && current.getStatus() == com.jme3.audio.AudioSource.Status.Stopped) startTrack(currentMood);
         float target = musicVolume * masterVolume * (currentMood.equals("drama") ? 0.95f : currentMood.equals("cafe") ? 0.75f : 0.85f);
         currentVol = Math.min(target, currentVol + dt * 0.35f);
         if (currentVol > target) currentVol = target;
@@ -172,7 +174,9 @@ public class Music {
         fading = current;
         fadingVol = currentVol;
         try {
-            AudioNode n = new AudioNode(app.getAssetManager(), "music/" + list[i] + ".ogg", AudioData.DataType.Stream);
+            // ohne Stream-Zwischenspeicher: der hängt sich beim Wechseln der Stücke sonst auf
+            AudioKey key = new AudioKey("music/" + list[i] + ".ogg", true, false);
+            AudioNode n = new AudioNode((AudioData) app.getAssetManager().loadAsset(key), key);
             n.setPositional(false);
             n.setLooping(false);
             n.setVolume(0);
@@ -181,9 +185,11 @@ public class Music {
             if (Boolean.getBoolean("dw.musiclog")) System.out.println("Musik: " + mood + " -> " + list[i]);
             current = n;
             currentVol = 0;
+            trackTime = 0;
         } catch (Exception e) {
             System.err.println("Musik nicht ladbar: " + e.getMessage());
             current = null;
+            trackTime = 0;
         }
     }
 }
