@@ -36,6 +36,9 @@ public class WorldScene implements Scene, Main.CameraDirector {
     private Npc nearP2;
     private House nearHouseP2;
     private boolean nearHome, nearHomeP2;
+    /** Palast: was ist in der Nähe? (Text für den Hinweis, Aktion für E) */
+    private String palaceLabel;
+    private Runnable palaceAction;
     private float velY, yaw, camYaw, camPitch = 0.28f, zoom = 1, moveSpeed;
     private boolean onGround = true, flyingNow;
     float mana;
@@ -248,7 +251,12 @@ public class WorldScene implements Scene, Main.CameraDirector {
             }, null);
             return;
         }
-        if (useHome && race == null) {
+        updatePalace(use1 || (p2 != null && p2.useNow));
+        if (palaceAction != null && (use1 || (p2 != null && p2.useNow)) && race == null) {
+            Runnable a = palaceAction;
+            palaceAction = null;
+            a.run();
+        } else if (useHome && race == null) {
             in.releaseAll();
             game.setScene(new HomeScene(game, this));
         } else if (useNpc != null && race == null) interact(useNpc);
@@ -458,6 +466,7 @@ public class WorldScene implements Scene, Main.CameraDirector {
     }
 
     private void spellImpact(Vector3f target) {
+        if (palaceSpell(target)) return;
         world.burst(target, new ColorRGBA(0.6f, 0.9f, 1f, 1), 70);
         float r = st.has(Ability.LANZE) ? 16 : 10;
         for (Iterator<Creature> it = creatures.iterator(); it.hasNext(); ) {
@@ -547,6 +556,9 @@ public class WorldScene implements Scene, Main.CameraDirector {
     public Vector3f focus() { return pos; }
 
     @Override
+    public boolean indoors() { return world.inPalace; }
+
+    @Override
     public void directCamera(Camera cam, float tpf) {
         Vector3f target;
         Vector3f desired;
@@ -566,6 +578,16 @@ public class WorldScene implements Scene, Main.CameraDirector {
             float dist = (st.hero.isTroll() ? 6.8f : 4.8f) * zoom;
             Vector3f back = new Vector3f(-FastMath.sin(camYaw) * FastMath.cos(camPitch), FastMath.sin(camPitch), -FastMath.cos(camYaw) * FastMath.cos(camPitch));
             desired = target.add(back.mult(dist));
+        }
+        if (world.inPalace) {
+            // Kamera nicht durch Palastwände und -decken
+            Vector3f d = desired.subtract(target);
+            float len = d.length();
+            if (len > 0.01f) {
+                d.divideLocal(len);
+                float hit = world.palace.rayDistance(target, d, len);
+                if (hit < len) desired = target.add(d.mult(Math.max(0.6f, hit - 0.35f)));
+            }
         }
         float gh = world.height(desired.x, desired.z) + 0.6f;
         if (desired.y < gh) desired.y = gh;
@@ -825,7 +847,110 @@ public class WorldScene implements Scene, Main.CameraDirector {
         void remove() { node.removeFromParent(); }
     }
 
+    // ================================================================ Zauberpalast
+
+    private void updatePalace(boolean pressed) {
+        palaceLabel = null;
+        palaceAction = null;
+        Palace pal = world.palace;
+        if (!world.inPalace) {
+            if (pal.gateOutside().distance(pos) < 4.5f) {
+                palaceLabel = "[E] Zauberpalast Sternenhall betreten";
+                palaceAction = this::enterPalace;
+            }
+            return;
+        }
+        // Rarität im Geheimraum aufheben
+        Palace.Secret ts = pal.treasureNear(pos, 1.8f);
+        if (ts != null && Palace.isOpen(st, ts.id) && !st.flags.contains("secretTreasure:" + ts.id)) {
+            st.flags.add("secretTreasure:" + ts.id);
+            st.addTreasure(ts.treasure, 1);
+            pal.applyOpen(st);
+            if (game.app.music != null) game.app.music.sfx("chime");
+            world.burst(pal.toWorld(ts.treasurePos), G3.rgb(ts.treasure.glow()), 120);
+            List<String> l = new ArrayList<>(List.of("*Auf dem goldenen Sockel liegt: " + ts.treasure.title + " (" + Treasure.RARITY[ts.treasure.rarity] + ")!",
+                "*" + ts.treasure.text + "  –  " + st.treasureKinds() + "/" + Treasure.values().length + " Raritäten gesammelt."));
+            l.addAll(st.addXp(40));
+            say(null, null, l.toArray(new String[0]), null);
+            saveNow(false);
+            return;
+        }
+        if (pal.exitInside().distance(pos) < 2.6f) {
+            palaceLabel = "[E] Palast verlassen";
+            palaceAction = this::exitPalace;
+            return;
+        }
+        Palace.Portal po = pal.portalNear(pos, 1.7f);
+        if (po != null && Palace.isOpen(st, po.secret())) {
+            palaceLabel = "[E] " + po.label();
+            palaceAction = () -> {
+                pos.set(pal.toWorld(po.to()));
+                yaw = camYaw = po.yawTo();
+                camInit = false;
+                if (p2 != null) p2.pos.set(pos).addLocal(1, 0, 0.5f);
+            };
+            return;
+        }
+        Palace.Secret sc = pal.secretNear(pos, 3.6f);
+        if (sc != null && !Palace.isOpen(st, sc.id)) {
+            boolean knows = st.flags.contains("hint:" + sc.id);
+            palaceLabel = "✦ " + sc.hint + (knows ? "  Zauber wirken (Q)!" : "");
+        }
+    }
+
+    void enterPalace() {
+        Palace pal = world.palace;
+        world.setPalace(true);
+        pal.applyOpen(st);
+        for (Creature c : creatures) c.remove();
+        creatures.clear();
+        pos.set(pal.entryInside());
+        yaw = camYaw = FastMath.PI;
+        camInit = false;
+        if (p2 != null) { p2.pos.set(pos).addLocal(1.5f, 0, 0); p2.yaw = FastMath.PI; }
+        if (!st.flags.contains("palace:visited")) {
+            st.flags.add("palace:visited");
+            say(null, null, new String[]{
+                "*Die Flügeltüren schwingen auf. Über dir schweben hunderte Kerzen unter einem Himmel aus Sternen – eine verzauberte Decke.",
+                "*Das ist Sternenhall, der Zauberpalast der Akademie. Links die Bibliothek, rechts der Trankkeller, vorn der große Kamin.",
+                "*Man erzählt sich von vier Geheimgängen. Wo etwas seltsam schimmert, hilft oft ein Zauber (Q). Und Freunde verraten Geheimnisse …"
+            }, null);
+        }
+    }
+
+    void exitPalace() {
+        Palace pal = world.palace;
+        world.setPalace(false);
+        pos.set(pal.gateOutside()).addLocal(0, 0, 2.5f);
+        pos.y = world.height(pos.x, pos.z);
+        yaw = camYaw = 0;
+        camInit = false;
+        if (p2 != null) { p2.pos.set(pos).addLocal(1.5f, 0, 0); p2.pos.y = world.height(p2.pos.x, p2.pos.z); }
+    }
+
+    /** Zauber im Palast: öffnet einen Geheimgang, wenn man an der richtigen Stelle zaubert. */
+    private boolean palaceSpell(Vector3f target) {
+        if (!world.inPalace) return false;
+        Palace pal = world.palace;
+        Palace.Secret sc = pal.secretNear(target, 3.4f);
+        if (sc == null) sc = pal.secretNear(pos, 3.6f);
+        if (sc == null || Palace.isOpen(st, sc.id)) return false;
+        st.flags.add("secret:" + sc.id);
+        pal.applyOpen(st);
+        world.burst(pal.toWorld(sc.spot), new ColorRGBA(0.6f, 0.8f, 1f, 1), 120);
+        if (game.app.music != null) game.app.music.sfx("chime");
+        int found = 0;
+        for (Palace.Secret s2 : pal.secrets) if (Palace.isOpen(st, s2.id)) found++;
+        List<String> l = new ArrayList<>(List.of("*Es knirscht und rumpelt – " + sc.title + " gibt einen geheimen Gang frei!",
+            "*Geheimgänge entdeckt: " + found + " von " + pal.secrets.size() + ". Dahinter wartet etwas Seltenes …"));
+        l.addAll(st.addXp(25));
+        say(null, null, l.toArray(new String[0]), null);
+        saveNow(false);
+        return true;
+    }
+
     private void updateCreatures(float dt) {
+        if (world.inPalace) return;
         invT = Math.max(0, invT - dt);
         hurtT = Math.max(0, hurtT - dt);
         foxT = Math.max(0, foxT - dt);
@@ -1608,6 +1733,14 @@ public class WorldScene implements Scene, Main.CameraDirector {
             if (sc == null) sc = new double[]{SW / 2.0, SH - 140};
             label(g, "[E] Nach Hause", sc, new Color(255, 215, 150), new Color(40, 26, 14, 210));
         }
+        if (palaceLabel != null && calm()) label(g, palaceLabel, new double[]{SW / 2.0, SH - 150}, new Color(255, 220, 150), new Color(30, 20, 50, 215));
+        if (world.inPalace && calm()) {
+            Palace.Room rm = world.palace.roomAt(pos.x, pos.z);
+            if (rm != null) {
+                g.setFont(new Font("Serif", Font.BOLD | Font.ITALIC, 24));
+                Art.shadowCentered(g, "Sternenhall · " + rm.name(), SW / 2.0, 80, new Color(230, 210, 255));
+            }
+        }
         drawSplit(g);
         drawHud(g);
         if (race != null) drawRace(g);
@@ -1698,6 +1831,21 @@ public class WorldScene implements Scene, Main.CameraDirector {
         Outfit cheapest = null;
         for (Outfit o : Outfit.values()) if (!st.owned.contains(o) && (cheapest == null || o.price < cheapest.price)) cheapest = o;
         if (cheapest != null) m.add(new String[]{"Laden", "Nächstes Gewand: " + cheapest.title, cheapest.price + " Taler bei Pimpernell (Hof)"});
+        if (!st.flags.contains("palace:visited")) m.add(new String[]{"Palast", "Betritt den Zauberpalast Sternenhall", "Nördlich hinter dem Akademiebaum"});
+        else {
+            int open = 0, taken = 0;
+            for (Palace.Secret sc : world.palace.secrets) {
+                if (Palace.isOpen(st, sc.id)) open++;
+                if (st.flags.contains("secretTreasure:" + sc.id)) taken++;
+            }
+            if (taken < 4) {
+                int hints = 0;
+                for (Palace.Secret sc : world.palace.secrets) if (st.flags.contains("hint:" + sc.id) && !Palace.isOpen(st, sc.id)) hints++;
+                m.add(new String[]{"Palast", "Geheimgänge in Sternenhall: " + open + "/4 · Schätze " + taken + "/4",
+                    hints > 0 ? hints + " Geheimnis(se) von Freunden bekannt – zaubern!" : "Freunde (3 ♥) verraten, wo man zaubern muss"});
+            }
+        }
+        m.add(new String[]{"Sammeln", "Raritäten: " + st.treasureKinds() + "/" + Treasure.values().length, "Taste I zeigt deine Tasche und Gerüchte"});
         if (st.homeLevel + 1 < Home.LEVELS.size()) {
             Home.Level nx = Home.LEVELS.get(st.homeLevel + 1);
             StringBuilder need = new StringBuilder();
@@ -1927,6 +2075,13 @@ public class WorldScene implements Scene, Main.CameraDirector {
             g.draw(hp);
             g.setFont(Art.SMALL);
             Art.shadowText(g, "Zuhause", hx + 10, hy + 4, new Color(255, 220, 160));
+            double px = mx + (Palace.PX + range) / (2 * range) * ms, py = my + (Palace.PZ + range) / (2 * range) * ms;
+            if (px > mx && px < mx + ms && py > my && py < my + ms) {
+                g.setColor(new Color(190, 170, 255));
+                for (int k = -1; k <= 1; k++) g.fill(new java.awt.geom.Rectangle2D.Double(px + k * 6 - 2, py - 10 - (k == 0 ? 4 : 0), 4, 12 + (k == 0 ? 4 : 0)));
+                g.fill(new java.awt.geom.Rectangle2D.Double(px - 8, py, 16, 6));
+                Art.shadowText(g, "Zauberpalast", px + 12, py + 4, new Color(210, 195, 255));
+            }
         }
         if (st.effect(Potion.SICHT)) {
             for (Chunks.Spot s : world.chunks.spotsNear(pos.x, pos.z, 200)) {

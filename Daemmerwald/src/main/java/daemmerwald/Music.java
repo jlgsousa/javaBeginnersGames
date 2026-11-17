@@ -84,7 +84,9 @@ public class Music {
         else if (s instanceof HomeScene) mood = "cafe";
         else if (s instanceof MiniGame) mood = "drama";
         else if (s instanceof WorldScene ws) {
+            Palace.Room pr = world.inPalace ? world.palace.roomAt(ws.focus().x, ws.focus().z) : null;
             if (ws.racing() || ws.danger()) mood = "drama";
+            else if (pr != null) mood = pr.id().equals("crypt") ? "dark" : "palace";
             else if (world.zoneDark() > 0.45f) mood = "dark";
             else if (world.dayNight.night > 0.55f) mood = "night";
             else mood = "day";
@@ -123,7 +125,8 @@ public class Music {
         "night", new String[]{"night1", "night2"},
         "dark", new String[]{"dark1", "dark2"},
         "drama", new String[]{"drama1", "drama2", "drama3"},
-        "cafe", new String[]{"cafe1", "cafe2"});
+        "cafe", new String[]{"cafe1", "cafe2"},
+        "palace", new String[]{"day2", "night1", "epic"});
     public static float musicVolume = 0.7f;
     private AudioNode current, fading;
     private String currentMood = "";

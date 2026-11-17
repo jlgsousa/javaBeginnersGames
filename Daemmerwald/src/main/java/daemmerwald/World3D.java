@@ -105,6 +105,10 @@ public class World3D {
             solid(h.x, h.z, h.radius());
         }
         setHomeLevel(0);
+        palace = new Palace();
+        root.attachChild(palace.exterior);
+        solid(Palace.PX, Palace.PZ - 1, 13.5f);
+        for (int sx = -1; sx <= 1; sx += 2) for (int sz = -1; sz <= 1; sz += 2) solid(Palace.PX + sx * 15, Palace.PZ + sz * 11, 4.2f);
         village = new Village();
         root.attachChild(village.root);
         for (float[] v : village.solids) solid(v[0], v[1], v[2]);
@@ -118,9 +122,23 @@ public class World3D {
     // ================================================================ Hilfen
 
     public Village village;
+    public Palace palace;
+    /** Spieler ist im Inneren des Zauberpalasts. */
+    public boolean inPalace;
+
+    public void setPalace(boolean inside) {
+        if (inside == inPalace) return;
+        inPalace = inside;
+        if (inside) root.attachChild(palace.interior);
+        else palace.interior.removeFromParent();
+    }
 
     /** Bodenhöhe für Figuren: Gelände – oder die Brücke im Feendorf. */
     public float height(float x, float z) {
+        if (inPalace) {
+            float f = palace.floorAt(x, z);
+            if (!Float.isNaN(f)) return f;
+        }
         float hg = WorldGen.height(x, z);
         if (village != null) {
             float d = village.deckHeight(x, z);
@@ -157,6 +175,7 @@ public class World3D {
     }
 
     public boolean blockedIgnoringWater(float x, float z, float r) {
+        if (inPalace) return palace.blocked(x, z, r);
         for (float[] o : statics) {
             float dx = x - o[0], dz = z - o[1], rr = r + o[2];
             if (dx * dx + dz * dz < rr * rr) return true;
@@ -1170,7 +1189,8 @@ public class World3D {
         }
 
         lantern.setPosition(focus.add(0, 2.4f, 0));
-        lantern.setColor(new ColorRGBA(1f, 0.76f, 0.48f, 1).multLocal(0.15f + 1.1f * night));
+        lantern.setColor(new ColorRGBA(1f, 0.76f, 0.48f, 1).multLocal(inPalace ? 1.1f : 0.15f + 1.1f * night));
+        if (inPalace) palace.update(tpf);
         for (int i = 0; i < nightLights.size(); i++) {
             nightLights.get(i).setColor(nightLightBase.get(i).mult(0.2f + 0.8f * night));
         }

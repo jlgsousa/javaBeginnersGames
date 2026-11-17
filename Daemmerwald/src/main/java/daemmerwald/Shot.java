@@ -142,6 +142,23 @@ public class Shot {
         });
         step("bag_open", 2.5f, () -> press(java.awt.event.KeyEvent.VK_I));
         step("friends_open", 2.5f, () -> press(java.awt.event.KeyEvent.VK_RIGHT));
+        step("palace_out", 5f, () -> {
+            GameState gs = app.core.state;
+            gs.flags.add("intro"); gs.flags.add("home:seen"); gs.flags.add("palace:visited");
+            app.core.setScene(new WorldScene(app.core));
+            app.world.dayNight.time = 0.42f;
+        });
+        step("palace_out2", 5f, () -> teleport(Palace.PX + 14, Palace.PZ + 52, FastMath.PI + 0.25f));
+        step("palace_hall", 5f, () -> { ((WorldScene) app.core.scene()).enterPalace(); });
+        step("palace_hall2", 4f, () -> teleport(Palace.PX + 3, Palace.PZ + 6, FastMath.PI - 0.3f));
+        step("palace_library", 4f, () -> teleport(Palace.PX - 15, Palace.PZ + 3, -FastMath.HALF_PI - 0.5f));
+        step("palace_secret", 4f, () -> {
+            app.core.state.flags.add("secret:regal");
+            app.world.palace.applyOpen(app.core.state);
+            teleport(Palace.PX - 25, Palace.PZ - 4, FastMath.PI + 0.2f);
+        });
+        step("palace_cellar", 4f, () -> teleport(Palace.PX + 15, Palace.PZ - 6, FastMath.HALF_PI + 0.4f));
+        step("palace_night", 5f, () -> { ((WorldScene) app.core.scene()).exitPalace(); app.world.dayNight.time = 0.88f; teleport(Palace.PX + 10, Palace.PZ + 46, FastMath.PI + 0.2f); });
         step("players", 2f, () -> app.core.setScene(new PlayersScene(app.core)));
         step("two_players", 6f, () -> {
             GameState gs = app.core.state;
