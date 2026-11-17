@@ -1,0 +1,26 @@
+MaterialDef SkyFog {
+
+    MaterialParameters {
+        Int NumSamples
+        Int NumSamplesDepth
+        Texture2D Texture
+        Texture2D DepthTexture
+        Vector4 FogColor
+        Float FogDensity
+        Vector2 NearFar
+        Float SkyHaze
+    }
+
+    Technique {
+        VertexShader GLSL150 GLSL100:   Common/MatDefs/Post/Post.vert
+        FragmentShader GLSL150 GLSL100: MatDefs/SkyFog.frag
+
+        WorldParameters {
+        }
+
+        Defines {
+            RESOLVE_MS : NumSamples
+            RESOLVE_DEPTH_MS : NumSamplesDepth
+        }
+    }
+}

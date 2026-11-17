@@ -1,0 +1,126 @@
+package daemmerwald;
+
+import com.jme3.math.FastMath;
+import com.jme3.math.Vector3f;
+import com.jme3.texture.Image;
+import com.jme3.util.BufferUtils;
+
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Automatischer Rundgang für Tests (-Ddw.tour=Ordner): stellt Szenen her, macht Bildschirmfotos und beendet sich.
+ * Wird im normalen Spiel nicht benutzt.
+ */
+public class Shot {
+    private final Main app;
+    private final File dir;
+    private final List<Object[]> steps = new ArrayList<>();
+    private int idx = -1;
+    private float wait;
+
+    public Shot(Main app, String dir) {
+        this.app = app;
+        this.dir = new File(dir);
+        this.dir.mkdirs();
+        // {Name, Wartezeit, Aktion}
+        step("title", 2.5f, () -> { });
+        step("select_troll", 2f, () -> app.core.setScene(new CharacterSelectScene(app.core)));
+        step("start_sunrise", 6f, () -> {
+            app.core.state.hero = CharacterDef.ALL.get(1);
+            app.core.state.dayTime = 0.245f;
+            app.core.setScene(new WorldScene(app.core));
+        });
+        step("courtyard_day", 3f, () -> { skipDialog(); app.world.dayNight.time = 0.38f; });
+        step("academy_noon", 3f, () -> { teleport(0, -60, FastMath.PI); app.world.dayNight.time = 0.5f; });
+        step("heart_sunset", 4f, () -> { teleport(0, 40, FastMath.PI); app.world.dayNight.time = 0.745f; });
+        step("lake_night", 4f, () -> { teleport(-90, -14, -FastMath.HALF_PI); app.world.dayNight.time = 0.92f; });
+        step("meadow_day", 4f, () -> { teleport(112, -80, FastMath.PI); app.world.dayNight.time = 0.42f; });
+        step("shadow_grove", 4f, () -> { teleport(-118, -70, FastMath.PI); app.world.dayNight.time = 0.55f; });
+        step("rain", 6f, () -> { teleport(20, -40, 0); app.world.dayNight.time = 0.45f; app.world.weather.forced = "rain"; app.world.weather.rain = 1; app.world.weather.cover = 0.95f; });
+        step("rainbow", 8f, () -> { app.world.weather.forced = "clear"; app.world.weather.rain = 0; app.world.weather.cover = 0.3f; app.world.weather.rainbow = 1; app.world.dayNight.time = 0.62f; teleport(0, -20, FastMath.PI * 1.5f); });
+        step("cafe_outside", 4f, () -> { app.world.weather.forced = null; teleport(34, 176, 0); app.world.dayNight.time = 0.7f; });
+        step("cafe_window", 6f, () -> {
+            WorldScene ws = (WorldScene) app.core.scene();
+            app.core.setScene(new CafeScene(app.core, ws));
+        });
+        step("wild_far", 6f, () -> {
+            WorldScene ws = new WorldScene(app.core);
+            app.core.state.flags.add("intro");
+            app.core.setScene(ws);
+            app.world.dayNight.time = 0.4f;
+        });
+        step("wild_far2", 6f, () -> teleport(-420, -380, 0.6f));
+        step("menu_map", 3f, () -> { teleport(10, -50, FastMath.PI); press(java.awt.event.KeyEvent.VK_TAB); });
+        step("fairy", 4f, () -> {
+            app.core.state.hero = CharacterDef.ALL.get(5);
+            app.core.state.outfit = Outfit.FLUEGELMANTEL;
+            app.core.state.owned.add(Outfit.FLUEGELMANTEL);
+            app.core.state.flags.add("intro");
+            app.core.setScene(new WorldScene(app.core));
+            app.world.dayNight.time = 0.3f;
+        });
+        step("end", 0.5f, () -> { });
+    }
+
+    private void step(String name, float wait, Runnable r) { steps.add(new Object[]{name, wait, r}); }
+
+    private void skipDialog() {
+        if (app.core.scene() instanceof WorldScene ws) ws.dialog = null;
+    }
+
+    private void press(int vk) {
+        app.core.input.keyDown(vk);
+        app.enqueue(() -> app.core.input.keyUp(vk));
+    }
+
+    private void teleport(float x, float z, float yaw) {
+        if (!(app.core.scene() instanceof WorldScene ws)) return;
+        ws.dialog = null;
+        ws.pos.set(x, app.world.height(x, z), z);
+        try {
+            java.lang.reflect.Field f = WorldScene.class.getDeclaredField("camYaw");
+            f.setAccessible(true);
+            f.setFloat(ws, yaw);
+            java.lang.reflect.Field y = WorldScene.class.getDeclaredField("yaw");
+            y.setAccessible(true);
+            y.setFloat(ws, yaw);
+            java.lang.reflect.Field ci = WorldScene.class.getDeclaredField("camInit");
+            ci.setAccessible(true);
+            ci.setBoolean(ws, false);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        app.world.chunks.preload(x, z);
+    }
+
+    public void update(float dt) {
+        wait -= 1;
+        if (wait > 0) return;
+        if (idx >= 0) capture((String) steps.get(idx)[0]);
+        idx++;
+        if (idx >= steps.size()) { app.stop(); return; }
+        ((Runnable) steps.get(idx)[2]).run();
+        wait = Math.max(3, (Float) steps.get(idx)[1] * 2);
+    }
+
+    private void capture(String name) {
+        int w = app.getCamera().getWidth(), h = app.getCamera().getHeight();
+        ByteBuffer buf = BufferUtils.createByteBuffer(w * h * 4);
+        app.getRenderer().readFrameBufferWithFormat(null, buf, Image.Format.RGBA8);
+        BufferedImage img = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+        for (int y = 0; y < h; y++) for (int x = 0; x < w; x++) {
+            int i = ((h - 1 - y) * w + x) * 4;
+            img.setRGB(x, y, ((buf.get(i) & 255) << 16) | ((buf.get(i + 1) & 255) << 8) | (buf.get(i + 2) & 255));
+        }
+        try {
+            javax.imageio.ImageIO.write(img, "png", new File(dir, String.format("%02d_%s.png", idx, name)));
+            System.out.println("SHOT " + name + " fps=" + app.getTimer().getFrameRate());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}

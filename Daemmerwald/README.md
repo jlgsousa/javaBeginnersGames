@@ -1,84 +1,71 @@
 # Das Flüstern im Dämmerwald
 
-Ein atmosphärisches Fantasy-Abenteuer für Erwachsene in reinem Java (Swing / Java2D, **keine externen Bibliotheken, keine Bilddateien** – alles wird prozedural gezeichnet).
+Ein 3D-Fantasy-Abenteuer für Erwachsene in Java (jMonkeyEngine 3.6). Gespielt wird in der **Third-Person-Perspektive**: Du siehst deine Figur von hinten, während sie durch eine fast **endlose Welt** läuft. Die Welt hat einen **Tag-Nacht-Zyklus mit Sonnenauf- und -untergang** (ein Tag dauert 15 Minuten), **Wetter** mit Regen und Regenbogen und **selbst komponierte Orchestermusik**.
 
-Trolle und Feen, eine Zauberakademie in den Wurzeln eines uralten Baumes, ein sterbender Wald – und ein Pakt, der mehr kostet, als alle zugeben. Kein Gemetzel: Konflikte werden mit Zaubern, Willenskraft und Entscheidungen ausgetragen.
-
-![Welt](screenshot_world.png)
+Trolle und Feen, eine Zauberakademie in den Wurzeln eines uralten Baumes, ein sterbender Wald und ein Pakt, der mehr kostet, als alle zugeben. Gemordet wird nicht: Konflikte werden mit Zaubern, Willenskraft und Entscheidungen ausgetragen.
 
 ## Starten
 
-Benötigt Java 17 oder neuer.
+Du brauchst **Java 17 oder neuer** und eine Grafikkarte mit OpenGL 3.2 (praktisch jeder Rechner der letzten zehn Jahre).
 
 ```sh
-./run.sh          # Linux / macOS
-run.bat           # Windows
+./start.sh        # Linux / macOS
+start.bat         # Windows
 ```
 
-oder manuell:
+Beim ersten Start lädt Gradle die 3D-Engine herunter, das dauert einen Moment. Für schwächere Rechner gibt es einen Sparmodus:
 
 ```sh
-javac -encoding UTF-8 -d out src/daemmerwald/*.java
-java -cp out daemmerwald.Main
+./gradlew run -Ddw.low=true
 ```
 
-## Das Spiel
-
-* **10 spielbare Figuren** (5 Trolle, 5 Feen) mit eigener Geschichte und den Werten *Macht* (Mana, Duellkraft), *Fokus* (mehr Zeit in Prüfungen) und *Geschick* (Tempo, größere Trefferflächen).
-* **Klares Ziel:** Sammle die sechs Splitter des Paktsteins und bring sie zum Herzbaum. Dort triffst du die Entscheidung, die das Ende bestimmt (zwei Enden).
-* **Endlos:** Nach dem Ende geht es weiter. Jede Prüfung ist beliebig oft wiederholbar und wird jedes Mal eine **Stufe** schwerer – mit mehr Erfahrung als Belohnung.
-* **Aufstieg & Fähigkeiten:** Erfahrung bringt Stufen, Stufen bringen neue Fähigkeiten:
-
-| Stufe | Fähigkeit | Wirkung |
-|---|---|---|
-| 1 | Lichtzauber | Verbrennt die Welke, vertreibt Schattenwesen |
-| 2 | Windschritt | [Umschalt] = schneller laufen |
-| 3 | Lichtlanze | Viel größere Zauberreichweite |
-| 4 | Zeitdehnung | +15 % Zeit in Prüfungen |
-| 5 | Seelenschild | Schattenwesen rauben nur halb so viel Mana |
-| 6 | Irrlichtbegleiter | Ein Irrlicht vertreibt Schattenwesen automatisch |
-| 8 | Mondsegen | Doppelte Mana-Regeneration |
-| 10 | Sternenherz | Stärkere Zauber im Duell |
-
-### Die Welt
-
-Helle, fröhliche Orte (Lichtwiese mit Lichtfüchsen, Mondsee, Pilzkreis, Akademiehof) und dunkle Orte voller dunkler Magie (Schattenhain, Moor, Dornenschlucht, die Welke rund um den Herzbaum). Dort streifen **Schattenwölfe** und **Welkenmotten** umher – sie rauben dir Mana, dein Lichtzauber vertreibt sie (+EP). **Lichtfüchse** schenken dir Mana.
-
-### Die Prüfungen (Minispiele)
-
-| Ort | Prüfung | Steuerung |
-|---|---|---|
-| Bibliothek – Magistra Velmara | Runen in einem Zug nachziehen | Maus |
-| Mondsee – Kanzler Oberion | Goldene Irrlichter fangen, dunkle meiden | Maus |
-| Steinbruch – Clanälteste Grumhild | Runensteine zum Turm stapeln | Leertaste / Klick |
-| Moor – Hexe Ysolde | Zutaten-Reihenfolge merken (Trank) | Maus / Tasten 1–6 |
-| Pilzkreis – Das Pilzorakel | Erinnerungs-Memory | Maus |
-| Dornenschlucht – Kestra | Durch die Dornen fliegen | Pfeile / WASD |
-| Herzbaum & Schattenhain (Vex) | Zauberduell: Pfeilkombos & Schild | Pfeile / WASD + Leertaste |
-| Lichtwiese – Aurin | Zufällige Prüfung, 1,5× Erfahrung | – |
-
-![Figurenwahl](screenshot_select.png)
-![Prüfungen](screenshot_minigames.png)
+Der Spielstand liegt in `~/.daemmerwald/spielstand.properties`.
 
 ## Steuerung
 
 | Taste | Aktion |
 |---|---|
-| WASD / Pfeiltasten | laufen |
-| E / Enter | sprechen, Dialog weiter |
-| Leertaste | Lichtzauber |
-| Umschalt | Windschritt (ab Stufe 2) |
-| M | Karte |
-| Esc | Tagebuch / Pause (Splitter, Erkenntnisse, Fähigkeiten) |
+| WASD | laufen |
+| Maus | Kamera drehen (Mausrad: Zoom) |
+| Linksklick / Q | Lichtzauber: verbrennt die Welke, vertreibt Schattenwesen |
+| Leertaste | springen (Troll) · flattern (Fee) · fliegen (mit Flügelmantel) |
+| Umschalt | rennen (ab Stufe 2) |
+| E | sprechen, benutzen, einkaufen, brauen |
+| 1–4 | Tränke trinken |
+| Tab / Esc / M | Menü: Karte, Garderobe, Inventar, Missionen, Fähigkeiten, Tagebuch, Speichern |
 
-## Code-Überblick (`src/daemmerwald`)
+Rechts am Bildschirmrand stehen immer deine **aktuellen Missionen**.
 
-* `GamePanel` – Game-Loop, Skalierung auf 1280×720, Szenenwechsel
-* `Scene` – Interface für Bildschirme (`TitleScene`, `IntroScene`, `CharacterSelectScene`, `WorldScene`, `EndingScene`)
-* `WorldMap` – Kachelkarte, teils prozedural erzeugt
-* `WorldScene` – Erkundung, Licht, Kreaturen, Zauber, HUD, Karte, Tagebuch
-* `MiniGame` – gemeinsame Basis aller Prüfungen (Einleitung → Spiel → Ergebnis, Stufen)
-* `Story` – alle Figuren und Texte · `CharacterDef` – die zehn Helden · `Ability` – Fähigkeiten
-* `Art` – sämtliche Zeichenroutinen
+## Was es gibt
 
-Ein neues Minispiel: Klasse von `MiniGame` ableiten, `start/play/draw` implementieren und in `Story.createNpcs()` einer Figur zuweisen.
+* **10 Figuren** (5 Trolle, 5 Feen) mit eigener Geschichte und eigenen Werten. Trolle sind groß und springen kraftvoll, Feen sind klein und können flattern.
+* **Hauptgeschichte:** Sammle die sechs Splitter des Paktsteins und entscheide am Herzbaum über das Schicksal des Waldes. Es gibt zwei Enden, danach geht das Spiel **endlos** weiter.
+* **Eine endlose Welt:** Im Zentrum liegen die Story-Orte (Akademie, Herzbaum, Mondsee, Steinbruch, Moor, Pilzkreis, Dornenschlucht, Schattenhain, Lichtwiese), im Süden das Meer mit dem Café auf der Klippe. In alle anderen Richtungen setzen sich Wälder, Wiesen, Seen, Berge und geheimnisvolle Steinkreise ohne Ende fort.
+* **Fröhliche und dunkle Orte:** Auf Lichtungen leben Lichtfüchse, die dir Mana schenken. An Orten der Welke und nachts streifen Schattenwölfe und Welkenmotten umher.
+* **Viele Minispiele, alle endlos wiederholbar und von Mal zu Mal schwerer:**
+  Runen nachzeichnen · Irrlichter fangen · Steinturm stapeln · Tränke brauen (Gedächtnis) · Erinnerungs-Memory · Dornenflug · Zauberduelle mit schnellen Tastenkombinationen · Rätsel beim Steinwächter · **Wettrennen gegen Brumm den Troll** quer durch die 3D-Welt · Zufallsprüfungen bei der Lichtfee Aurin
+* **Sammeln und Brauen:** Sechs Zutaten wachsen je nach Gegend überall in der Welt. Aus ihnen braust du an Kesseln vier Tränke. Figuren vergeben **Sammelaufträge** gegen Glimmertaler.
+* **Pimpernells Fadenwerk:** Der Kleiderladen einer großen, magischen Maus verkauft **18 Gewänder mit Gadgets**, zum Beispiel einen Flügelmantel zum Fliegen, eine Rüstung zur Verteidigung, einen Taucheranzug, Windläufer-Stiefel, einen Schattentarnmantel, Sprungfeder-Gamaschen, eine Glücksweste oder das Sternengewand.
+* **Stufen und Fähigkeiten:** Erfahrung bringt Stufen, Stufen bringen neue Fähigkeiten wie Windschritt, Lichtlanze, Seelenschild oder einen Irrlichtbegleiter.
+* **Café Wolkenrand:** Ein Ort nur zum Entspannen. Die Fee Lumi fragt, was du trinken möchtest, du setzt dich ans Fenster, und das Spiel speichert. Draußen wechseln Sonne, Regen und Regenbogen, Vogelschwärme ziehen vorbei, in der Ferne springen Wale, und manchmal gleitet ein leuchtender Himmelsrochen vorüber. Im Bücherregal stehen **vier vollständige Geschichten** zum Lesen.
+
+## Technik
+
+* Alles ist in Java geschrieben. Gelände, Himmel, Wetter, Musik und die meisten Modelle werden **prozedural im Code** erzeugt.
+* Fototexturen (Waldboden, Kies, Fels, Mauerwerk), das Baummodell, das Troll-Modell „Sinbad“ und das Modell, aus dem die Feen gebaut sind, stammen aus `jme3-testdata`, den freien Beispieldaten der jMonkeyEngine. Das Sinbad-Modell stammt von Zi Ye und steht unter CC BY-SA 3.0.
+* Die Musik ist **kein echtes Orchester**. Ein kleiner Synthesizer im Spiel (`MusicSynth`) berechnet sie beim Start aus Streicherflächen, Ostinati, Blechbläser-„Braams“, Trommeln, Harfe und Hall. Mit `MusicExport` lassen sich die Stücke als WAV-Dateien speichern.
+
+### Code-Überblick (`src/main/java/daemmerwald`)
+
+| Datei | Aufgabe |
+|---|---|
+| `Main` | Start, Eingabe, Kamera für Menüs |
+| `World3D` | Bauwerke, Lichter, Wasser, Schatten, Nebel, Bloom |
+| `WorldGen` / `Chunks` | Höhenfunktion der endlosen Welt / Nachladen von Gelände, Bäumen, Gras, Zutaten |
+| `DayNight` / `Weather` / `Vista` | Tag und Nacht / Wolken, Regen, Regenbogen / Wale, Vögel, Himmelsrochen |
+| `Figure` | animierte Figuren, Gewand-Zubehör |
+| `WorldScene` | Third-Person-Steuerung, Kreaturen, Rennen, Laden, Brauen, Menü, Missionen |
+| `CafeScene` / `BookReader` / `Stories` | Café, Lesemodus, Geschichten |
+| `MiniGame` und Unterklassen | alle Prüfungen (als 2D-Oberfläche über der 3D-Welt) |
+| `Music` / `MusicSynth` | Musik und Klänge |
+| `GameState` | Fortschritt, Speichern und Laden |

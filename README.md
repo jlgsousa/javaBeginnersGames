@@ -1,10 +1,10 @@
 # Java beginners games
 A set of interactive games to exercise core java features
 
-## Das Flüstern im Dämmerwald (Fantasy-Abenteuer)</br>
-Trolle, Feen, ein sterbender Wald, 10 spielbare Figuren, 8 Minispiele, Stufen & Fähigkeiten, endlos spielbar. Siehe [Daemmerwald/README.md](Daemmerwald/README.md).
+## Das Flüstern im Dämmerwald (3D-Fantasy-Abenteuer)</br>
+Trolle und Feen in einer fast endlosen 3D-Welt mit Third-Person-Kamera, Tag-Nacht-Zyklus, Wetter, selbst komponierter Musik, vielen Minispielen, einem Kleiderladen und einem Café zum Entspannen. Siehe [Daemmerwald/README.md](Daemmerwald/README.md).
 
-![](Daemmerwald/screenshot_world.png "Welt")
+![](Daemmerwald/screenshots/titel.png "Titel")
 
 ## Golf game</br>
 ![](GolfGame/introScreen.png "Intro Screen")  
