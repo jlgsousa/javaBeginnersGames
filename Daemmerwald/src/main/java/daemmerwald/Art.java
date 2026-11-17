@@ -85,16 +85,107 @@ public final class Art {
         g.fill(new Ellipse2D.Double(x - r, y - r, r * 2, r * 2));
     }
 
+    /** Verschnörkeltes Fenster: Farbverlauf, doppelter Goldrahmen, Ranken in den Ecken, Zierstück oben. */
     public static void panel(Graphics2D g, double x, double y, double w, double h) {
-        RoundRectangle2D r = new RoundRectangle2D.Double(x, y, w, h, 18, 18);
-        g.setColor(PANEL);
+        Stroke os = g.getStroke();
+        RoundRectangle2D r = new RoundRectangle2D.Double(x, y, w, h, 26, 26);
+        g.setPaint(new GradientPaint((float) x, (float) y, new Color(34, 22, 52, 228), (float) x, (float) (y + h), new Color(12, 14, 30, 232)));
         g.fill(r);
-        g.setStroke(new BasicStroke(2f));
-        g.setColor(alpha(GOLD, 150));
+        // feines Rankenmuster im Hintergrund
+        g.setColor(new Color(255, 220, 160, 10));
+        g.setStroke(new BasicStroke(1.2f));
+        for (double yy = y + 30; yy < y + h - 20; yy += 46) {
+            Path2D vine = new Path2D.Double();
+            vine.moveTo(x + 20, yy);
+            for (double xx = x + 20; xx < x + w - 40; xx += 40) { vine.quadTo(xx + 10, yy - 9, xx + 20, yy); vine.quadTo(xx + 30, yy + 9, xx + 40, yy); }
+            g.draw(vine);
+        }
+        g.setStroke(new BasicStroke(2.2f));
+        g.setColor(alpha(GOLD, 190));
         g.draw(r);
         g.setStroke(new BasicStroke(1f));
-        g.setColor(alpha(GOLD, 45));
-        g.draw(new RoundRectangle2D.Double(x + 5, y + 5, w - 10, h - 10, 14, 14));
+        g.setColor(alpha(GOLD, 70));
+        g.draw(new RoundRectangle2D.Double(x + 6, y + 6, w - 12, h - 12, 20, 20));
+        double cs = Math.min(34, Math.min(w, h) * 0.22);
+        corner(g, x + 6, y + 6, cs, 1, 1);
+        corner(g, x + w - 6, y + 6, cs, -1, 1);
+        corner(g, x + 6, y + h - 6, cs, 1, -1);
+        corner(g, x + w - 6, y + h - 6, cs, -1, -1);
+        if (w > 240) crest(g, x + w / 2, y + 2);
+        g.setStroke(os);
+    }
+
+    /** Ranke mit Spirale und Blättchen in einer Ecke. */
+    private static void corner(Graphics2D g, double cx, double cy, double s, int dx, int dy) {
+        g.setColor(alpha(GOLD, 200));
+        g.setStroke(new BasicStroke(1.8f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+        Path2D p = new Path2D.Double();
+        p.moveTo(cx + dx * s * 1.6, cy + dy * 2);
+        p.curveTo(cx + dx * s * 0.8, cy + dy * 2, cx + dx * 4, cy + dy * s * 0.2, cx + dx * 6, cy + dy * s * 0.7);
+        p.curveTo(cx + dx * 8, cy + dy * s * 1.1, cx + dx * s * 0.55, cy + dy * s * 0.95, cx + dx * s * 0.5, cy + dy * s * 0.55);
+        p.curveTo(cx + dx * s * 0.45, cy + dy * s * 0.3, cx + dx * s * 0.2, cy + dy * s * 0.4, cx + dx * s * 0.28, cy + dy * s * 0.58);
+        g.draw(p);
+        Path2D q = new Path2D.Double();
+        q.moveTo(cx + dx * 2, cy + dy * s * 1.6);
+        q.curveTo(cx + dx * 2, cy + dy * s * 0.9, cx + dx * s * 0.25, cy + dy * 5, cx + dx * s * 0.7, cy + dy * 6);
+        g.draw(q);
+        g.setColor(alpha(new Color(150, 210, 140), 170));
+        for (int k = 0; k < 2; k++) {
+            double lx = cx + dx * s * (1.1 + k * 0.35), ly = cy + dy * (5 + k * 3);
+            g.fill(new Ellipse2D.Double(lx - 4, ly - 2.2, 8, 4.4));
+        }
+        g.setColor(alpha(GOLD, 230));
+        g.fill(new Ellipse2D.Double(cx + dx * s * 0.28 - 2.5, cy + dy * s * 0.58 - 2.5, 5, 5));
+    }
+
+    /** Kleines Zierstück mit Edelstein oben mittig. */
+    private static void crest(Graphics2D g, double cx, double y) {
+        g.setStroke(new BasicStroke(1.6f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+        g.setColor(alpha(GOLD, 210));
+        for (int side = -1; side <= 1; side += 2) {
+            Path2D p = new Path2D.Double();
+            p.moveTo(cx + side * 8, y + 4);
+            p.curveTo(cx + side * 22, y - 6, cx + side * 36, y + 10, cx + side * 50, y + 2);
+            p.curveTo(cx + side * 58, y - 2, cx + side * 60, y + 8, cx + side * 54, y + 8);
+            g.draw(p);
+        }
+        Path2D gem = new Path2D.Double();
+        gem.moveTo(cx, y - 7); gem.lineTo(cx + 7, y + 3); gem.lineTo(cx, y + 12); gem.lineTo(cx - 7, y + 3); gem.closePath();
+        g.setPaint(new GradientPaint((float) cx, (float) y - 7, new Color(200, 160, 255), (float) cx, (float) y + 12, new Color(110, 60, 190)));
+        g.fill(gem);
+        g.setColor(alpha(GOLD, 230));
+        g.draw(gem);
+    }
+
+    /** Verschnörkelter Trennstrich unter Überschriften, mit funkelndem Stern. */
+    public static void ornament(Graphics2D g, double cx, double y, double w, double t) {
+        Stroke os = g.getStroke();
+        g.setStroke(new BasicStroke(1.5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+        g.setColor(alpha(GOLD, 200));
+        for (int side = -1; side <= 1; side += 2) {
+            Path2D p = new Path2D.Double();
+            p.moveTo(cx + side * 14, y);
+            p.curveTo(cx + side * w * 0.15, y - 8, cx + side * w * 0.3, y + 8, cx + side * w * 0.45, y);
+            p.curveTo(cx + side * w * 0.48, y - 3, cx + side * w * 0.5, y + 4, cx + side * w * 0.47, y + 5);
+            g.draw(p);
+            g.fill(new Ellipse2D.Double(cx + side * w * 0.3 - 2, y + 1, 4, 4));
+        }
+        double tw = 0.75 + 0.25 * Math.sin(t * 3);
+        star(g, cx, y, 9 * tw, new Color(255, 236, 170));
+        g.setStroke(os);
+    }
+
+    public static void star(Graphics2D g, double x, double y, double r, Color c) {
+        Path2D p = new Path2D.Double();
+        for (int i = 0; i < 8; i++) {
+            double a = i * Math.PI / 4, rr = i % 2 == 0 ? r : r * 0.35;
+            if (i == 0) p.moveTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr);
+            else p.lineTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr);
+        }
+        p.closePath();
+        glow(g, x, y, r * 2.2, c, 90);
+        g.setColor(c);
+        g.fill(p);
     }
 
     public static void centered(Graphics2D g, String s, double cx, double y) {
@@ -204,8 +295,15 @@ public final class Art {
 
     public static void backdrop(Graphics2D g, double t) {
         if (THREE_D) {
-            g.setPaint(new GradientPaint(0, 0, new Color(4, 6, 16, 150), 0, GamePanel.H, new Color(4, 6, 16, 90)));
+            g.setPaint(new GradientPaint(0, 0, new Color(10, 6, 24, 150), 0, GamePanel.H, new Color(4, 6, 16, 90)));
             g.fillRect(0, 0, GamePanel.W, GamePanel.H);
+            // schwebende Funken
+            for (int i = 0; i < 26; i++) {
+                double fx = (i * 197.3 + t * (8 + i % 5)) % 1300 - 10, fy = 720 - ((i * 83.7 + t * (14 + i % 7)) % 760);
+                double a = 0.5 + 0.5 * Math.sin(t * 2 + i);
+                if (i % 4 == 0) star(g, fx, fy, 3 + a * 2, new Color(255, 230, 170, (int) (120 + a * 120)));
+                else dot(g, fx, fy, 1.4, new Color(255, 220, 160), (int) (a * 180));
+            }
             return;
         }
         if (backdrop == null) backdrop = makeBackdrop();

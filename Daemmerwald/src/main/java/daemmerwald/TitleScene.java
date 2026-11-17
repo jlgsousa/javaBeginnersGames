@@ -44,6 +44,7 @@ public class TitleScene implements Scene {
             GameState s = GameState.load();
             if (s != null) {
                 game.state = s;
+                DialogBox.playerName = s.playerName;
                 game.setScene(new WorldScene(game));
             }
             return;
@@ -52,7 +53,7 @@ public class TitleScene implements Scene {
         switch (idx) {
             case 0 -> {
                 game.state = new GameState();
-                game.setScene(new IntroScene(game));
+                game.setScene(new NameScene(game));
             }
             case 1 -> help = true;
             default -> System.exit(0);
@@ -71,14 +72,16 @@ public class TitleScene implements Scene {
         g.setFont(Art.TITLE);
         Art.shadowCentered(g, "Das Flüstern", 640, 225, Art.GOLD);
         Art.shadowCentered(g, "im Dämmerwald", 640, 300, Art.GOLD);
+        Art.ornament(g, 640, 322, 520, t);
         g.setFont(Art.ITALIC);
         g.setColor(new Color(210, 210, 235));
-        Art.centered(g, "Trolle. Feen. Ein sterbender Wald. Und ein Pakt, der mehr kostet, als alle zugeben.", 640, 350);
+        Art.centered(g, "Trolle. Feen. Ein sterbender Wald. Und ein Pakt, der mehr kostet, als alle zugeben.", 640, 360);
 
         for (int i = 0; i < items.length; i++) {
             double y = 430 + i * 64;
             boolean s = i == sel;
-            RoundRectangle2D r = new RoundRectangle2D.Double(480, y - 30, 320, 50, 24, 24);
+            RoundRectangle2D r = new RoundRectangle2D.Double(480, y - 30, 320, 50, 28, 28);
+            if (s) { Art.star(g, 462, y - 5, 7 + Math.sin(t * 4) * 2, new Color(255, 230, 160)); Art.star(g, 818, y - 5, 7 + Math.sin(t * 4 + 1) * 2, new Color(255, 230, 160)); }
             g.setColor(s ? new Color(60, 50, 90, 220) : new Color(20, 20, 36, 170));
             g.fill(r);
             g.setColor(s ? Art.GOLD : Art.alpha(Art.GOLD, 80));

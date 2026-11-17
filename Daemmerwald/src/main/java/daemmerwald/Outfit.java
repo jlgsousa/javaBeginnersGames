@@ -64,6 +64,6 @@ public enum Outfit {
     /** Look der Spielfigur mit der Farbe dieses Gewands. */
     public Look apply(Look base) {
         if (color == null) return base;
-        return new Look(base.kind, base.skin, color, base.accent, base.hair, base.wing, base.horns);
+        return new Look(base.kind, base.skin, color, base.accent, base.hair, base.wing, base.horns).hair(base.female, base.hairStyle);
     }
 }

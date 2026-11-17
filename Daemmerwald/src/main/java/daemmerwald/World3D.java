@@ -34,6 +34,8 @@ public class World3D {
     public final Map<String, Figure> figures = new HashMap<>();
     public final Map<String, Vector3f> npcPos = new HashMap<>();
     public Figure corvina, waitress;
+    /** Begehbare Häuser der Story-Region. */
+    public final List<House> houses = Chunks.STORY_HOUSES;
     public final PointLight lantern = new PointLight();
 
     private final Main app;
@@ -87,6 +89,10 @@ public class World3D {
         buildLakeCourt();
         buildCafe();
         buildShop();
+        for (House h : houses) {
+            root.attachChild(h.buildExterior());
+            solid(h.x, h.z, h.radius());
+        }
         buildNpcs();
         buildParticles();
         setupFilters();
@@ -757,7 +763,7 @@ public class World3D {
         cafeDoor.set(cx, height(cx, cz - d - 1.8f), cz - d - 1.8f);
         cafeSeat.set(cx, fy + 1.45f, cz + d - 2.75f);
         cafeLook.set(cx, fy - 9f, cz + 60);
-        waitress = new Figure(Look.fairy(Look.rgb(250, 232, 220), Look.rgb(150, 110, 160), Look.rgb(255, 210, 240), Look.rgb(250, 220, 170), Look.rgb(255, 210, 250)));
+        waitress = new Figure(Look.fairy(Look.rgb(250, 232, 220), Look.rgb(150, 110, 160), Look.rgb(255, 210, 240), Look.rgb(250, 220, 170), Look.rgb(255, 210, 250)).hair(true, Look.BUN));
         waitress.node.setLocalTranslation(cx + 4.5f, fy, cz - d + 2.6f);
         waitress.node.setLocalRotation(new Quaternion().fromAngleAxis(FastMath.PI * 0.85f, Vector3f.UNIT_Y));
         root.attachChild(waitress.node);

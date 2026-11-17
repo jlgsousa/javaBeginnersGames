@@ -153,14 +153,20 @@ public class Main extends SimpleApplication implements RawInputListener {
             {KeyInput.KEY_4, KeyEvent.VK_4}, {KeyInput.KEY_5, KeyEvent.VK_5}, {KeyInput.KEY_6, KeyEvent.VK_6},
             {KeyInput.KEY_NUMPAD1, KeyEvent.VK_NUMPAD1}, {KeyInput.KEY_NUMPAD2, KeyEvent.VK_NUMPAD2}, {KeyInput.KEY_NUMPAD3, KeyEvent.VK_NUMPAD3},
             {KeyInput.KEY_NUMPAD4, KeyEvent.VK_NUMPAD4}, {KeyInput.KEY_NUMPAD5, KeyEvent.VK_NUMPAD5}, {KeyInput.KEY_NUMPAD6, KeyEvent.VK_NUMPAD6},
-            {KeyInput.KEY_PGUP, KeyEvent.VK_PAGE_UP}, {KeyInput.KEY_PGDN, KeyEvent.VK_PAGE_DOWN}
+            {KeyInput.KEY_PGUP, KeyEvent.VK_PAGE_UP}, {KeyInput.KEY_PGDN, KeyEvent.VK_PAGE_DOWN}, {KeyInput.KEY_BACK, KeyEvent.VK_BACK_SPACE}
         };
         for (int[] p : m) keyMap.put(p[0], p[1]);
     }
 
     @Override public void onKeyEvent(KeyInputEvent e) {
+        char ch = e.getKeyChar();
+        if (e.isPressed() && ch != 0 && (Character.isLetterOrDigit(ch) || ch == ' ' || ch == '-' || ch == '\'')) core.input.typeChar(ch);
         Integer vk = keyMap.get(e.getKeyCode());
-        if (vk == null || e.isRepeating()) return;
+        if (vk == null) return;
+        if (e.isRepeating()) {
+            if (vk == KeyEvent.VK_BACK_SPACE) core.input.keyDown(vk);
+            return;
+        }
         if (e.isPressed()) core.input.keyDown(vk);
         else core.input.keyUp(vk);
     }

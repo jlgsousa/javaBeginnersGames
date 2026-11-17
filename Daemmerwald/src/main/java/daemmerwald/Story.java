@@ -26,25 +26,25 @@ public final class Story {
         "Du bist im letzten Jahr deines Studiums. Niemand hat dich gebeten, das zu tun.\n\nGenau deshalb wirst du es tun."
     };
 
-    public static final Look BORGA = Look.troll(rgb(116, 136, 104), rgb(92, 70, 50), rgb(240, 180, 90), rgb(50, 40, 30), false);
-    public static final Look ILVY = Look.fairy(rgb(240, 225, 215), rgb(90, 140, 170), rgb(160, 230, 255), rgb(200, 120, 60), rgb(170, 220, 255));
-    public static final Look REKTOR = Look.fairy(rgb(215, 210, 200), rgb(70, 34, 78), rgb(230, 200, 120), rgb(230, 230, 230), rgb(150, 140, 160));
-    public static final Look VELMARA = Look.fairy(rgb(225, 215, 200), rgb(40, 40, 92), rgb(150, 180, 255), rgb(120, 120, 150), rgb(100, 110, 150));
-    public static final Look OBERION = Look.fairy(rgb(245, 235, 230), rgb(180, 180, 222), rgb(220, 240, 255), rgb(250, 250, 250), rgb(220, 230, 255));
-    public static final Look GRUMHILD = Look.troll(rgb(110, 116, 126), rgb(100, 80, 60), rgb(255, 170, 80), rgb(210, 210, 210), true);
-    public static final Look YSOLDE = Look.troll(rgb(100, 122, 90), rgb(50, 60, 40), rgb(150, 255, 120), rgb(40, 50, 30), false);
+    public static final Look BORGA = Look.troll(rgb(116, 136, 104), rgb(92, 70, 50), rgb(240, 180, 90), rgb(50, 40, 30), false).hair(true, Look.BRAIDS);
+    public static final Look ILVY = Look.fairy(rgb(240, 225, 215), rgb(90, 140, 170), rgb(160, 230, 255), rgb(200, 120, 60), rgb(170, 220, 255)).hair(true, Look.PONYTAIL);
+    public static final Look REKTOR = Look.fairy(rgb(215, 210, 200), rgb(70, 34, 78), rgb(230, 200, 120), rgb(230, 230, 230), rgb(150, 140, 160)).hair(false, Look.BEARD);
+    public static final Look VELMARA = Look.fairy(rgb(225, 215, 200), rgb(40, 40, 92), rgb(150, 180, 255), rgb(120, 120, 150), rgb(100, 110, 150)).hair(true, Look.BUN);
+    public static final Look OBERION = Look.fairy(rgb(245, 235, 230), rgb(180, 180, 222), rgb(220, 240, 255), rgb(250, 250, 250), rgb(220, 230, 255)).hair(false, Look.LONG);
+    public static final Look GRUMHILD = Look.troll(rgb(110, 116, 126), rgb(100, 80, 60), rgb(255, 170, 80), rgb(210, 210, 210), true).hair(true, Look.BUN);
+    public static final Look YSOLDE = Look.troll(rgb(100, 122, 90), rgb(50, 60, 40), rgb(150, 255, 120), rgb(40, 50, 30), false).hair(true, Look.LONG);
     public static final Look ORAKEL = new Look(Look.SHROOM, new Color(220, 210, 185), new Color(150, 52, 42),
         new Color(255, 236, 170), Color.WHITE, Color.WHITE, false);
-    public static final Look KESTRA = Look.fairy(rgb(210, 190, 170), rgb(70, 60, 40), rgb(255, 200, 120), rgb(150, 60, 40), rgb(200, 170, 120));
+    public static final Look KESTRA = Look.fairy(rgb(210, 190, 170), rgb(70, 60, 40), rgb(255, 200, 120), rgb(150, 60, 40), rgb(200, 170, 120)).hair(true, Look.BRAIDS);
     public static final Look CORVINA = new Look(Look.WRAITH, Color.BLACK, new Color(60, 24, 72),
         new Color(214, 120, 255), Color.BLACK, Color.BLACK, false);
 
     public static final Look VEX = new Look(Look.WRAITH, Color.BLACK, new Color(20, 24, 40),
         new Color(255, 80, 90), Color.BLACK, Color.BLACK, false);
-    public static final Look AURIN = Look.fairy(rgb(255, 240, 225), rgb(255, 200, 120), rgb(255, 250, 170), rgb(255, 230, 120), rgb(255, 250, 200));
+    public static final Look AURIN = Look.fairy(rgb(255, 240, 225), rgb(255, 200, 120), rgb(255, 250, 170), rgb(255, 230, 120), rgb(255, 250, 200)).hair(true, Look.LONG);
 
-    public static final Look BRUMM = Look.troll(rgb(126, 140, 100), rgb(150, 70, 40), rgb(255, 200, 80), rgb(180, 120, 60), false);
-    public static final Look GROL = Look.troll(rgb(128, 128, 132), rgb(96, 96, 100), rgb(120, 220, 255), rgb(110, 110, 115), true);
+    public static final Look BRUMM = Look.troll(rgb(126, 140, 100), rgb(150, 70, 40), rgb(255, 200, 80), rgb(180, 120, 60), false).hair(false, Look.WILD);
+    public static final Look GROL = Look.troll(rgb(128, 128, 132), rgb(96, 96, 100), rgb(120, 220, 255), rgb(110, 110, 115), true).hair(false, Look.BEARD);
     public static final Look PIMPERNELL = new Look(Look.MOUSE, new Color(140, 128, 120), new Color(200, 80, 90),
         new Color(255, 220, 230), Color.WHITE, Color.WHITE, false);
 

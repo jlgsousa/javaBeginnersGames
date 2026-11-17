@@ -20,6 +20,8 @@ public class DialogBox {
         String text;
     }
 
+    /** Name, mit dem die Figuren die Spielerin oder den Spieler ansprechen. */
+    public static String playerName = "";
     private final List<Line> lines = new ArrayList<>();
     private int idx;
     private double chars;
@@ -30,7 +32,7 @@ public class DialogBox {
         for (String s : raw) {
             Line l = new Line();
             if (s.startsWith(">")) {
-                l.speaker = hero.name;
+                l.speaker = playerName.isBlank() ? hero.name : playerName;
                 l.look = hero.look;
                 s = s.substring(1);
             } else if (s.startsWith("*")) {
@@ -40,7 +42,7 @@ public class DialogBox {
                 l.speaker = npcName;
                 l.look = npcLook;
             }
-            l.text = s.replace("{name}", hero.name.split(" ")[0]);
+            l.text = s.replace("{name}", playerName.isBlank() ? hero.name.split(" ")[0] : playerName);
             lines.add(l);
         }
         if (lines.isEmpty()) done = true;
@@ -83,7 +85,15 @@ public class DialogBox {
         double ty = y + 46;
         if (l.speaker != null) {
             g.setFont(Art.H2);
-            Art.shadowText(g, l.speaker, tx, ty, Art.GOLD);
+            int nw = g.getFontMetrics().stringWidth(l.speaker) + 44;
+            java.awt.geom.Path2D rib = new java.awt.geom.Path2D.Double();
+            rib.moveTo(tx - 22, y - 16); rib.lineTo(tx - 22 + nw, y - 16); rib.lineTo(tx - 22 + nw + 14, y + 2);
+            rib.lineTo(tx - 22 + nw, y + 20); rib.lineTo(tx - 22, y + 20); rib.lineTo(tx - 8, y + 2); rib.closePath();
+            g.setPaint(new GradientPaint((float) tx, (float) y - 16, new Color(120, 70, 160), (float) tx, (float) y + 20, new Color(70, 36, 100)));
+            g.fill(rib);
+            g.setColor(Art.alpha(Art.GOLD, 220));
+            g.draw(rib);
+            Art.shadowText(g, l.speaker, tx, y + 11, Art.GOLD);
             ty += 36;
         } else {
             ty += 12;

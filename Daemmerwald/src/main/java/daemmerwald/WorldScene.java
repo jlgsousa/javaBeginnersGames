@@ -48,6 +48,7 @@ public class WorldScene implements Scene, Main.CameraDirector {
     private final List<FloatText> texts = new ArrayList<>();
     private BufferedImage mapImg;
     private Npc near;
+    private House nearHouse;
 
     // Kreaturen
     private final List<Creature> creatures = new ArrayList<>();
@@ -204,7 +205,17 @@ public class WorldScene implements Scene, Main.CameraDirector {
             float d = p.distance(pos);
             if (d < r && d < best) { best = d; near = n; }
         }
+        nearHouse = null;
+        if (near == null) {
+            List<House> hs = new ArrayList<>(world.houses);
+            hs.addAll(world.chunks.housesNear(pos.x, pos.z));
+            for (House h : hs) if (h.door().distance(pos) < 3.2f) nearHouse = h;
+        }
         if (near != null && in.wasPressed(KeyEvent.VK_E, KeyEvent.VK_ENTER) && race == null) interact(near);
+        else if (nearHouse != null && in.wasPressed(KeyEvent.VK_E, KeyEvent.VK_ENTER) && race == null) {
+            in.releaseAll();
+            game.setScene(new HouseScene(game, this, nearHouse));
+        }
 
         pickups();
         updateCreatures(dt);
@@ -1274,6 +1285,16 @@ public class WorldScene implements Scene, Main.CameraDirector {
             g.fill(new RoundRectangle2D.Double(s[0] - w / 2.0, s[1] - 20, w, 28, 14, 14));
             Art.shadowCentered(g, label, s[0], s[1], Art.GOLD);
         }
+        if (nearHouse != null && dialog == null && choice == null && menuTab < 0 && !shop && !brew && race == null) {
+            double[] s = screen(nearHouse.door().add(0, 2.4f, 0));
+            if (s == null) s = new double[]{SW / 2.0, SH - 140};
+            String label = "[E] " + (nearHouse.evil ? "Anklopfen bei " : "Besuch bei ") + nearHouse.owner;
+            g.setFont(Art.UI);
+            int w = g.getFontMetrics().stringWidth(label) + 30;
+            g.setColor(nearHouse.evil ? new Color(40, 10, 50, 210) : new Color(40, 26, 14, 210));
+            g.fill(new RoundRectangle2D.Double(s[0] - w / 2.0, s[1] - 20, w, 28, 14, 14));
+            Art.shadowCentered(g, label, s[0], s[1], nearHouse.evil ? new Color(220, 150, 255) : Art.GOLD);
+        }
         drawHud(g);
         if (race != null) drawRace(g);
         if (dialog == null && menuTab < 0 && !shop && !brew) drawTracker(g);
@@ -1287,10 +1308,10 @@ public class WorldScene implements Scene, Main.CameraDirector {
     private void drawHud(Graphics2D g) {
         Art.panel(g, 16, 16, 330, 112);
         g.setFont(Art.UI);
-        Art.shadowText(g, st.hero.name, 32, 42, Art.GOLD);
+        Art.shadowText(g, st.displayName(), 32, 42, Art.GOLD);
         g.setFont(Art.SMALL);
         g.setColor(new Color(190, 190, 210));
-        g.drawString(st.hero.epithet + "  ·  " + st.outfit.title, 32, 61);
+        g.drawString(st.hero.name.split(" ")[0] + ", " + st.hero.epithet + "  ·  " + st.outfit.title, 32, 61);
         Art.bar(g, 32, 70, 296, 14, mana / maxMana(), Art.MAGIC);
         g.setColor(Color.WHITE);
         g.setFont(new Font("SansSerif", Font.BOLD, 11));
@@ -1356,6 +1377,7 @@ public class WorldScene implements Scene, Main.CameraDirector {
         for (Outfit o : Outfit.values()) if (!st.owned.contains(o) && (cheapest == null || o.price < cheapest.price)) cheapest = o;
         if (cheapest != null) m.add(new String[]{"Laden", "Nächstes Gewand: " + cheapest.title, cheapest.price + " Taler bei Pimpernell (Hof)"});
         if (!st.flags.contains("cafe")) m.add(new String[]{"Ruhe", "Besuche das Café Wolkenrand", "Auf der Klippe im Süden"});
+        if (!st.flags.contains("visit:knorz")) m.add(new String[]{"Besuch", "Oma Knorz wohnt in einer Hügelhöhle", "beim Steinbruch – sie hat immer Tee"});
         return m;
     }
 

@@ -85,6 +85,7 @@ public class Music {
         Scene s = core.scene();
         String mood;
         if (s instanceof CafeScene) mood = "cafe";
+        else if (s instanceof HouseScene hs) mood = hs.evil() ? "dark" : "cafe";
         else if (s instanceof MiniGame) mood = "drama";
         else if (s instanceof WorldScene ws) {
             if (ws.racing()) mood = "drama";

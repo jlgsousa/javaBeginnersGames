@@ -16,6 +16,10 @@ public class Input {
     /** Mausbewegung seit dem letzten Frame (Pixel) – für die Kamera. */
     public double lookDX, lookDY;
     public double wheel;
+    /** In diesem Frame getippte Zeichen (für Namenseingabe). */
+    public final StringBuilder typed = new StringBuilder();
+
+    public void typeChar(char c) { typed.append(c); }
 
     public boolean isDown(int... codes) {
         for (int c : codes) if (c >= 0 && c < down.length && down[c]) return true;
@@ -60,5 +64,6 @@ public class Input {
         lookDX = 0;
         lookDY = 0;
         wheel = 0;
+        typed.setLength(0);
     }
 }

@@ -27,6 +27,7 @@ public class Figure {
     public final float height;
     private final Node model = new Node("model");
     private AnimComposer ac;
+    private Doll doll;
     private Anim anim;
     private final boolean troll;
     private Node[] wings;
@@ -43,8 +44,8 @@ public class Figure {
         this.troll = look.kind == Look.TROLL;
         node.attachChild(model);
         switch (look.kind) {
-            case Look.TROLL -> { height = 2.7f; buildTroll(); }
-            case Look.FAIRY -> { height = 1.65f; buildFairy(); }
+            case Look.TROLL -> { height = 2.3f; doll = new Doll(look, height); model.attachChild(doll.root); }
+            case Look.FAIRY -> { height = 1.5f; buildFairy(); }
             case Look.SHROOM -> { height = 3.4f; buildShroom(); }
             case Look.MOUSE -> { height = 1.35f; buildMouse(); }
             default -> { height = 2.1f; buildWraith(); }
@@ -283,14 +284,8 @@ public class Figure {
     }
 
     private void buildFairy() {
-        Spatial s = ninja();
-        Material m = G3.lit(G3.rgb(look.cloth).multLocal(1.5f).addLocal(new ColorRGBA(0.15f, 0.15f, 0.15f, 0)));
-        Texture t = G3.am.loadTexture("Models/Ninja/Ninja.jpg");
-        m.setTexture("DiffuseMap", t);
-        m.setColor("GlowColor", G3.rgb(look.accent).multLocal(0.16f));
-        m.setColor("Specular", new ColorRGBA(0.3f, 0.3f, 0.3f, 1));
-        s.setMaterial(m);
-        fit(s, height, FastMath.PI);
+        doll = new Doll(look, height);
+        model.attachChild(doll.root);
         // Flügel
         wings = new Node[4];
         Material wm = G3.additive(G3.wingTex(), G3.rgb(look.wing).multLocal(0.22f), false);
@@ -413,6 +408,7 @@ public class Figure {
             if (airborne && troll) play(Anim.JUMP);
             else play(speed > 0.5f ? Anim.RUN : Anim.IDLE);
         }
+        if (doll != null) doll.animate(tpf, t, speed, airborne || flying, castT > 0);
         if (ac != null) {
             float base = troll ? speed / 5.2f : speed / 2.6f;
             ac.setGlobalSpeed(castT > 0 ? 1.3f : (speed > 0.5f ? Math.max(0.6f, Math.min(1.8f, base)) : 1f));

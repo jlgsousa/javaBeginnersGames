@@ -53,11 +53,13 @@ public class Chunks {
 
     /** Bereits gesammelte Zutaten (wird vom Spiel befüllt, thread-sicher). */
     public final Set<String> picked = ConcurrentHashMap.newKeySet();
+    public static final List<House> STORY_HOUSES = House.storyHouses();
     private final Map<Item, Material> itemMats = new EnumMap<>(Item.class);
     private final Map<Item, Mesh> itemMeshes = new EnumMap<>(Item.class);
 
     static class Chunk {
         volatile List<Spot> spots = List.of();
+        volatile List<House> houses = List.of();
         final int cx, cz;
         volatile Node terrain, far, near;
         volatile boolean building, buildingNear;
@@ -260,6 +262,17 @@ public class Chunks {
         c.buildingNear = false;
     }
 
+    /** Häuser der Wildnis in der Nähe. */
+    public List<House> housesNear(float x, float z) {
+        List<House> out = new ArrayList<>();
+        int cx = Math.floorDiv((int) Math.floor(x), SIZE), cz = Math.floorDiv((int) Math.floor(z), SIZE);
+        for (int dx = -1; dx <= 1; dx++) for (int dz = -1; dz <= 1; dz++) {
+            Chunk c = chunks.get(key(cx + dx, cz + dz));
+            if (c != null) out.addAll(c.houses);
+        }
+        return out;
+    }
+
     /** Zutaten in der Nähe (nur geladene Nah-Kacheln). */
     public List<Spot> spotsNear(float x, float z, float r) {
         List<Spot> out = new ArrayList<>();
@@ -381,6 +394,23 @@ public class Chunks {
         Node farBatch = new Node("farBatch");
         List<float[]> obst = new ArrayList<>();
         Random rnd = new Random(key(c.cx, c.cz) * 31 + 7);
+        // Begehbare Häuser in der Wildnis
+        List<House> hs = new ArrayList<>();
+        Random hr = new Random(key(c.cx, c.cz) * 97 + 13);
+        if (Math.hypot(x0 + 64, z0 + 64) > 330 && hr.nextFloat() < 0.22f) {
+            for (int tries = 0; tries < 6; tries++) {
+                float hx = x0 + 20 + hr.nextFloat() * 88, hz = z0 + 20 + hr.nextFloat() * 88;
+                float h0 = WorldGen.height(hx, hz);
+                float sl = Math.abs(WorldGen.height(hx + 4, hz) - h0) + Math.abs(WorldGen.height(hx, hz + 4) - h0);
+                if (h0 < WorldGen.WATER + 1.2f || sl > 2.2f || h0 > 90) continue;
+                House wh = House.random("w" + c.cx + "_" + c.cz, hx, hz, hr);
+                hs.add(wh);
+                obst.add(new float[]{hx, hz, wh.radius(), 5, h0, 1, 0, 0});
+                far.attachChild(wh.buildExterior());
+                break;
+            }
+        }
+        for (House sh : STORY_HOUSES) if (sh.x > x0 - 10 && sh.x < x0 + SIZE + 10 && sh.z > z0 - 10 && sh.z < z0 + SIZE + 10) hs.add(sh);
         for (float gz = 3; gz < SIZE; gz += 7) {
             for (float gx = 3; gx < SIZE; gx += 7) {
                 float wx = x0 + gx + (rnd.nextFloat() - 0.5f) * 5.5f, wz = z0 + gz + (rnd.nextFloat() - 0.5f) * 5.5f;
@@ -390,6 +420,9 @@ public class Chunks {
                 float roll = rnd.nextFloat();
                 float scale = 3.4f + rnd.nextFloat() * 2.4f;
                 float rot = rnd.nextFloat() * FastMath.TWO_PI;
+                boolean nearHouse = false;
+                for (House nh : hs) if (FastMath.sqr(wx - nh.x) + FastMath.sqr(wz - nh.z) < FastMath.sqr(nh.radius() + 4)) nearHouse = true;
+                if (nearHouse) continue;
                 if (roll < f * 0.9f) {
                     boolean dead = WorldGen.darkness(wx, wz) > 0.45f && rnd.nextFloat() < 0.75f;
                     float pineN = (float) G3.fbm(wx * 0.006 + 50, wz * 0.006 - 20, 3) + (hh > 14 ? 0.25f : 0);
@@ -458,6 +491,9 @@ public class Chunks {
         }
         c.terrain = tn;
         c.far = far;
+        List<House> own = new ArrayList<>();
+        for (House oh : hs) if (!STORY_HOUSES.contains(oh)) own.add(oh);
+        c.houses = own;
     }
 
     private void buildNear(Chunk c) {

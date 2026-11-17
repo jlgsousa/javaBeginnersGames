@@ -42,6 +42,7 @@ public class Shot {
         });
         // {Name, Wartezeit, Aktion}
         step("title", 2.5f, () -> { });
+        step("name", 2f, () -> { app.core.setScene(new NameScene(app.core)); for (char ch : "Liora".toCharArray()) app.core.input.typeChar(ch); });
         step("select_troll", 2f, () -> app.core.setScene(new CharacterSelectScene(app.core)));
         step("start_sunrise", 6f, () -> {
             app.core.state.hero = CharacterDef.ALL.get(1);
@@ -81,6 +82,11 @@ public class Shot {
             app.core.setScene(new WorldScene(app.core));
             app.world.dayNight.time = 0.3f;
         });
+        step("houses_knorz_out", 4f, () -> { House h = app.world.houses.get(1); Vector3f d = h.door(); teleport(d.x + (d.x - h.x) * 0.9f, d.z + (d.z - h.z) * 0.9f, FastMath.atan2(h.x - d.x, h.z - d.z)); app.world.dayNight.time = 0.7f; });
+        step("houses_knorz_in", 4f, () -> { WorldScene ws = (WorldScene) app.core.scene(); app.core.setScene(new HouseScene(app.core, ws, app.world.houses.get(1))); });
+        step("houses_evil_out", 4f, () -> { app.core.setScene(new WorldScene(app.core)); House h = app.world.houses.get(4); Vector3f d = h.door(); teleport(d.x + (d.x - h.x) * 0.9f, d.z + (d.z - h.z) * 0.9f, FastMath.atan2(h.x - d.x, h.z - d.z)); app.world.dayNight.time = 0.85f; });
+        step("houses_evil_in", 4f, () -> { WorldScene ws = (WorldScene) app.core.scene(); app.core.setScene(new HouseScene(app.core, ws, app.world.houses.get(4))); });
+        step("houses_mouse_out", 4f, () -> { app.core.setScene(new WorldScene(app.core)); House h = app.world.houses.get(2); Vector3f d = h.door(); teleport(d.x + (d.x - h.x) * 1.4f, d.z + (d.z - h.z) * 1.4f, FastMath.atan2(h.x - d.x, h.z - d.z)); app.world.dayNight.time = 0.4f; });
         step("end", 0.5f, () -> { });
     }
 

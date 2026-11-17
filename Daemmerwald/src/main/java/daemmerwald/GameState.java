@@ -7,6 +7,8 @@ import java.util.*;
 /** Spielfortschritt eines Durchlaufs – kann gespeichert und geladen werden. */
 public class GameState {
     public CharacterDef hero = CharacterDef.ALL.get(0);
+    /** Der Name, den sich die Spielerin oder der Spieler gegeben hat. */
+    public String playerName = "";
     public final EnumSet<Shard> shards = EnumSet.noneOf(Shard.class);
     public final Set<String> flags = new HashSet<>();
     public final List<String> notes = new ArrayList<>();
@@ -24,6 +26,9 @@ public class GameState {
     public int level = 1, xp, banished, gamesWon, racesWon, riddlesSolved, brewed, collected;
     public float px = 0, pz = -50, dayTime = 0.30f;
     public boolean loaded;
+
+    /** Anzeigename: eigener Name oder der Vorname der Figur. */
+    public String displayName() { return playerName == null || playerName.isBlank() ? hero.name.split(" ")[0] : playerName; }
 
     public boolean has(Shard s) { return shards.contains(s); }
 
@@ -81,6 +86,7 @@ public class GameState {
     public void save() {
         Properties p = new Properties();
         p.setProperty("hero", String.valueOf(CharacterDef.ALL.indexOf(hero)));
+        p.setProperty("name", playerName);
         p.setProperty("shards", join(shards.stream().map(Enum::name).toList()));
         p.setProperty("flags", join(flags));
         p.setProperty("notes", String.join("\u0001", notes));
@@ -118,6 +124,7 @@ public class GameState {
         try (Reader r = Files.newBufferedReader(saveFile())) {
             p.load(r);
             s.hero = CharacterDef.ALL.get(Integer.parseInt(p.getProperty("hero", "0")));
+            s.playerName = p.getProperty("name", "");
             for (String x : split(p.getProperty("shards"))) s.shards.add(Shard.valueOf(x));
             s.flags.addAll(split(p.getProperty("flags")));
             String notes = p.getProperty("notes", "");

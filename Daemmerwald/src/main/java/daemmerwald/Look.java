@@ -8,6 +8,17 @@ public class Look {
     public final int kind;
     public final Color skin, cloth, accent, hair, wing;
     public final boolean horns;
+    /** Frisuren der Puppen-Figuren. */
+    public static final int SHORT = 0, LONG = 1, BRAIDS = 2, BUN = 3, WILD = 4, BEARD = 5, PONYTAIL = 6;
+    public boolean female;
+    public int hairStyle;
+
+    /** Setzt Geschlecht und Frisur (für die 3D-Figuren). */
+    public Look hair(boolean female, int style) {
+        this.female = female;
+        this.hairStyle = style;
+        return this;
+    }
 
     public Look(int kind, Color skin, Color cloth, Color accent, Color hair, Color wing, boolean horns) {
         this.kind = kind;
