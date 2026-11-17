@@ -20,3 +20,8 @@ Sinbad, Ninja, Baum- und Geländetexturen aus `jme3-testdata`.
 ## Realistische Figuren (werden nicht mitgeliefert)
 Michelle.glb und Soldier.glb (Mixamo-Figuren aus den three.js-Beispielen) lädt das Spiel beim ersten Start
 auf den eigenen Rechner.
+
+## Fuchs und Schattenwolf
+`assets/models/Fox.glb` aus den [Khronos glTF Sample Assets](https://github.com/KhronosGroup/glTF-Sample-Assets/tree/main/Models/Fox):
+Modell von PixelMannen (CC0), Rigging und Animation von tomkranis
+([CC-BY 4.0](https://creativecommons.org/licenses/by/4.0/)), glTF-Umwandlung von @AsoboStudio und @scurest.

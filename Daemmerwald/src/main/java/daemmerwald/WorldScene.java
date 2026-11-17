@@ -615,8 +615,50 @@ public class WorldScene implements Scene, Main.CameraDirector {
 
         boolean dark() { return type == WOLF || type == MOTH; }
 
+        com.jme3.anim.AnimComposer anim;
+        String animNow = "";
+
+        /** Echtes, animiertes Fuchsmodell (Khronos glTF-Beispiel, CC-BY 4.0) – als Fuchs oder dunkel getönt als Schattenwolf. */
+        private boolean realAnimal(boolean wolf) {
+            Spatial m = G3.foxModel();
+            if (m == null) return false;
+            float sc = wolf ? 0.0125f : 0.0072f;
+            m.setLocalScale(sc);
+            if (wolf) {
+                m.depthFirstTraversal(sp -> {
+                    if (sp instanceof Geometry g) {
+                        com.jme3.material.Material mm = g.getMaterial().clone();
+                        mm.setColor("Diffuse", new ColorRGBA(0.2f, 0.17f, 0.24f, 1));
+                        mm.setColor("Ambient", new ColorRGBA(0.12f, 0.1f, 0.16f, 1));
+                        mm.setColor("GlowColor", new ColorRGBA(0.04f, 0f, 0.07f, 1));
+                        g.setMaterial(mm);
+                    }
+                });
+                for (int s = -1; s <= 1; s += 2) {
+                    Geometry eye = G3.geom("eye", new Sphere(6, 6, 0.035f), G3.emissive(new ColorRGBA(1f, 0.15f, 0.25f, 1)));
+                    eye.setLocalTranslation(s * 0.065f, 0.8f, 0.8f);
+                    node.attachChild(eye);
+                }
+            }
+            node.attachChild(m);
+            anim = Mixamo.composer(m);
+            return true;
+        }
+
         void build() {
-            if (type == WOLF) {
+            if (type == WOLF && realAnimal(true)) {
+                com.jme3.effect.ParticleEmitter smoke = G3.particles("wolfSmoke", 30, "Effects/Smoke/Smoke.png",
+                    new ColorRGBA(0.06f, 0.02f, 0.1f, 0.45f), new ColorRGBA(0, 0, 0, 0), 0.5f, 1.2f, 0.8f, 1.6f);
+                smoke.setImagesX(15);
+                smoke.getMaterial().getAdditionalRenderState().setBlendMode(com.jme3.material.RenderState.BlendMode.Alpha);
+                smoke.setShape(new com.jme3.effect.shapes.EmitterSphereShape(new Vector3f(0, 0.6f, -0.5f), 0.4f));
+                smoke.getParticleInfluencer().setInitialVelocity(new Vector3f(0, 0.4f, 0));
+                smoke.setParticlesPerSec(12);
+                smoke.setInWorldSpace(true);
+                node.attachChild(smoke);
+            } else if (type == FOX && realAnimal(false)) {
+                // fertig
+            } else if (type == WOLF) {
                 Material fur = G3.litGlow(new ColorRGBA(0.04f, 0.03f, 0.06f, 1), new ColorRGBA(0.05f, 0, 0.08f, 1));
                 Geometry body = G3.geom("wolfBody", new Sphere(10, 12, 1), fur);
                 body.setLocalScale(0.32f, 0.36f, 0.85f);
@@ -719,7 +761,16 @@ public class WorldScene implements Scene, Main.CameraDirector {
             t += dt;
             float y = world.height(pos.x, pos.z);
             if (type == MOTH) y += 1.8f + FastMath.sin(t * 2) * 0.4f;
-            if (type == FOX) y += Math.abs(FastMath.sin(t * 7)) * 0.08f * Math.min(1, vel.length());
+            if (type == FOX && anim == null) y += Math.abs(FastMath.sin(t * 7)) * 0.08f * Math.min(1, vel.length());
+            if (anim != null) {
+                float sp = vel.length();
+                String want = sp > 3.2f ? "Run" : sp > 0.25f ? "Walk" : "Survey";
+                if (!want.equals(animNow)) {
+                    animNow = want;
+                    try { anim.setCurrentAction(want); } catch (RuntimeException ignored) { }
+                }
+                anim.setGlobalSpeed(want.equals("Walk") ? Math.max(0.6f, sp / (type == WOLF ? 1.6f : 1.1f)) : 1f);
+            }
             if (type == RABBIT) y += Math.abs(FastMath.sin(t * 9)) * 0.22f * Math.min(1, vel.length());
             node.setLocalTranslation(pos.x, Math.max(y, WorldGen.WATER), pos.z);
             if (vel.lengthSquared() > 0.01f) node.setLocalRotation(new Quaternion().fromAngleAxis(FastMath.atan2(vel.x, vel.z), Vector3f.UNIT_Y));

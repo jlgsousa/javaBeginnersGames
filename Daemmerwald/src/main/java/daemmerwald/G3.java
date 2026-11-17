@@ -150,6 +150,25 @@ public final class G3 {
         return s.clone();
     }
 
+    private static Spatial fox;
+    private static boolean foxFailed;
+
+    /** Animiertes Fuchsmodell (assets/models/Fox.glb) – Kopie, oder null, falls nicht ladbar. */
+    static Spatial foxModel() {
+        if (foxFailed) return null;
+        try {
+            if (fox == null) {
+                fox = am.loadModel("models/Fox.glb");
+                toPhong(fox);
+            }
+            return fox.clone();
+        } catch (Exception e) {
+            foxFailed = true;
+            System.err.println("Fuchsmodell nicht ladbar: " + e.getMessage());
+            return null;
+        }
+    }
+
     /** Ersetzt PBR-Materialien durch klassisches Licht (passt zur übrigen Beleuchtung, braucht keine Umgebungssonde). */
     static void toPhong(Spatial s) {
         s.depthFirstTraversal(sp -> {
