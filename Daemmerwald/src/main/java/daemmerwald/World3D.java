@@ -598,12 +598,12 @@ public class World3D {
         box(n, wall, cx - (w + 1.2f) / 2 - 0.6f, fy + wh / 2, cz - d, (w - 1.2f) / 2, wh / 2, 0.15f);
         box(n, wall, cx + (w + 1.2f) / 2 + 0.6f, fy + wh / 2, cz - d, (w - 1.2f) / 2, wh / 2, 0.15f);
         box(n, wall, cx, fy + wh - 0.6f, cz - d, 1.2f, 0.6f, 0.15f);
-        box(n, wall, cx, fy + 0.5f, cz + d, w, 0.5f, 0.15f);
+        box(n, wall, cx, fy + 0.33f, cz + d, w, 0.33f, 0.15f);
         box(n, wall, cx, fy + wh - 0.4f, cz + d, w, 0.4f, 0.15f);
         box(n, wall, cx - w, fy + wh / 2, cz, 0.15f, wh / 2, d);
         box(n, wall, cx + w, fy + wh / 2, cz, 0.15f, wh / 2, d);
-        for (float mx = -w; mx <= w; mx += 4) box(n, dark, cx + mx, fy + 2.2f, cz + d, 0.1f, 1.2f, 0.2f);
-        box(n, dark, cx, fy + 1.05f, cz + d - 0.2f, w, 0.06f, 0.35f);
+        for (float mx = -w; mx <= w; mx += 4) box(n, dark, cx + mx, fy + 2.2f, cz + d, 0.1f, 1.5f, 0.2f);
+        box(n, dark, cx, fy + 0.7f, cz + d - 0.2f, w, 0.05f, 0.35f);
         // Dach
         for (int side = -1; side <= 1; side += 2) {
             Geometry rf = G3.geom("roof", new Box(w + 0.8f, 0.12f, d * 0.62f), roofM);
@@ -755,8 +755,8 @@ public class World3D {
         }
         solid(cx, cz, 5);
         cafeDoor.set(cx, height(cx, cz - d - 1.8f), cz - d - 1.8f);
-        cafeSeat.set(cx, fy + 1.22f, cz + d - 2.75f);
-        cafeLook.set(cx, fy - 4f, cz + 60);
+        cafeSeat.set(cx, fy + 1.45f, cz + d - 2.75f);
+        cafeLook.set(cx, fy - 9f, cz + 60);
         waitress = new Figure(Look.fairy(Look.rgb(250, 232, 220), Look.rgb(150, 110, 160), Look.rgb(255, 210, 240), Look.rgb(250, 220, 170), Look.rgb(255, 210, 250)));
         waitress.node.setLocalTranslation(cx + 4.5f, fy, cz - d + 2.6f);
         waitress.node.setLocalRotation(new Quaternion().fromAngleAxis(FastMath.PI * 0.85f, Vector3f.UNIT_Y));

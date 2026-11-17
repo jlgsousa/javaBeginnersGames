@@ -4,6 +4,14 @@ Ein 3D-Fantasy-Abenteuer für Erwachsene in Java (jMonkeyEngine 3.6). Gespielt w
 
 Trolle und Feen, eine Zauberakademie in den Wurzeln eines uralten Baumes, ein sterbender Wald und ein Pakt, der mehr kostet, als alle zugeben. Gemordet wird nicht: Konflikte werden mit Zaubern, Willenskraft und Entscheidungen ausgetragen.
 
+![Akademie](screenshots/akademie.png)
+
+| | |
+|---|---|
+| ![Mondsee](screenshots/mondsee.png) | ![Café](screenshots/cafe_fenster.png) |
+| ![Fee mit Flügelmantel](screenshots/fee_fluegelmantel.png) | ![Karte](screenshots/karte.png) |
+| ![Figurenwahl](screenshots/figurenwahl.png) | ![Regen](screenshots/regen.png) |
+
 ## Starten
 
 Du brauchst **Java 17 oder neuer** und eine Grafikkarte mit OpenGL 3.2 (praktisch jeder Rechner der letzten zehn Jahre).
@@ -47,6 +55,7 @@ Rechts am Bildschirmrand stehen immer deine **aktuellen Missionen**.
 * **Sammeln und Brauen:** Sechs Zutaten wachsen je nach Gegend überall in der Welt. Aus ihnen braust du an Kesseln vier Tränke. Figuren vergeben **Sammelaufträge** gegen Glimmertaler.
 * **Pimpernells Fadenwerk:** Der Kleiderladen einer großen, magischen Maus verkauft **18 Gewänder mit Gadgets**, zum Beispiel einen Flügelmantel zum Fliegen, eine Rüstung zur Verteidigung, einen Taucheranzug, Windläufer-Stiefel, einen Schattentarnmantel, Sprungfeder-Gamaschen, eine Glücksweste oder das Sternengewand.
 * **Stufen und Fähigkeiten:** Erfahrung bringt Stufen, Stufen bringen neue Fähigkeiten wie Windschritt, Lichtlanze, Seelenschild oder einen Irrlichtbegleiter.
+* **Viele Details:** Nadel- und Laubbäume mit Herbstfärbung, Farne, Büsche, bemooste Baumstämme, Pilzgruppen, Schilf und Seerosen, Schmetterlinge, Libellen, fallendes Laub, Hasen auf den Wiesen, Umgebungsverdeckung (SSAO) und Lichtstrahlen bei tief stehender Sonne.
 * **Café Wolkenrand:** Ein Ort nur zum Entspannen. Die Fee Lumi fragt, was du trinken möchtest, du setzt dich ans Fenster, und das Spiel speichert. Draußen wechseln Sonne, Regen und Regenbogen, Vogelschwärme ziehen vorbei, in der Ferne springen Wale, und manchmal gleitet ein leuchtender Himmelsrochen vorüber. Im Bücherregal stehen **vier vollständige Geschichten** zum Lesen.
 
 ## Technik

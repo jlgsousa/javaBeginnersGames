@@ -169,6 +169,8 @@ public final class WorldGen {
         f *= G3.smooth(24, 30, (float) dist(x, z, RAVINE));
         f *= G3.smooth(4, 8, (float) pathDist(x, z));
         f *= 1 - brightness(x, z) * 0.7f;
+        // Freie Sicht vom Café über das Klippenplateau aufs Meer
+        f *= 1 - (float) (smooth(150, 178, z) * smooth(-60, -20, x) * (1 - smooth(90, 130, x)));
         if (h > 70) f *= G3.smooth(110, 70, h);
         return f;
     }

@@ -113,7 +113,7 @@ public class Chunks {
         pineMat.setFloat("AlphaDiscardThreshold", 0.3f);
         pineMat.getAdditionalRenderState().setFaceCullMode(RenderState.FaceCullMode.Off);
         fernMat = decoMat(G3.fernTex(), new ColorRGBA(0.9f, 1f, 0.85f, 1));
-        bushMat = decoMat(canopyTex(), new ColorRGBA(0.85f, 0.95f, 0.8f, 1));
+        bushMat = decoMat(canopyTex(), new ColorRGBA(1.35f, 1.5f, 1.2f, 1));
         reedMat = decoMat(G3.reedTex(), ColorRGBA.White);
         lilyMat = decoMat(G3.lilyTex(), ColorRGBA.White);
         logMat = G3.litTex("Models/Tree/BarkColor.jpg", new ColorRGBA(0.55f, 0.6f, 0.42f, 1), null);

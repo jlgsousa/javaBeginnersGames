@@ -116,7 +116,8 @@ public final class G3 {
         m.setTexture("ColorMap", tex);
         m.setColor("Color", c);
         if (glow) m.setColor("GlowColor", c);
-        m.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Additive);
+        // AlphaAdditive beachtet die Transparenz der Textur – sonst leuchtet das ganze Rechteck
+        m.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.AlphaAdditive);
         m.getAdditionalRenderState().setDepthWrite(false);
         m.getAdditionalRenderState().setFaceCullMode(RenderState.FaceCullMode.Off);
         return m;

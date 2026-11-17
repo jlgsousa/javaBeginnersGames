@@ -84,7 +84,11 @@ public class Shot {
         step("end", 0.5f, () -> { });
     }
 
-    private void step(String name, float wait, Runnable r) { steps.add(new Object[]{name, wait, r}); }
+    private void step(String name, float wait, Runnable r) {
+        String only = System.getProperty("dw.only");
+        if (only != null && !name.equals("end") && !java.util.Arrays.asList(only.split(",")).contains(name)) return;
+        steps.add(new Object[]{name, wait, r});
+    }
 
     private void skipDialog() {
         if (app.core.scene() instanceof WorldScene ws) ws.dialog = null;
