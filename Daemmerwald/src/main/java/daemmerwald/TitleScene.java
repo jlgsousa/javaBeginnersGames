@@ -68,14 +68,14 @@ public class TitleScene implements Scene {
         Art.glow(g, 640, 210, 380, new Color(150, 120, 255), 50);
         g.setFont(Art.SMALL);
         g.setColor(new Color(200, 200, 230));
-        Art.centered(g, "E I N E   G E S C H I C H T E   A U S   W U R Z E L H A I N", 640, 140);
+        Art.centered(g, "E I N E   G E S C H I C H T E   A U S   D E M   D Ä M M E R W A L D", 640, 140);
         g.setFont(Art.TITLE);
-        Art.shadowCentered(g, "Das Flüstern", 640, 225, Art.GOLD);
-        Art.shadowCentered(g, "im Dämmerwald", 640, 300, Art.GOLD);
+        Art.shadowCentered(g, "JoLu und die", 640, 225, Art.GOLD);
+        Art.shadowCentered(g, "Kammer von Cabeceiras", 640, 300, Art.GOLD);
         Art.ornament(g, 640, 322, 520, t);
         g.setFont(Art.ITALIC);
         g.setColor(new Color(210, 210, 235));
-        Art.centered(g, "Trolle. Feen. Ein sterbender Wald. Und ein Pakt, der mehr kostet, als alle zugeben.", 640, 360);
+        Art.centered(g, "Eine vergessene Akademie. Ein Brief ohne Absender. Und tief unter dem Schloss: die Kammer von Cabeceiras.", 640, 360);
 
         for (int i = 0; i < items.length; i++) {
             double y = 430 + i * 64;

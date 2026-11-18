@@ -261,7 +261,7 @@ public final class Saga {
                 default -> new String[]{head, "Kapitel abgeschlossen", ""};
             };
             case 7 -> switch (s) {
-                case 0 -> new String[]{head, "Hinab zum Schlafenden", "Der Torbogen hinter dem Steinwächter"};
+                case 0 -> new String[]{head, "Hinab in die Kammer von Cabeceiras", "Der Torbogen hinter dem Steinwächter"};
                 case 1 -> new String[]{head, "Halte Malrik auf!", "Protego · Diener · Gründerfeuer (Ignis) · Sternenblitz (Lumen, dann Arcanum)"};
                 default -> new String[]{head, "Sternenhall ist gerettet", ""};
             };
@@ -652,7 +652,7 @@ public final class Saga {
             return;
         }
         if (c >= 7 && dw(Depths.TO_HEART).distance(pos) < 2.6f) {
-            label = "[E] Hinab zum Schlafenden";
+            label = "[E] Hinab in die Kammer von Cabeceiras";
             action = () -> {
                 ws.teleportTo(dw(Depths.HEART_ARRIVE), FastMath.PI);
                 if (c == 7 && s == 0) meetMalrik();
@@ -842,6 +842,7 @@ public final class Saga {
             "Da bist du ja. Pünktlich, wie es in meinem Brief stand.",
             "Ja – der Brief war von mir. Das Symbol, das dich führte, war meins. Die Siegel am Gemälde? Du hast sie für mich gebrochen. Danke.",
             "Fünfhundert Jahre war ich ein Schatten in den Mauern. Fünf Narren haben mich ausgelöscht, weil ich nicht sterben wollte.",
+            "Willkommen in der Kammer von Cabeceiras – in der alten Sprache heißt das: die Quellen. Hier entspringt alles Licht des Waldes.",
             "Dort oben schwebt das Sternenherz. Wer es bricht, lebt ewig. Der Wald? Der stirbt. Die Akademie? Die stirbt. Ich nicht.",
             "*Du hebst deinen Stab. Hinter dir flackern fünf erloschene Feuerschalen – die Feuer der Gründer.",
             "Du willst mich aufhalten? Mit den fünf Kinderzaubern, die ich dir habe beibringen lassen? Gut. Zeig sie mir."

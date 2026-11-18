@@ -300,6 +300,23 @@ public class Shot {
             ws.teleportTo(ws.saga.dw(new Vector3f(210, Depths.HY, 12)), FastMath.PI);
             ws.saga.startShade();
         });
+        step("scroll_open", 3f, () -> {
+            WorldScene ws = (WorldScene) app.core.scene();
+            ws.saga.endEncounter();
+            ws.scrollOpen = true;
+        });
+        step("scroll_menu", 3f, () -> { skipDialog(); ((WorldScene) app.core.scene()).clearOverlays(); press(java.awt.event.KeyEvent.VK_TAB); });
+        step("scroll_bag", 2f, () -> press(java.awt.event.KeyEvent.VK_RIGHT));
+        step("scroll_spells", 2f, () -> press(java.awt.event.KeyEvent.VK_RIGHT));
+        step("palace_map", 4f, () -> {
+            WorldScene ws = (WorldScene) app.core.scene();
+            ws.enterPalace();
+            skipDialog();
+            ws.clearOverlays();
+            for (String r : new String[]{"library", "cellar", "gallery", "deep_lib", "deep_lib2", "deep_bridge", "deep_ruin"}) app.core.state.flags.add("room:" + r);
+            ws.teleportTo(ws.saga.dw(new Vector3f(118, Depths.LY, 15)), FastMath.PI);
+            press(java.awt.event.KeyEvent.VK_TAB);
+        });
         step("players", 2f, () -> app.core.setScene(new PlayersScene(app.core)));
         step("two_players", 6f, () -> {
             GameState gs = app.core.state;

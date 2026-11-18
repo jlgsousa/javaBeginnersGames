@@ -8,7 +8,7 @@ public final class Chapters {
     private Chapters() { }
 
     public static final String[] TITLES = {
-        "", "Die Ankunft", "Das erste Geheimnis", "Der verbotene Wald", "Das Dorf", "Die vergessene Bibliothek", "Die alten Ruinen", "Das Erwachen"
+        "", "Die Ankunft", "Das erste Geheimnis", "Der verbotene Wald", "Das Dorf", "Die vergessene Bibliothek", "Die alten Ruinen", "Die Kammer von Cabeceiras"
     };
 
     public static int chapter(GameState st) { return Math.max(1, st.stages.getOrDefault("chapter", 1)); }

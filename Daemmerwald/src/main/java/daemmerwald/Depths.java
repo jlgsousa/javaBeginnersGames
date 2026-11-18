@@ -134,30 +134,34 @@ public final class Depths {
         }
         // Decke über der Schlucht und die Tiefe darunter
         p.box(n, wood, 18, 0.2f, 3.2f, 118, LY + 11.2f, 0, 0.6f);
-        Geometry abyss = p.box(n, G3.lit(new ColorRGBA(0.02f, 0.01f, 0.04f, 1)), 18, 0.2f, 3, 118, LY - 14, 0, 0);
+        Geometry abyss = p.box(n, G3.emissive(new ColorRGBA(0.22f, 0.06f, 0.4f, 1)), 18, 0.2f, 3, 118, LY - 9, 0, 0);
+        for (int s = -1; s <= 1; s += 2) {
+            Geometry edge = p.box(n, G3.emissive(new ColorRGBA(0.6f, 0.3f, 1f, 1)), 18, 0.03f, 0.05f, 118, LY + 0.02f, s * 3f, 0);
+            edge.setShadowMode(ShadowMode.Off);
+        }
         abyss.setShadowMode(ShadowMode.Off);
         for (int s = -1; s <= 1; s += 2) p.box(n, stone, 18, 7, 0.2f, 118, LY - 7, s * 3, 0.5f);
         com.jme3.effect.ParticleEmitter mist = G3.particles("abyssMist", 60, "Effects/Smoke/Smoke.png",
-            new ColorRGBA(0.3f, 0.12f, 0.5f, 0.35f), new ColorRGBA(0.1f, 0, 0.2f, 0), 1.5f, 3f, 3f, 5f);
+            new ColorRGBA(0.45f, 0.2f, 0.8f, 0.5f), new ColorRGBA(0.2f, 0.05f, 0.4f, 0), 1.5f, 3f, 3f, 5f);
         mist.setImagesX(15);
         mist.getMaterial().getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
         mist.setShape(new com.jme3.effect.shapes.EmitterBoxShape(new Vector3f(-17, -1, -2.5f), new Vector3f(17, 1, 2.5f)));
         mist.getParticleInfluencer().setInitialVelocity(new Vector3f(0, 0.8f, 0));
-        mist.setParticlesPerSec(10);
+        mist.setParticlesPerSec(14);
         mist.setLocalTranslation(118, LY - 6, 0);
         n.attachChild(mist);
         // Hohe Regale an allen Wänden
         for (int i = 0; i < 11; i++) {
             float x = 102 + i * 3.2f;
-            if (Math.abs(x - 118) > 2.5f) p.shelf(n, x, 23.4f, FastMath.PI, 1.9f);
-            if (Math.abs(x - 118) > 4 && Math.abs(x - 134) > 2) p.shelf(n, x, -23.4f, 0, 1.9f);
+            if (Math.abs(x - 118) > 2.5f) p.shelf(n, x, LY, 23.4f, FastMath.PI, 1.9f);
+            if (Math.abs(x - 118) > 4 && Math.abs(x - 134) > 2) p.shelf(n, x, LY, -23.4f, 0, 1.9f);
         }
         for (int i = 0; i < 6; i++) {
             float z = 5.5f + i * 3.1f;
-            p.shelf(n, 100.6f, z, FastMath.HALF_PI, 1.9f);
-            p.shelf(n, 135.4f, z, -FastMath.HALF_PI, 1.9f);
-            p.shelf(n, 100.6f, -z, FastMath.HALF_PI, 1.9f);
-            p.shelf(n, 135.4f, -z, -FastMath.HALF_PI, 1.9f);
+            p.shelf(n, 100.6f, LY, z, FastMath.HALF_PI, 1.9f);
+            p.shelf(n, 135.4f, LY, z, -FastMath.HALF_PI, 1.9f);
+            p.shelf(n, 100.6f, LY, -z, FastMath.HALF_PI, 1.9f);
+            p.shelf(n, 135.4f, LY, -z, -FastMath.HALF_PI, 1.9f);
         }
         // Spinnweben-graue Schwebebücher
         java.util.Random r = new java.util.Random(77);
@@ -369,7 +373,7 @@ public final class Depths {
         p.walls.add(gw);
         // Arena: zerborstener Boden, Säulenstümpfe, Feuerschalen
         for (int i = 0; i < 6; i++) {
-            float a = i * FastMath.TWO_PI / 6;
+            float a = i * FastMath.TWO_PI / 6 + FastMath.PI / 6;
             float x = ARENA_C.x + FastMath.sin(a) * 15, z = ARENA_C.z + FastMath.cos(a) * 15;
             p.cylY(n, stone, 0.9f, 1f, 10, 10, x, RY + 5, z);
             p.walls.add(new Palace.Wall(x - 1, x + 1, z - 1, z + 1, null));
@@ -405,7 +409,7 @@ public final class Depths {
 
     private void buildHeart() {
         Material stone = p.stone;
-        heart = p.room("deep_heart", "Die Kammer des Schlafenden", 190, 230, -24, 20, HY, 18);
+        heart = p.room("deep_heart", "Die Kammer von Cabeceiras", 190, 230, -24, 20, HY, 18);
         walls4(heart, stone, new float[][]{}, new float[][]{}, new float[][]{}, new float[][]{});
         p.floorAndCeiling(heart);
         // Das Sternenherz: ein riesiger Kristall in Ketten

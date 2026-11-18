@@ -128,6 +128,16 @@ public class WorldScene implements Scene, Main.CameraDirector, Combat.Host {
         world.root.attachChild(dust);
         saga = new Saga(this, this);
         saga.apply();
+        // im Schloss oder in den Tiefen gespeichert: dort weiterspielen
+        if (st.flags.contains("savedInPalace")) {
+            if (world.palace.roomAt(st.px, st.pz) != null) {
+                world.palace.addTeacher(CharacterDef.ALL.get(9).look);
+                teleportTo(new Vector3f(st.px, world.palace.baseY, st.pz), yaw);
+                applyChapterWorld();
+            } else {
+                pos.set(world.palace.gateOutside());
+            }
+        }
     }
 
     // ---------------------------------------------------------------- Combat.Host
@@ -335,6 +345,8 @@ public class WorldScene implements Scene, Main.CameraDirector, Combat.Host {
         if (in.wasPressed(KeyEvent.VK_ESCAPE, KeyEvent.VK_TAB)) { menuTab = 0; return; }
         if (in.wasPressed(KeyEvent.VK_M)) { menuTab = 0; return; }
         if (in.wasPressed(KeyEvent.VK_I)) { menuTab = 1; return; }
+        if (in.wasPressed(KeyEvent.VK_J)) { scrollOpen = !scrollOpen; return; }
+        if (in.mouseClicked && scrollHit()) { scrollOpen = !scrollOpen; in.mouseClicked = false; }
 
         if (race != null && race.countdown > 0) {
             race.countdown -= dt;
@@ -2119,6 +2131,7 @@ public class WorldScene implements Scene, Main.CameraDirector, Combat.Host {
     void saveNow(boolean announce) {
         st.px = pos.x;
         st.pz = pos.z;
+        if (world.inPalace) st.flags.add("savedInPalace"); else st.flags.remove("savedInPalace");
         st.dayTime = world.dayNight.time;
         st.save();
         if (announce) floatText("✓ Automatisch gespeichert", pos.add(0, fig.height + 1.3f, 0), Art.GOOD);
@@ -2322,19 +2335,21 @@ public class WorldScene implements Scene, Main.CameraDirector, Combat.Host {
 
     // ================================================================ Menü
 
-    private static final String[] TABS = {"Karte", "Tasche", "Karten", "Freunde", "Garderobe", "Missionen", "Fähigkeiten", "Tagebuch", "Spiel"};
+    private static final String[] TABS = {"Karte", "Tasche", "Zauber", "Karten", "Freunde", "Garderobe", "Missionen", "Fähigkeiten", "Tagebuch", "Spiel"};
 
     private void updateMenu() {
         if (in.wasPressed(KeyEvent.VK_ESCAPE, KeyEvent.VK_TAB) || (menuTab == 0 && in.wasPressed(KeyEvent.VK_M))) { menuTab = -1; return; }
+        savedT = Math.max(0, savedT - 1 / 60f);
+        if (in.wasPressed(KeyEvent.VK_S) || (in.mouseClicked && saveSealHit())) { saveFromScroll(); return; }
         if (in.wasPressed(KeyEvent.VK_RIGHT, KeyEvent.VK_D)) menuTab = (menuTab + 1) % TABS.length;
         if (in.wasPressed(KeyEvent.VK_LEFT, KeyEvent.VK_A)) menuTab = (menuTab + TABS.length - 1) % TABS.length;
         if (in.mouseClicked) {
             for (int i = 0; i < TABS.length; i++) {
-                double x = 30 + i * 136;
-                if (in.mouseX > x && in.mouseX < x + 130 && in.mouseY > 40 && in.mouseY < 84) menuTab = i;
+                double x = 24 + i * tabW();
+                if (in.mouseX > x && in.mouseX < x + tabW() - 6 && in.mouseY > 34 && in.mouseY < 96) menuTab = i;
             }
         }
-        if (menuTab == 4) {
+        if (menuTab == 5) {
             List<Outfit> owned = new ArrayList<>(st.owned);
             for (int i = 0; i < owned.size(); i++) {
                 double y = 150 + i * 40;
@@ -2345,7 +2360,8 @@ public class WorldScene implements Scene, Main.CameraDirector, Combat.Host {
             }
         }
         if (menuTab == 1) for (int i = 0; i < 4; i++) if (in.wasPressed(KeyEvent.VK_1 + i)) drink(Potion.values()[i]);
-        if (menuTab == 8) {
+        if (menuTab == 9 && in.mouseClicked && hitButton(0)) saveFromScroll();
+        if (menuTab == 9) {
             if (in.wasPressed(KeyEvent.VK_Q) || (in.mouseClicked && hitButton(1))) {
                 fig.node.removeFromParent();
                 for (Creature c : creatures) c.remove();
@@ -2509,7 +2525,7 @@ public class WorldScene implements Scene, Main.CameraDirector, Combat.Host {
         String pl = palaceLabel == null ? puzzleLabel() : null;
         if (pl != null && calm()) label(g, pl, new double[]{SW / 2.0, SH - 150}, new Color(220, 210, 255), new Color(30, 20, 50, 215));
         if (palaceLabel != null && calm()) label(g, palaceLabel, new double[]{SW / 2.0, SH - 150}, new Color(255, 220, 150), new Color(30, 20, 50, 215));
-        if (world.inPalace && calm()) {
+        if (world.inPalace && calm() && !bossFight()) {
             Palace.Room rm = world.palace.roomAt(pos.x, pos.z);
             if (rm != null) {
                 g.setFont(new Font("Serif", Font.BOLD | Font.ITALIC, 24));
@@ -2534,7 +2550,7 @@ public class WorldScene implements Scene, Main.CameraDirector, Combat.Host {
             Art.shadowCentered(g, cardTitle, SW / 2.0, SH / 2.0, Art.alpha(Art.GOLD, (int) (a * 255)));
             Art.ornament(g, SW / 2.0, SH / 2.0 + 26, 420, game.time());
             g.setFont(Art.ITALIC);
-            Art.shadowCentered(g, "Das Erwachen unter Sternenhall", SW / 2.0, SH / 2.0 + 52, Art.alpha(Art.PARCH, (int) (a * 255)));
+            Art.shadowCentered(g, "JoLu und die Kammer von Cabeceiras", SW / 2.0, SH / 2.0 + 52, Art.alpha(Art.PARCH, (int) (a * 255)));
         }
         if (dialog != null) dialog.render(g, game.time());
     }
@@ -2707,35 +2723,85 @@ public class WorldScene implements Scene, Main.CameraDirector, Combat.Host {
         return id;
     }
 
+    /** Missions-Schriftrolle: zusammengerollt nur das aktuelle Ziel, mit J (oder Klick) aufgerollt alle Missionen. */
+    boolean scrollOpen;
+    private float scrollAnim;
+
+    private double[] scrollBox() {
+        double w = 330, x = SW - w - 16, y = p2 != null ? 122 : 62;
+        return new double[]{x, y, w};
+    }
+
+    private boolean scrollHit() {
+        double[] b = scrollBox();
+        return in.mouseX > b[0] && in.mouseX < b[0] + b[2] && in.mouseY > b[1] && in.mouseY < b[1] + 70;
+    }
+
+    /** Pergament mit gerollten Enden oben und unten. */
+    static void parchment(Graphics2D g, double x, double y, double w, double h) {
+        g.setPaint(new GradientPaint((float) x, (float) y, new Color(238, 222, 186), (float) (x + w), (float) (y + h), new Color(214, 190, 146)));
+        g.fill(new java.awt.geom.Rectangle2D.Double(x + 6, y, w - 12, h));
+        g.setColor(new Color(150, 110, 60, 90));
+        g.setStroke(new BasicStroke(1.2f));
+        g.draw(new java.awt.geom.Rectangle2D.Double(x + 12, y + 4, w - 24, h - 8));
+        for (int k = 0; k < 2; k++) {
+            double ry = k == 0 ? y - 9 : y + h - 9;
+            g.setPaint(new GradientPaint((float) x, (float) ry, new Color(196, 166, 116), (float) x, (float) ry + 18, new Color(140, 104, 62)));
+            g.fill(new RoundRectangle2D.Double(x, ry, w, 18, 18, 18));
+            g.setColor(new Color(96, 64, 32));
+            g.draw(new RoundRectangle2D.Double(x, ry, w, 18, 18, 18));
+            for (int s2 = 0; s2 < 2; s2++) {
+                double kx = s2 == 0 ? x - 9 : x + w - 3;
+                g.setColor(new Color(90, 56, 28));
+                g.fill(new java.awt.geom.Ellipse2D.Double(kx, ry - 1, 12, 20));
+                g.setColor(new Color(220, 180, 90));
+                g.fill(new java.awt.geom.Ellipse2D.Double(kx + 3, ry + 5, 6, 8));
+            }
+        }
+    }
+
     private void drawTracker(Graphics2D g) {
         List<String[]> m = missions();
-        double x = SW - 330, y = 62, w = 314;
-        if (p2 != null) {
-            // geteilter Bildschirm: nur die wichtigsten Missionen, unter der Leiste von Spieler 2
-            if (m.size() > 3) m = new ArrayList<>(m.subList(0, 3));
-            y = 122;
-        }
-        double h = 34 + m.size() * 50;
-        g.setColor(new Color(8, 10, 18, 150));
-        g.fill(new RoundRectangle2D.Double(x, y, w, h, 16, 16));
-        g.setFont(Art.UI);
-        Art.shadowText(g, "Missionen", x + 14, y + 24, Art.GOLD);
-        double yy = y + 48;
-        for (String[] e : m) {
+        double[] b = scrollBox();
+        double x = b[0], y = b[1], w = b[2];
+        float target = scrollOpen ? 1 : 0;
+        scrollAnim += (target - scrollAnim) * 0.25f;
+        if (Math.abs(target - scrollAnim) < 0.01f) scrollAnim = target;
+        int max = p2 != null ? 3 : Math.min(m.size(), (int) ((SH - y - 120) / 46));
+        double full = 64 + (max - 1) * 46 + 12;
+        double h = 64 + (full - 64) * scrollAnim;
+        parchment(g, x, y, w, h);
+        Shape clip = g.getClip();
+        g.clip(new java.awt.geom.Rectangle2D.Double(x, y, w, h - (scrollAnim < 0.05f ? 14 : 4)));
+        Color ink = new Color(60, 34, 16), soft = new Color(110, 80, 50);
+        double yy = y + 24;
+        for (int i = 0; i < max && i < m.size(); i++) {
+            String[] e = m.get(i);
             Color tag = switch (e[0]) {
-                case "Hauptquest" -> Art.GOLD;
-                case "Kapitel" -> new Color(220, 170, 255);
-                case "Auftrag" -> new Color(140, 220, 150);
-                case "Endlos" -> Art.MAGIC;
-                default -> new Color(170, 170, 195);
+                case "Kapitel" -> new Color(110, 40, 120);
+                case "Hauptquest" -> new Color(140, 90, 10);
+                case "Auftrag" -> new Color(40, 110, 50);
+                default -> ink;
             };
-            g.setFont(new Font("SansSerif", Font.BOLD, 13));
-            Art.shadowText(g, e[1], x + 14, yy, tag);
-            g.setFont(new Font("SansSerif", Font.PLAIN, 12));
-            g.setColor(new Color(190, 190, 210));
-            g.drawString(e[2], (float) x + 24, (float) yy + 17);
-            yy += 50;
+            g.setFont(new Font("Serif", Font.BOLD, 15));
+            g.setColor(tag);
+            g.drawString(clipText(g, e[1], w - 34), (float) x + 18, (float) yy);
+            g.setFont(new Font("Serif", Font.ITALIC, 13));
+            g.setColor(soft);
+            g.drawString(clipText(g, e[2], w - 44), (float) x + 26, (float) yy + 17);
+            yy += 46;
         }
+        g.setClip(clip);
+        g.setFont(new Font("SansSerif", Font.BOLD, 11));
+        g.setColor(new Color(255, 235, 200, 210));
+        String hint = scrollOpen ? "[J] Schriftrolle schließen · Tab: alle Ebenen" : "[J] Schriftrolle öffnen (" + m.size() + " Missionen)";
+        Art.shadowCentered(g, hint, x + w / 2, y + h + 22, new Color(255, 235, 200));
+    }
+
+    private static String clipText(Graphics2D g, String t, double w) {
+        if (g.getFontMetrics().stringWidth(t) <= w) return t;
+        while (t.length() > 3 && g.getFontMetrics().stringWidth(t + "…") > w) t = t.substring(0, t.length() - 1);
+        return t + "…";
     }
 
     private void drawRace(Graphics2D g) {
@@ -2833,37 +2899,177 @@ public class WorldScene implements Scene, Main.CameraDirector, Combat.Host {
         }
     }
 
+    private float savedT;
+
+    private boolean saveSealHit() {
+        double cx = SW - 92, cy = SH - 70;
+        return Math.abs(in.mouseX - cx) < 56 && Math.abs(in.mouseY - cy) < 26;
+    }
+
+    private void saveFromScroll() {
+        saveNow(false);
+        savedT = 2.5f;
+        if (game.app.music != null) game.app.music.sfx("chime", 1.2f);
+    }
+
+    private double tabW() { return (SW - 48) / (double) TABS.length; }
+
+    /** Ebene „Zauber“: gelernte Zauber leuchten, unbekannte sind ausgegraut – dazu die Kombinationen. */
+    private void drawSpellsTab(Graphics2D g) {
+        Spell[] all = Spell.values();
+        g.setFont(Art.H2);
+        Art.shadowText(g, "Deine Zaubersprüche  ·  " + st.spells.size() + "/" + all.length, 60, 140, Art.GOLD);
+        for (int i = 0; i < all.length; i++) {
+            Spell sp = all[i];
+            boolean known = st.spells.contains(sp);
+            double x = 60 + (i % 2) * 590, y = 170 + (i / 2) * 104;
+            g.setColor(known ? new Color(255, 240, 200, 26) : new Color(0, 0, 0, 60));
+            g.fill(new RoundRectangle2D.Double(x, y, 570, 94, 14, 14));
+            Art.dot(g, x + 40, y + 46, 22, known ? sp.color : new Color(90, 85, 100), known ? 255 : 120);
+            g.setFont(new Font("Serif", Font.BOLD | Font.ITALIC, 24));
+            Art.shadowText(g, known ? sp.word + "  –  " + sp.title : "???  (noch nicht gelernt)", x + 76, y + 32, known ? Art.alpha(sp.color, 255) : new Color(120, 115, 130));
+            g.setFont(Art.SMALL);
+            if (known) {
+                Art.shadowText(g, "Stufe " + "★".repeat(spellLevel(sp)) + "☆".repeat(3 - spellLevel(sp)) + (st.spell == sp ? "   · gewählt" : ""), x + 76, y + 52, Art.GOLD);
+                g.setColor(new Color(220, 210, 230));
+                Art.drawWrapped(g, sp.text, x + 76, y + 72, 480, 15);
+            } else {
+                g.setColor(new Color(130, 125, 140));
+                g.drawString(sp.basic() ? "Unterricht bei Professorin Funkelstein im Palast" : "Fortgeschritten – später im Unterricht", (float) x + 76, (float) y + 56);
+            }
+        }
+        double y = 170 + 4 * 104 + 6;
+        g.setFont(Art.UI);
+        Art.shadowText(g, "Kombinationen (zwei Zauber kurz nacheinander)", 60, y, Art.GOLD);
+        int k = 0;
+        for (Combat.Combo cb : Combat.Combo.values()) {
+            boolean has = st.flags.contains("combo:" + cb.name());
+            g.setFont(Art.SMALL);
+            Art.shadowText(g, has ? "✦ " + cb.title + ":  " + cb.text : "✦ ???  – wird in einem späteren Kapitel freigeschaltet", 72, y + 24 + k * 20, has ? Art.PARCH : new Color(120, 115, 130));
+            k++;
+        }
+    }
+
     private void drawMenu(Graphics2D g) {
-        g.setColor(new Color(4, 6, 12, 200));
+        g.setColor(new Color(4, 6, 12, 170));
         g.fillRect(0, 0, SW, SH);
+        // die große Schriftrolle: dunkles, altes Zauberpergament mit Holzrollen oben und unten
+        double sx = 14, sy = 96, sw = SW - 28, sh = SH - 130;
+        g.setPaint(new GradientPaint(0, (float) sy, new Color(58, 42, 34, 245), 0, (float) (sy + sh), new Color(34, 24, 26, 245)));
+        g.fill(new java.awt.geom.Rectangle2D.Double(sx + 8, sy, sw - 16, sh));
+        g.setColor(new Color(200, 160, 90, 120));
+        g.setStroke(new BasicStroke(1.4f));
+        g.draw(new java.awt.geom.Rectangle2D.Double(sx + 16, sy + 6, sw - 32, sh - 12));
+        for (int k = 0; k < 2; k++) {
+            double ry = k == 0 ? sy - 13 : sy + sh - 13;
+            g.setPaint(new GradientPaint(0, (float) ry, new Color(150, 100, 56), 0, (float) ry + 26, new Color(80, 50, 26)));
+            g.fill(new RoundRectangle2D.Double(sx, ry, sw, 26, 26, 26));
+            g.setColor(new Color(220, 180, 100));
+            for (int s2 = 0; s2 < 2; s2++) g.fill(new java.awt.geom.Ellipse2D.Double(s2 == 0 ? sx - 10 : sx + sw - 8, ry - 2, 18, 30));
+        }
+        // Ebenen als Lesebändchen, die von der oberen Rolle hängen
         for (int i = 0; i < TABS.length; i++) {
-            double x = 30 + i * 136;
+            double x = 24 + i * tabW();
             boolean sel = i == menuTab;
-            g.setColor(sel ? new Color(70, 56, 104, 230) : new Color(20, 22, 36, 220));
-            g.fill(new RoundRectangle2D.Double(x, 40, 130, 44, 16, 16));
-            g.setColor(sel ? Art.GOLD : Art.alpha(Art.GOLD, 90));
-            g.setStroke(new BasicStroke(sel ? 2.5f : 1.2f));
-            g.draw(new RoundRectangle2D.Double(x, 40, 130, 44, 16, 16));
+            double hgt = sel ? 62 : 48;
+            Color rib = sel ? new Color(150, 40, 60) : new Color(70, 40, 60);
+            java.awt.geom.Path2D.Double rb = new java.awt.geom.Path2D.Double();
+            rb.moveTo(x, 34); rb.lineTo(x + tabW() - 6, 34); rb.lineTo(x + tabW() - 6, 34 + hgt); rb.lineTo(x + tabW() / 2 - 3, 34 + hgt - 10); rb.lineTo(x, 34 + hgt); rb.closePath();
+            g.setColor(rib);
+            g.fill(rb);
+            g.setColor(sel ? Art.GOLD : Art.alpha(Art.GOLD, 110));
+            g.setStroke(new BasicStroke(sel ? 2.2f : 1f));
+            g.draw(rb);
             g.setFont(Art.UI);
-            Art.shadowCentered(g, TABS[i], x + 65, 68, sel ? Color.WHITE : Art.PARCH);
+            Art.shadowCentered(g, TABS[i], x + tabW() / 2 - 3, 62, sel ? Color.WHITE : Art.PARCH);
         }
         g.setFont(Art.SMALL);
         g.setColor(new Color(170, 170, 190));
-        Art.centered(g, "←/→ oder Klick: Reiter wechseln · Esc/Tab: schließen", SW / 2.0, SH - 18);
+        Art.centered(g, "←/→ oder Klick: Ebene wechseln · S: speichern · Esc/Tab: Schriftrolle schließen", SW / 2.0, SH - 8);
         switch (menuTab) {
             case 0 -> drawMapTab(g);
             case 1 -> drawBag(g);
-            case 2 -> drawCards(g);
-            case 3 -> drawFriends(g);
-            case 4 -> drawWardrobe(g);
-            case 5 -> drawMissionsTab(g);
-            case 6 -> drawAbilities(g);
-            case 7 -> drawJournal(g);
+            case 2 -> drawSpellsTab(g);
+            case 3 -> drawCards(g);
+            case 4 -> drawFriends(g);
+            case 5 -> drawWardrobe(g);
+            case 6 -> drawMissionsTab(g);
+            case 7 -> drawAbilities(g);
+            case 8 -> drawJournal(g);
             default -> drawGameTab(g);
+        }
+        // Siegel „Speichern“ – auf jeder Ebene der Schriftrolle
+        boolean hov = saveSealHit();
+        double cx = SW - 92, cy = SH - 70;
+        g.setColor(hov ? new Color(190, 50, 60) : new Color(150, 30, 45));
+        g.fill(new Ellipse2D.Double(cx - 56, cy - 26, 112, 52));
+        g.setColor(Art.GOLD);
+        g.setStroke(new BasicStroke(2f));
+        g.draw(new Ellipse2D.Double(cx - 56, cy - 26, 112, 52));
+        g.setFont(Art.UI);
+        Art.shadowCentered(g, savedT > 0 ? "✓ Gespeichert" : "Speichern", cx, cy + 6, Color.WHITE);
+    }
+
+    /** Schlosskarte: Grundriss von Sternenhall und, sobald entdeckt, der Tiefen darunter. */
+    private void drawPalaceMap(Graphics2D g) {
+        Palace pal = world.palace;
+        Palace.Room here = pal.roomAt(pos.x, pos.z);
+        boolean deep = here != null && here.id().startsWith("deep");
+        boolean anyDeep = false;
+        for (Palace.Room r : pal.rooms) if (r.id().startsWith("deep") && st.flags.contains("room:" + r.id())) anyDeep = true;
+        // zwei Pläne nebeneinander: oben das Schloss, unten (rechts) die Tiefen
+        drawPlan(g, pal, false, 50, 130, 600, 520, here, !deep);
+        if (anyDeep) drawPlan(g, pal, true, 670, 130, 560, 520, here, deep);
+        else {
+            g.setFont(Art.ITALIC);
+            g.setColor(new Color(170, 160, 190));
+            Art.drawWrapped(g, "Unter dem Schloss liegt mehr, als man glaubt … Dieser Teil der Karte füllt sich, sobald du ihn betrittst.", 690, 380, 520, 24);
+        }
+        g.setFont(Art.SMALL);
+        Art.shadowText(g, "Rot: du bist hier · Goldene Räume: besucht · Graue Räume: noch unbekannt · Draußen zeigt die Karte die Welt.", 50, 680, Art.PARCH);
+    }
+
+    private void drawPlan(Graphics2D g, Palace pal, boolean deep, double x0, double y0, double w, double h, Palace.Room here, boolean active) {
+        float minX = 1e9f, maxX = -1e9f, minZ = 1e9f, maxZ = -1e9f;
+        List<Palace.Room> rs = new ArrayList<>();
+        for (Palace.Room r : pal.rooms) {
+            if (r.id().startsWith("deep") != deep) continue;
+            boolean secret = !deep && !r.id().equals("hall") && !r.id().equals("library") && !r.id().equals("cellar");
+            if (secret && !st.flags.contains("room:" + r.id())) continue; // Geheimräume erst nach dem Entdecken
+            rs.add(r);
+            minX = Math.min(minX, r.x0()); maxX = Math.max(maxX, r.x1()); minZ = Math.min(minZ, r.z0()); maxZ = Math.max(maxZ, r.z1());
+        }
+        if (rs.isEmpty()) return;
+        g.setFont(Art.H2);
+        Art.shadowText(g, deep ? "Unter dem Schloss" : "Sternenhall", x0, y0 - 12, active ? Art.GOLD : Art.alpha(Art.GOLD, 150));
+        double sc = Math.min((w - 20) / (maxX - minX), (h - 20) / (maxZ - minZ));
+        double ox = x0 + 10 + ((w - 20) - (maxX - minX) * sc) / 2, oy = y0 + 10;
+        for (Palace.Room r : rs) {
+            double rx = ox + (r.x0() - minX) * sc, ry = oy + (r.z0() - minZ) * sc, rw = (r.x1() - r.x0()) * sc, rh = (r.z1() - r.z0()) * sc;
+            boolean seen = st.flags.contains("room:" + r.id()) || r.id().equals("hall");
+            boolean now = r == here;
+            g.setColor(now ? new Color(120, 80, 40, 230) : seen ? new Color(90, 70, 45, 200) : new Color(50, 48, 58, 170));
+            g.fill(new RoundRectangle2D.Double(rx, ry, rw, rh, 6, 6));
+            g.setColor(seen ? Art.GOLD : new Color(110, 105, 120));
+            g.setStroke(new BasicStroke(now ? 2.5f : 1.2f));
+            g.draw(new RoundRectangle2D.Double(rx, ry, rw, rh, 6, 6));
+            if (r.id().equals("deep_lib2") || r.id().equals("deep_bridge")) continue;
+            g.setFont(new Font("Serif", Font.BOLD | Font.ITALIC, rw > 90 ? 15 : 12));
+            String name = seen ? r.name().replace("Die ", "").replace("Sternenhall · ", "") : "?";
+            Art.shadowCentered(g, name, rx + rw / 2, ry + Math.min(rh / 2 + 5, 22), seen ? Art.PARCH : new Color(150, 145, 160));
+        }
+        if (active) {
+            double px = ox + (pos.x - Palace.PX - minX) * sc, py = oy + (pos.z - Palace.PZ - minZ) * sc;
+            g.setColor(new Color(230, 50, 60));
+            g.fill(new Ellipse2D.Double(px - 6, py - 6, 12, 12));
+            g.setColor(Color.WHITE);
+            g.setStroke(new BasicStroke(2));
+            g.drawLine((int) px, (int) py, (int) (px + Math.sin(yaw) * 16), (int) (py + Math.cos(yaw) * 16));
         }
     }
 
     private void drawMapTab(Graphics2D g) {
+        if (world.inPalace) { drawPalaceMap(g); return; }
         double mx = 330, my = 104, ms = 560;
         if (mapImg == null) {
             g.setFont(Art.H2);
@@ -3232,7 +3438,7 @@ public class WorldScene implements Scene, Main.CameraDirector, Combat.Host {
     }
 
     private void drawGameTab(Graphics2D g) {
-        String[] b = {"Speichern nur im Café", "[Q] Zum Titelbild"};
+        String[] b = {"[S] Jetzt speichern", "[Q] Zum Titelbild"};
         for (int i = 0; i < b.length; i++) {
             double y = 220 + i * 80;
             boolean hover = hitButton(i);
@@ -3245,8 +3451,8 @@ public class WorldScene implements Scene, Main.CameraDirector, Combat.Host {
         }
         g.setFont(Art.SMALL);
         g.setColor(new Color(180, 180, 200));
-        Art.centered(g, "Gespeichert wird automatisch nach jedem gewonnenen Spiel – und von Hand in jedem Café (Gästebuch).", 640, 420);
-        Art.centered(g, "Zum Titelbild: Fortschritt seit dem letzten Speichern geht verloren. " + nearestCafeText(), 640, 466);
+        Art.centered(g, "Speichern geht jederzeit: hier, mit dem Siegel „Speichern“ unten auf der Schriftrolle oder mit S, solange sie offen ist.", 640, 420);
+        Art.centered(g, "Zum Titelbild: Fortschritt seit dem letzten Speichern geht verloren.", 640, 466);
         Art.centered(g, "Spielstand: " + GameState.saveFile(), 640, 444);
     }
 }

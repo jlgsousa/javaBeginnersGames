@@ -1,4 +1,4 @@
-# Das Flüstern im Dämmerwald
+# JoLu und die Kammer von Cabeceiras
 
 Ein 3D-Fantasy-Abenteuer für Erwachsene in Java (jMonkeyEngine 3.6). Gespielt wird in der **Third-Person-Perspektive**: Du siehst deine Figur von hinten, während sie durch eine fast **endlose Welt** läuft. Die Welt hat einen **Tag-Nacht-Zyklus mit Sonnenauf- und -untergang** (ein Tag dauert 15 Minuten), **Wetter** mit Regen und Regenbogen und **selbst komponierte Orchestermusik**.
 
@@ -48,7 +48,7 @@ Der Spielstand liegt in `~/.daemmerwald/spielstand.properties`.
 
 Rechts am Bildschirmrand stehen immer deine **aktuellen Missionen**.
 
-## Die Geschichte: Das Erwachen unter Sternenhall
+## Die Geschichte
 
 Sieben Kapitel, mit Titelkarte, Zielen rechts oben und Belohnungen:
 
@@ -58,7 +58,7 @@ Sieben Kapitel, mit Titelkarte, Zielen rechts oben und Belohnungen:
 4. **Das Dorf** – Hedda Wendelin in Laternhain: Laternen anzünden, eine Verfolgungsjagd mit dem Laternendieb, eine Flugstunde auf dem Besen durch zehn Ringe.
 5. **Die vergessene Bibliothek** – ein Rätsel in drei Stufen: Leuchter entzünden, eine Brücke aus Büchern schweben lassen, Runensäulen in der richtigen Reihenfolge – vorbei an Wächteraugen (Schleichen; Lumen blendet sie).
 6. **Die alten Ruinen** – Flammenfallen im Takt, Pfeilwände, ein Fallgitter mit Druckplatte, dann der Steinwächter: Schockwellen überspringen, Trümmersteine mit Levitaris auf ihn schleudern, das offene Runenherz treffen.
-7. **Das Erwachen** – das Finale gegen Malrik, den sechsten Gründer, in vier Phasen, und die Wahrheit über das Sternenherz.
+7. **Die Kammer von Cabeceiras** – das Finale gegen Malrik, den sechsten Gründer, in vier Phasen, und die Wahrheit über das Sternenherz.
 
 **Kämpfe:** Im Kampf hast du Herzen. Jeder Gegner hat eine Schwäche – Schattenflatterer (Arcanum), Dornenwürger (nur Ignis), Irrgeister (erst mit Lumen sichtbar). Protego hält jeden Treffer ab und wirft Schattenkugeln zurück. **Kombinationen** (zwei Zauber kurz nacheinander) schaltest du in den Kapiteln frei: Sternenblitz (Lumen → Arcanum), Feuerkomet (Ignis → Levitaris), Spiegelstoß (Protego → Arcanum).
 

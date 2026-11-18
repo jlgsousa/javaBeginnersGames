@@ -697,10 +697,12 @@ public final class Palace {
         for (Wall w : walls) if ("regal".equals(w.secret)) { w.door.removeFromParent(); w.door = secretShelf; }
     }
 
-    void shelf(Node n, float x, float z, float yaw, float scale) {
+    void shelf(Node n, float x, float z, float yaw, float scale) { shelf(n, x, 0, z, yaw, scale); }
+
+    void shelf(Node n, float x, float y0, float z, float yaw, float scale) {
         Spatial s = G3.model("wooden_bookshelf_worn");
         s.setLocalScale(scale);
-        s.setLocalTranslation(x, 0, z);
+        s.setLocalTranslation(x, y0, z);
         s.setLocalRotation(new Quaternion().fromAngleAxis(yaw, Vector3f.UNIT_Y));
         n.attachChild(s);
         // bunte Buchrücken in die Fächer
@@ -709,7 +711,7 @@ public final class Palace {
             for (int b = 0; b < 7; b++) {
                 Vector3f p = q.mult(new Vector3f(-0.85f + b * 0.27f, 0.42f + f * 0.72f, 0.05f));
                 Geometry book = box(n, G3.lit(new ColorRGBA(0.25f + rnd.nextFloat() * 0.6f, 0.1f + rnd.nextFloat() * 0.35f, 0.1f + rnd.nextFloat() * 0.45f, 1)),
-                    0.06f, 0.2f + rnd.nextFloat() * 0.06f, 0.18f, x + p.x, p.y, z + p.z, 0);
+                    0.06f, 0.2f + rnd.nextFloat() * 0.06f, 0.18f, x + p.x, y0 + p.y, z + p.z, 0);
                 book.setLocalRotation(q);
             }
         }

@@ -41,7 +41,7 @@ public class Main extends SimpleApplication implements RawInputListener {
     public static void main(String[] args) {
         Main app = new Main();
         AppSettings s = new AppSettings(true);
-        s.setTitle("Das Flüstern im Dämmerwald");
+        s.setTitle("JoLu und die Kammer von Cabeceiras");
         int[] res = windowSize();
         s.setResolution(res[0], res[1]);
         if (Boolean.getBoolean("dw.fullscreen")) s.setFullscreen(true);
