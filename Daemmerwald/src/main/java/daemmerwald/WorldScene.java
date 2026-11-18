@@ -368,7 +368,7 @@ public class WorldScene implements Scene, Main.CameraDirector {
             velY = Math.min(velY + 18 * dt, 5.5f);
             mana -= 7 * dt;
             flyingNow = true;
-        } else if (!troll && space && pos.y < ground + 3.2f) {
+        } else if (st.hero.isFairy() && space && pos.y < ground + 3.2f) {
             velY = Math.min(velY + 14 * dt, 3.2f);
         } else if (in.wasPressed(KeyEvent.VK_SPACE) && onGround) {
             velY = (troll ? 6.2f : 5f) * (st.gadget(Outfit.Gadget.JUMP) ? 1.75f : 1);
@@ -2189,13 +2189,13 @@ public class WorldScene implements Scene, Main.CameraDirector {
         for (Potion p : Potion.values()) pot.append("[").append(p.ordinal() + 1).append("] ").append(p.title).append(" ×").append(st.potions.getOrDefault(p, 0)).append("   ");
         g.drawString(pot.toString(), 20, SH - 40);
         if (p2 != null) {
-            g.drawString("WASD · Maus · Klick/Q zaubern · Leertaste " + (st.hero.isTroll() ? "springen" : "fliegen") + " · E sprechen · Tab Menü", 20, SH - 18);
-            g.drawString("Pfeile laufen · R-Strg " + (st.hero2.isTroll() ? "springen" : "fliegen") + " · R-Umschalt zaubern · Enter sprechen",
+            g.drawString("WASD · Maus · Klick/Q zaubern · Leertaste " + (st.hero.isFairy() ? "fliegen" : "springen") + " · E sprechen · Tab Menü", 20, SH - 18);
+            g.drawString("Pfeile laufen · R-Strg " + (st.hero2.isFairy() ? "fliegen" : "springen") + " · R-Umschalt zaubern · Enter sprechen",
                 SW / 2 + 20, SH - 18);
-            g.drawString("oder Gamepad: Stick · A " + (st.hero2.isTroll() ? "springen" : "fliegen") + " · B zaubern · X sprechen", SW / 2 + 20, SH - 40);
+            g.drawString("oder Gamepad: Stick · A " + (st.hero2.isFairy() ? "fliegen" : "springen") + " · B zaubern · X sprechen", SW / 2 + 20, SH - 40);
             return;
         }
-        g.drawString("WASD laufen · Maus schauen · Klick/Q zaubern · Leertaste " + (st.gadget(Outfit.Gadget.FLIGHT) ? "fliegen" : st.hero.isTroll() ? "springen" : "flattern")
+        g.drawString("WASD laufen · Maus schauen · Klick/Q zaubern · Leertaste " + (st.gadget(Outfit.Gadget.FLIGHT) ? "fliegen" : st.hero.isFairy() ? "flattern" : "springen")
             + (st.has(Ability.SPRINT) ? " · Umschalt rennen" : "") + " · E sprechen · I Tasche · Tab Menü", 20, SH - 18);
     }
 

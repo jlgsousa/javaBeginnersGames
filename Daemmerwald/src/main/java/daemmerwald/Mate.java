@@ -88,7 +88,7 @@ public class Mate {
         boolean jump = in.isDown(Input.P2_JUMP);
         flyingNow = false;
         float ground = world.height(pos.x, pos.z);
-        if (!troll() && jump && mana > 1 && pos.y < ground + 6f) {
+        if (st.hero2.isFairy() && jump && mana > 1 && pos.y < ground + 6f) {
             // Feen flattern und fliegen (kostet etwas Mana)
             velY = Math.min(velY + 16 * dt, 4.2f);
             mana -= 5 * dt;
@@ -97,7 +97,7 @@ public class Mate {
             velY = troll() ? 6.2f : 5f;
             onGround = false;
         }
-        float grav = troll() ? 18 : (jump ? 3 : 9);
+        float grav = troll() ? 18 : (jump && st.hero2.isFairy() ? 3 : 12);
         velY -= grav * dt;
         pos.y += velY * dt;
         ground = world.height(pos.x, pos.z);

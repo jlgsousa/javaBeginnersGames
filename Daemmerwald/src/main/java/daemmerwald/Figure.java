@@ -60,6 +60,12 @@ public class Figure {
                     buildFairyWings();
                 } else buildFairy();
             }
+            case Look.HUMAN -> {
+                height = look.female ? 1.66f : 1.8f;
+                Spatial m = Mixamo.character(look.female);
+                if (m != null) buildHuman(m);
+                else { buildFairy(); if (wings != null) for (Node w : wings) w.removeFromParent(); wings = null; }
+            }
             case Look.SHROOM -> { height = 3.4f; buildShroom(); }
             case Look.MOUSE -> { height = 1.35f; buildMouse(); }
             default -> { height = 2.1f; buildWraith(); }
@@ -326,6 +332,45 @@ public class Figure {
                 }
             }
         }
+    }
+
+    /** Mensch: Haut, Haare, Kleidung je Figur einfärben (Ready-Player-Me-Teile bzw. Michelle-Textur). */
+    private void buildHuman(Spatial s) {
+        mixamo = true;
+        troll = false;
+        ColorRGBA skin = G3.rgb(look.skin), top = G3.rgb(look.cloth), bottom = G3.rgb(look.accent), hair = G3.rgb(look.hair), shoes = G3.rgb(look.wing);
+        boolean beard = look.hairStyle == Look.BEARD;
+        s.depthFirstTraversal(sp -> {
+            if (!(sp instanceof Geometry g) || g.getMaterial() == null) return;
+            String mn = String.valueOf(g.getMaterial().getName());
+            Material m = g.getMaterial();
+            if (m.getMaterialDef().getMaterialParam("Diffuse") == null) return;
+            if (look.female) {
+                Texture t = Humans.michelleTexture(look, m);
+                if (t != null) m.setTexture("DiffuseMap", t);
+                return;
+            }
+            ColorRGBA mul = null;
+            if (mn.contains("Skin") || mn.contains("Wolf3D_Body")) mul = ratio(skin, 172, 121, 113);
+            else if (mn.contains("Headwear")) mul = ratio(hair, 45, 42, 39);
+            else if (mn.contains("Beard")) { if (!beard) g.setCullHint(Spatial.CullHint.Always); mul = ratio(hair, 87, 59, 47); }
+            else if (mn.contains("Outfit_Top")) mul = ratio(top, 149, 103, 108);
+            else if (mn.contains("Outfit_Bottom")) mul = ratio(bottom, 159, 115, 103);
+            else if (mn.contains("Footwear")) mul = ratio(shoes, 71, 51, 57);
+            if (mul != null) {
+                m.setColor("Diffuse", mul);
+                m.setColor("Ambient", mul.mult(0.9f));
+            }
+        });
+        float base = look.female ? 1.62f : Humans.maleBase;
+        float k = height / base;
+        s.setLocalScale(k);
+        model.attachChild(s);
+        ac = Mixamo.composer(s);
+    }
+
+    private static ColorRGBA ratio(ColorRGBA target, int r, int g, int b) {
+        return new ColorRGBA(Math.min(4.5f, target.r * 255 / r), Math.min(4.5f, target.g * 255 / g), Math.min(4.5f, target.b * 255 / b), 1);
     }
 
     /** Skaliert eine Mixamo-Figur. Mixamo-Exporte sind (bei Maßstab 1) etwa 1,62 m groß, die Füße stehen auf y = 0. */

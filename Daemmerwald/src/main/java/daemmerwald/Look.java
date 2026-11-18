@@ -4,7 +4,7 @@ import java.awt.Color;
 
 /** Aussehen einer Figur, wird prozedural gezeichnet. */
 public class Look {
-    public static final int TROLL = 0, FAIRY = 1, SHROOM = 2, WRAITH = 3, MOUSE = 4;
+    public static final int TROLL = 0, FAIRY = 1, SHROOM = 2, WRAITH = 3, MOUSE = 4, HUMAN = 5;
     public final int kind;
     public final Color skin, cloth, accent, hair, wing;
     public final boolean horns;
@@ -36,6 +36,11 @@ public class Look {
 
     public static Look fairy(int[] skin, int[] cloth, int[] accent, int[] hair, int[] wing) {
         return new Look(FAIRY, c(skin), c(cloth), c(accent), c(hair), c(wing), false);
+    }
+
+    /** Mensch: Hautton, Oberteil, Hose, Haarfarbe, Schuhe. */
+    public static Look human(int[] skin, int[] top, int[] bottom, int[] hair, int[] shoes, boolean female, int style) {
+        return new Look(HUMAN, c(skin), c(top), c(bottom), c(hair), c(shoes), false).hair(female, style);
     }
 
     public static int[] rgb(int r, int g, int b) { return new int[]{r, g, b}; }

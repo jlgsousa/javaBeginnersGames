@@ -20,7 +20,7 @@ public class CharacterSelectScene implements Scene {
         this.game = game;
         this.in = game.input;
         this.player = player;
-        if (player == 2) sel = game.state.hero.isTroll() ? 5 : 0;
+        if (player == 2) sel = game.state.hero.look.female ? 0 : 1;
     }
 
     public int selected() { return sel; }
@@ -76,7 +76,7 @@ public class CharacterSelectScene implements Scene {
         g.setFont(new Font("Serif", Font.BOLD, 34));
         Art.shadowText(g, c.name, 40, 130, Color.WHITE);
         g.setFont(Art.ITALIC);
-        Art.shadowText(g, c.epithet + "  ·  " + (c.isTroll() ? "Troll" : "Fee"), 42, 162, new Color(220, 220, 240));
+        Art.shadowText(g, c.epithet + "  ·  " + (c.look.female ? "Hexe" : "Zauberer"), 42, 162, new Color(220, 220, 240));
         g.setFont(new Font("Serif", Font.PLAIN, 19));
         g.setColor(Art.PARCH);
         Art.drawWrapped(g, c.bio, 42, 205, 470, 25);
@@ -95,9 +95,7 @@ public class CharacterSelectScene implements Scene {
         }
         g.setFont(Art.SMALL);
         g.setColor(new Color(200, 200, 215));
-        Art.drawWrapped(g, c.isTroll()
-            ? "Trolle sind groß und schwer: hohe Kamera, kraftvolle Sprünge."
-            : "Feen sind klein und leicht: Halte die Leertaste, um ein Stück zu flattern.", 42, 478, 470, 18);
+        Art.drawWrapped(g, "Neu an der verlassenen Akademie Sternenhall. Zauber lernst du im Unterricht – Arcanum kannst du schon.", 42, 478, 470, 18);
         RoundRectangle2D btn = new RoundRectangle2D.Double(60, 504, 240, 48, 24, 24);
         g.setColor(Math.sin(t * 4) > 0 ? new Color(90, 70, 140) : new Color(70, 56, 110));
         g.fill(btn);
@@ -125,7 +123,7 @@ public class CharacterSelectScene implements Scene {
             g.setFont(new Font("SansSerif", Font.PLAIN, 11));
             g.setColor(new Color(190, 190, 210));
             Art.centered(g, d.epithet, x + 58, y + 78);
-            Art.centered(g, d.isTroll() ? "Troll" : "Fee", x + 58, y + 95);
+            Art.centered(g, d.look.female ? "Hexe" : "Zauberer", x + 58, y + 95);
         }
     }
 }

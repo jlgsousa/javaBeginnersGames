@@ -220,6 +220,7 @@ public final class G3 {
             Material pbr = g.getMaterial();
             if (pbr.getMaterialDef().getMaterialParam("BaseColor") == null) return;
             Material m = new Material(am, "Common/MatDefs/Light/Lighting.j3md");
+            m.setName(pbr.getName());
             com.jme3.material.MatParam base = pbr.getParam("BaseColorMap"), nrm = pbr.getParam("NormalMap"), col = pbr.getParam("BaseColor"),
                 em = pbr.getParam("EmissiveMap"), emc = pbr.getParam("Emissive");
             ColorRGBA c = col != null ? (ColorRGBA) col.getValue() : ColorRGBA.White;

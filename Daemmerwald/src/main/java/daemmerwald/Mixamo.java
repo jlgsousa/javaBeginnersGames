@@ -26,7 +26,7 @@ public final class Mixamo {
 
     public static final Path DIR = Paths.get(System.getProperty("user.home"), ".daemmerwald", "modelle");
     private static final String BASE = "https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/models/gltf/";
-    private static final String[] FILES = {"Michelle.glb", "Soldier.glb"};
+    private static final String[] FILES = {"Michelle.glb", "Soldier.glb", "readyplayer.glb"};
     public static volatile String status = "";
     private static Spatial animSource;
     private static AssetManager am;
@@ -46,10 +46,13 @@ public final class Mixamo {
                 Path target = DIR.resolve(f);
                 if (Files.exists(target)) continue;
                 status = "Lade realistische Figuren (einmalig): " + f + " …";
-                try (InputStream in = URI.create(BASE + f).toURL().openStream()) {
+                try (InputStream in = URI.create(BASE + (f.equals("readyplayer.glb") ? "readyplayer.me.glb" : f)).toURL().openStream()) {
                     Path tmp = DIR.resolve(f + ".part");
                     Files.copy(in, tmp, StandardCopyOption.REPLACE_EXISTING);
-                    Files.move(tmp, target, StandardCopyOption.REPLACE_EXISTING);
+                    if (f.equals("readyplayer.glb")) {
+                        GlbFix.deinterleave(tmp, target);
+                        Files.deleteIfExists(tmp);
+                    } else Files.move(tmp, target, StandardCopyOption.REPLACE_EXISTING);
                 } catch (Exception e) {
                     status = "Realistische Figuren konnten nicht geladen werden (offline?) – es werden die Ersatzmodelle benutzt.";
                     return;
@@ -64,17 +67,31 @@ public final class Mixamo {
     /** Lädt eine weibliche bzw. männliche Mixamo-Figur (eigene Datei hat Vorrang) – oder null. */
     public static Spatial character(boolean female) {
         String own = female ? "frau.glb" : "mann.glb";
-        String fallback = female ? "Michelle.glb" : null;
+        String fallback = female ? "Michelle.glb" : "readyplayer.glb";
         for (String f : new String[]{own, fallback}) {
             if (f == null || !Files.exists(DIR.resolve(f)) || !Files.exists(DIR.resolve("Soldier.glb"))) continue;
             try {
                 Spatial s = am.loadModel(f).clone();
+                stripMorphs(s);
                 if (retarget(s)) { G3.toPhong(s); return s; }
             } catch (Exception e) {
                 System.err.println("Mixamo-Figur " + f + " nicht lesbar: " + e.getMessage());
             }
         }
         return null;
+    }
+
+    /** Gesichts-Blendshapes entfernen (zu viele für die Engine – die Figur würde sonst zersplittern). */
+    static void stripMorphs(Spatial s) {
+        s.depthFirstTraversal(sp -> {
+            while (sp.getNumControls() > 0 && sp.getControl(com.jme3.anim.MorphControl.class) != null)
+                sp.removeControl(com.jme3.anim.MorphControl.class);
+            if (sp instanceof com.jme3.scene.Geometry g) {
+                com.jme3.scene.Mesh m = g.getMesh();
+                while (m.hasMorphTargets()) m.removeMorphTarget(0);
+                g.setMorphState(null);
+            }
+        });
     }
 
     static AnimComposer composer(Spatial s) {
@@ -100,6 +117,10 @@ public final class Mixamo {
         SkinningControl sk = skin(target);
         if (src == null || dst == null || sk == null) return false;
         Armature arm = sk.getArmature();
+        // Grunddrehung der beiden Skelette (z. B. ein gedrehter "Armature"-Knoten in der Datei) ausgleichen
+        // M: dreht den Skelettraum der Quelle in den des Ziels (aus Körperachsen: Hüfte→Kopf, rechte→linke Schulter)
+        Quaternion conv = frame(sk.getArmature()).mult(frame(skin(animSource).getArmature()).inverse());
+        Quaternion convInv = conv.inverse();
         for (String name : new String[]{"Idle", "Walk", "Run"}) {
             AnimClip clip = src.getAnimClip(name);
             if (clip == null) return false;
@@ -109,6 +130,7 @@ public final class Mixamo {
                 String jn = sj.getName();
                 Joint mj = arm.getJoint(jn);
                 if (mj == null) mj = arm.getJoint(jn.replace("mixamorig:", "mixamorig"));
+                if (mj == null) mj = arm.getJoint(jn.replace("mixamorig:", ""));
                 if (mj == null) continue;
                 Transform sb = sj.getInitialTransform(), tb = mj.getInitialTransform();
                 Quaternion ws = bindWorld(sj), wt = bindWorld(mj);
@@ -124,9 +146,11 @@ public final class Mixamo {
                 for (int i = 0; i < n; i++) {
                     Quaternion r = srq != null ? srq[i] : sb.getRotation();
                     // Rotation über die Ruhepose im Weltraum übertragen: inv(Wt_parent) * Ws_parent * r * inv(Ws) * Wt
-                    rots[i] = wtpInv.mult(wsp).multLocal(r).multLocal(wsInv).multLocal(wt).normalizeLocal();
+                    // Änderung D = Wsp*r*inv(Ws) im Quellraum; Ziel x = inv(Wtp)*M*D*inv(M)*Wt
+                    Quaternion d = wsp.mult(r).multLocal(wsInv);
+                    rots[i] = wtpInv.mult(conv).multLocal(d).multLocal(convInv).multLocal(wt).normalizeLocal();
                     trs[i] = jn.endsWith("Hips") && srt != null
-                        ? tb.getTranslation().add(srt[i].subtract(sb.getTranslation()).multLocal(ratio))
+                        ? tb.getTranslation().add(conv.mult(srt[i].subtract(sb.getTranslation())).multLocal(ratio))
                         : tb.getTranslation().clone();
                 }
                 out.add(new TransformTrack(mj, tt.getTimes(), trs, rots, null));
@@ -137,6 +161,32 @@ public final class Mixamo {
         }
         dst.setCurrentAction("Idle");
         return true;
+    }
+
+    /** Körper-Koordinatensystem eines Skeletts in Ruhehaltung (seitlich, oben, vorn). */
+    private static Quaternion frame(Armature a) {
+        Vector3f hips = bindPos(find(a, "Hips")), head = bindPos(find(a, "Head")), l = bindPos(find(a, "LeftArm")), r = bindPos(find(a, "RightArm"));
+        Vector3f up = head.subtract(hips).normalizeLocal();
+        Vector3f side = l.subtract(r).normalizeLocal();
+        Vector3f fwd = side.cross(up).normalizeLocal();
+        side = up.cross(fwd).normalizeLocal();
+        Quaternion q = new Quaternion();
+        q.fromAxes(side, up, fwd);
+        return q;
+    }
+
+    private static Joint find(Armature a, String n) {
+        Joint j = a.getJoint("mixamorig:" + n);
+        if (j == null) j = a.getJoint("mixamorig" + n);
+        if (j == null) j = a.getJoint(n);
+        return j;
+    }
+
+    private static Vector3f bindPos(Joint j) {
+        if (j == null) return new Vector3f();
+        Transform t = j.getInitialTransform().clone();
+        for (Joint p = j.getParent(); p != null; p = p.getParent()) t.combineWithParent(p.getInitialTransform());
+        return t.getTranslation();
     }
 
     private static Quaternion bindWorld(Joint j) {

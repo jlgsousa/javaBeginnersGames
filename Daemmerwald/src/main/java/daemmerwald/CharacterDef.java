@@ -33,46 +33,49 @@ public class CharacterDef {
 
     public double manaMax() { return 60 + macht * 12; }
 
+    public boolean isFairy() { return look.kind == Look.FAIRY; }
+
+    /** Zehn Menschen, die sehr verschieden aussehen – alle neu an der verlassenen Akademie Sternenhall. */
     public static final List<CharacterDef> ALL = List.of(
-        new CharacterDef("Grimbart Moosfaust", "Der Steinrufer", 4, 3, 2,
-            Look.troll(rgb(104, 128, 96), rgb(84, 70, 52), rgb(150, 220, 120), rgb(60, 80, 50), false).hair(false, Look.BEARD),
-            "Dreißig Jahre unter Tage, dann ein Unglück, das ihm die Lust an der Dunkelheit nahm. "
-          + "Er studiert spät, aber verbissen. Er spricht mit Steinen – und die Steine, sagt er, antworten ehrlicher als Leute."),
-        new CharacterDef("Hralda Eisenwurz", "Die Verbannte", 3, 4, 2,
-            Look.troll(rgb(120, 130, 145), rgb(110, 40, 40), rgb(230, 190, 90), rgb(200, 200, 210), true).hair(true, Look.BRAIDS),
-            "Einst Gesandte ihres Clans. Sie unterschrieb einen Friedensvertrag, den niemand wollte, "
-          + "und verlor dafür ihren Namen im Stammbuch. Bereut hat sie es nie. Zumindest nicht laut."),
-        new CharacterDef("Brokk der Leise", "Der Feldheiler", 2, 5, 2,
-            Look.troll(rgb(130, 110, 90), rgb(60, 80, 60), rgb(180, 230, 200), rgb(90, 70, 50), false).hair(false, Look.SHORT),
-            "Spricht selten, hört immer zu. Er hat bei Grenzstreitigkeiten mehr Wunden geflickt, als er zählen will. "
-          + "Seine Hände sind ruhig. Sein Schlaf nicht."),
-        new CharacterDef("Unna Kieselherz", "Die Runenschmiedin", 3, 2, 4,
-            Look.troll(rgb(100, 122, 122), rgb(70, 60, 80), rgb(255, 150, 80), rgb(180, 80, 40), false).hair(true, Look.BUN),
-            "Schmiedet Runen in Eisen und hat bei den falschen Leuten Schulden. Ihr Humor ist so trocken wie Schlacke. "
-          + "Wer ihr etwas verspricht, sollte es halten."),
-        new CharacterDef("Torvak Aschenhorn", "Der Ehemalige", 5, 2, 2,
-            Look.troll(rgb(92, 98, 92), rgb(50, 50, 58), rgb(220, 90, 70), rgb(40, 40, 40), true).hair(false, Look.WILD),
-            "Früher Söldner, heute Student der Schutzmagie. Über die Jahre dazwischen redet er nicht. "
-          + "Er sucht keine Vergebung – nur einen Grund, sie irgendwann zu verdienen."),
-        new CharacterDef("Lysandra Taufeuer", "Die Hofintrigantin", 3, 3, 3,
-            Look.fairy(rgb(240, 220, 210), rgb(120, 40, 90), rgb(255, 120, 180), rgb(230, 200, 120), rgb(255, 170, 220)).hair(true, Look.LONG),
-            "Aufgewachsen zwischen Fächern und Flüstereien am Feenhof. Offiziell Studentin. "
-          + "Inoffiziell schreibt sie Berichte für jemanden, dessen Namen sie nie nennt."),
-        new CharacterDef("Fenn Distelweber", "Der Schmuggler", 2, 2, 5,
-            Look.fairy(rgb(220, 200, 180), rgb(60, 90, 70), rgb(170, 255, 150), rgb(90, 60, 40), rgb(180, 255, 200)).hair(false, Look.WILD),
-            "Schmuggelt Mondstaub über die Grenze, um das Studium zu bezahlen. Charmant, schnell, chronisch pleite. "
-          + "Kennt jeden Trampelpfad im Dämmerwald."),
-        new CharacterDef("Mirelle Nachtglanz", "Die Flügellahme", 4, 4, 1,
-            Look.fairy(rgb(200, 200, 222), rgb(40, 50, 100), rgb(140, 180, 255), rgb(30, 30, 60), rgb(120, 140, 220)).hair(true, Look.PONYTAIL),
-            "Verlor bei einem Experiment die Flugfähigkeit und gewann dafür eine Obsession: Warum stirbt Magie? "
-          + "Ihre Notizbücher sind voller Antworten, die niemand hören will."),
-        new CharacterDef("Caelan Weidenlicht", "Der Duellant", 4, 2, 3,
-            Look.fairy(rgb(235, 215, 195), rgb(200, 190, 170), rgb(255, 230, 140), rgb(240, 240, 230), rgb(255, 240, 180)).hair(false, Look.SHORT),
-            "Duellmeister der Akademie, ehrgeizig bis zur Erschöpfung. Hinter der Arroganz steckt die Angst, "
-          + "dass ohne Siege nichts von ihm übrig bliebe."),
-        new CharacterDef("Senna Graufalter", "Die Traumdeuterin", 3, 4, 2,
-            Look.fairy(rgb(210, 200, 195), rgb(70, 70, 76), rgb(200, 200, 235), rgb(170, 170, 182), rgb(160, 160, 172)).hair(true, Look.LONG),
-            "Mit dreiunddreißig verwitwet. Seitdem liest sie Träume, auch die, die sie nicht lesen will. "
-          + "In letzter Zeit träumt der ganze Wald dasselbe.")
+        new CharacterDef("Elias Brandt", "Der Kartograf", 3, 4, 2,
+            Look.human(rgb(236, 196, 170), rgb(70, 90, 70), rgb(110, 86, 60), rgb(150, 80, 40), rgb(70, 50, 35), false, Look.BEARD),
+            "Hat jede Landkarte des Reiches gezeichnet – nur eine nicht: die der Akademie. Auf allen alten Plänen ist an ihrer Stelle "
+          + "ein weißer Fleck. Er will wissen, warum."),
+        new CharacterDef("Amara Okafor", "Die Runenleserin", 4, 4, 1,
+            Look.human(rgb(110, 70, 50), rgb(150, 60, 70), rgb(60, 60, 110), rgb(25, 20, 20), rgb(200, 180, 120), true, Look.LONG),
+            "Liest Runen wie andere Leute Briefe. Seit Wochen träumt sie von einem Symbol, das sie noch nie gesehen hat – "
+          + "und gestern stand es plötzlich an ihrer Zimmertür."),
+        new CharacterDef("Kenji Arai", "Der Uhrmacher", 2, 5, 2,
+            Look.human(rgb(232, 200, 160), rgb(60, 60, 75), rgb(40, 40, 50), rgb(20, 20, 25), rgb(90, 60, 40), false, Look.SHORT),
+            "Repariert Uhren, die rückwärts laufen, und Spieluhren, die Erinnerungen abspielen. "
+          + "Er glaubt, dass die Akademie selbst ein Uhrwerk ist – und dass sie gerade wieder anfängt zu ticken."),
+        new CharacterDef("Liv Sandberg", "Die Sturmseglerin", 3, 2, 4,
+            Look.human(rgb(245, 214, 196), rgb(70, 110, 160), rgb(220, 210, 190), rgb(235, 205, 130), rgb(120, 80, 50), true, Look.PONYTAIL),
+            "Ist mit einem Boot voller Zauberbücher über das Nordmeer gekommen. Furchtlos, laut und immer die Erste, "
+          + "die eine verbotene Tür aufmacht."),
+        new CharacterDef("Malik Haddad", "Der Alchemist", 4, 3, 2,
+            Look.human(rgb(190, 140, 100), rgb(120, 40, 40), rgb(80, 70, 60), rgb(30, 25, 20), rgb(60, 45, 35), false, Look.BEARD),
+            "Seine Familie braut seit sieben Generationen Tränke. Er ist der Erste, der die alten Rezepte "
+          + "der Akademie lesen kann – und einige davon hätten besser verschlossen bleiben sollen."),
+        new CharacterDef("Mei Lin", "Die Lichtweberin", 3, 3, 3,
+            Look.human(rgb(240, 210, 180), rgb(220, 200, 230), rgb(90, 50, 110), rgb(20, 18, 22), rgb(240, 240, 240), true, Look.BUN),
+            "Webt Licht zu Fäden und Fäden zu Bildern. Als sie das erste Mal durch die Säle von Sternenhall ging, "
+          + "flackerten alle Kerzen gleichzeitig – als hätten sie sie erkannt."),
+        new CharacterDef("Tobias Lindqvist", "Der Pechvogel", 2, 2, 5,
+            Look.human(rgb(250, 222, 205), rgb(200, 140, 50), rgb(70, 90, 120), rgb(240, 220, 160), rgb(150, 50, 40), false, Look.WILD),
+            "Stolpert über jede Schwelle und findet dabei jede Geheimtür. Niemand weiß, ob er Glück oder Pech hat. "
+          + "Er selbst am allerwenigsten."),
+        new CharacterDef("Sofia Márquez", "Die Duellantin", 5, 2, 2,
+            Look.human(rgb(210, 160, 120), rgb(40, 40, 45), rgb(130, 30, 40), rgb(70, 40, 25), rgb(30, 30, 30), true, Look.LONG),
+            "Gewann jedes Duell ihrer alten Schule. Dann kam der Brief von Sternenhall – ohne Absender, mit ihrem Namen in Goldtinte. "
+          + "Sie will wissen, wer sie gerufen hat."),
+        new CharacterDef("Darius Mensah", "Der Sternenkundler", 4, 3, 2,
+            Look.human(rgb(85, 55, 40), rgb(30, 50, 90), rgb(180, 170, 150), rgb(15, 12, 12), rgb(200, 160, 80), false, Look.SHORT),
+            "Zählt Sterne, die andere nicht sehen. Seit dem Neumond leuchtet über der Akademie ein Stern, der in keinem Atlas steht. "
+          + "Er ist ihm bis hierher gefolgt."),
+        new CharacterDef("Nora Kessler", "Die Archivarin", 3, 4, 2,
+            Look.human(rgb(248, 220, 205), rgb(90, 120, 80), rgb(110, 80, 60), rgb(190, 70, 30), rgb(80, 55, 40), true, Look.BRAIDS),
+            "Hat die Bibliothek der Hauptstadt geordnet, Buch für Buch. Ein einziges Buch war nirgends verzeichnet: "
+          + "eine Chronik von Sternenhall, deren letzte Seite leer ist – noch.")
     );
 }
