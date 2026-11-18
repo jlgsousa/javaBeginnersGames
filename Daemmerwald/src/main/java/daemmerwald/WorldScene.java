@@ -486,10 +486,37 @@ public class WorldScene implements Scene, Main.CameraDirector {
         }
     }
 
-    private void releaseSpell() { releaseSpell(pos, yaw, fig.height); }
+    private float shieldT;
+    private Geometry shieldGeo;
+
+    private void releaseSpell() {
+        if (st.spell == Spell.SCHILD) { raiseShield(); return; }
+        releaseSpell(pos, yaw, fig.height);
+    }
+
+    /** Protego: schimmernde Schutzkugel, hält Angriffe ab und stößt Schattenwesen zurück. */
+    private void raiseShield() {
+        shieldT = 4f + 1.5f * (spellLevel(Spell.SCHILD) - 1);
+        if (shieldGeo == null) {
+            com.jme3.material.Material m = new com.jme3.material.Material(G3.am, "Common/MatDefs/Misc/Unshaded.j3md");
+            m.setColor("Color", new ColorRGBA(0.45f, 1f, 0.8f, 0.17f));
+            m.setColor("GlowColor", new ColorRGBA(0.2f, 0.6f, 0.45f, 1));
+            m.getAdditionalRenderState().setBlendMode(com.jme3.material.RenderState.BlendMode.Alpha);
+            m.getAdditionalRenderState().setFaceCullMode(com.jme3.material.RenderState.FaceCullMode.Off);
+            m.getAdditionalRenderState().setDepthWrite(false);
+            shieldGeo = G3.geom("protego", new Sphere(20, 24, 1f), m);
+            shieldGeo.setQueueBucket(com.jme3.renderer.queue.RenderQueue.Bucket.Transparent);
+            shieldGeo.setShadowMode(com.jme3.renderer.queue.RenderQueue.ShadowMode.Off);
+        }
+        world.root.attachChild(shieldGeo);
+        world.burst(pos.add(0, fig.height * 0.5f, 0), new ColorRGBA(0.5f, 1f, 0.85f, 1), 60);
+    }
+
+    /** Zauberstufe 1–3: steigt durch Übungsstunden. */
+    int spellLevel(Spell s) { return Math.max(1, Math.min(3, st.stage("spell:" + s.name()))); }
 
     private void releaseSpell(Vector3f pos, float yaw, float figH) {
-        float reach = st.has(Ability.LANZE) ? 9 : 5;
+        float reach = (st.has(Ability.LANZE) ? 9 : 5) + (spellLevel(st.spell) - 1) * 2;
         Vector3f fwd = new Vector3f(FastMath.sin(yaw), 0, FastMath.cos(yaw));
         Vector3f target = pos.add(fwd.mult(reach)).addLocal(0, 1.2f, 0);
         Vector3f hand = pos.add(fwd.mult(0.7f)).addLocal(0, figH * 0.72f, 0);
@@ -506,6 +533,7 @@ public class WorldScene implements Scene, Main.CameraDirector {
             case SCHWEBE -> 1.2f;
             case FROST -> 1.7f;
             case OEFFNEN -> 1.1f;
+            case SCHILD -> 0.9f;
         };
     }
 
@@ -795,6 +823,13 @@ public class WorldScene implements Scene, Main.CameraDirector {
     public void update3D(float dt) {
         if (p2 != null) p2.update3D(dt);
         updateFlashes(dt);
+        if (shieldT > 0) {
+            shieldT -= dt;
+            float r = fig.height * 0.75f + 0.3f;
+            shieldGeo.setLocalTranslation(pos.add(0, fig.height * 0.5f, 0));
+            shieldGeo.setLocalScale(r * (1 + FastMath.sin(treasureT * 6) * 0.03f) * Math.min(1, shieldT * 3));
+            if (shieldT <= 0) shieldGeo.removeFromParent();
+        }
         world.cards.update(dt, st);
         updateRuneMarker(dt);
         treasureT += dt;
@@ -1169,12 +1204,12 @@ public class WorldScene implements Scene, Main.CameraDirector {
             Choice c = new Choice("Professorin Ysmira Funkelstein");
             for (Spell sp : Spell.LESSONS) c.add("Noch einmal üben: " + sp.label(), () -> runLesson(sp, true));
             c.add("Danke, Professorin!", () -> { });
-            say("Professorin Ysmira Funkelstein", CharacterDef.ALL.get(9).look, new String[]{"Du kennst alle fünf Zauber dieses Jahres! Üben schadet trotzdem nie."}, () -> choice = c);
+            say("Professorin Ysmira Funkelstein", CharacterDef.ALL.get(9).look, new String[]{"Du kennst alle Zauber dieses Jahres! Jede Übungsstunde verbessert einen Zauber (bis Stufe 3)."}, () -> choice = c);
             return;
         }
         String[] intro = st.spells.size() <= 1
             ? new String[]{"Willkommen zu deiner ersten Stunde! Ich bin Professorin Ysmira Funkelstein.",
-                "Fünf Zauber lernst du dieses Jahr. Jeder öffnet Wege, die anderen verschlossen bleiben – hier im Palast und draußen im Wald.",
+                "Arcanum, den Energieblitz, kannst du schon. Dazu lernst du Lumen, Ignis, Levitaris und Protego – und später zwei fortgeschrittene Zauber.",
                 "Heute: " + next.label() + ". " + next.text}
             : new String[]{"Ah, da bist du ja! Heute lernen wir " + next.label() + ".", next.text};
         say("Professorin Ysmira Funkelstein", CharacterDef.ALL.get(9).look, intro, () -> runLesson(next, false));
@@ -1195,7 +1230,13 @@ public class WorldScene implements Scene, Main.CameraDirector {
                 l.add("*Neuer Zauber gelernt: " + sp.label() + "!");
                 l.add("*Mit R wechselst du deinen Zauber, mit Q oder Klick zauberst du.");
                 l.add("Professorin Funkelstein: " + lessonTip(sp));
-            } else l.add("*Gut geübt!");
+            } else {
+                int lv = spellLevel(sp);
+                if (lv < 3) {
+                    st.stages.put("spell:" + sp.name(), lv + 1);
+                    l.add("*" + sp.word + " ist jetzt Stufe " + (lv + 1) + "! " + (sp == Spell.SCHILD ? "Der Schild hält länger." : "Der Zauber reicht weiter und wirkt stärker."));
+                } else l.add("*Gut geübt! " + sp.word + " ist schon auf der höchsten Stufe.");
+            }
             l.addAll(st.addXp(practice ? 15 : 50));
             saveNow(false);
             say("Professorin Ysmira Funkelstein", CharacterDef.ALL.get(9).look, l.toArray(new String[0]), null);
@@ -1210,6 +1251,7 @@ public class WorldScene implements Scene, Main.CameraDirector {
             case SCHWEBE -> "Im Steinbruch liegt ein Felsbrocken, den kein Troll bewegen kann. Und manche Wandteppiche hängen nicht ohne Grund.";
             case FROST -> "Am Ostufer des Mondsees steht ein Frostkristall. Draußen auf der Insel glänzt seit Jahren eine Truhe.";
             case OEFFNEN -> "Jetzt kannst du all die verschlossenen Truhen öffnen. Und im Trankkeller gibt es eine Platte mit einem Mondzeichen …";
+            case SCHILD -> "Protego hält Schattenwölfe und Motten auf Abstand. Ein Schild zur rechten Zeit ist mehr wert als zehn Blitze!";
             default -> "";
         };
     }
@@ -1384,6 +1426,13 @@ public class WorldScene implements Scene, Main.CameraDirector {
                         it.remove();
                         continue;
                     } else {
+                        if (shieldT > 0) {
+                            // Protego: der Angriff prallt ab, das Wesen wird zurückgestoßen
+                            c.vel.set(c.pos.subtract(pos).setY(0).normalizeLocal().multLocal(6));
+                            c.pos.addLocal(c.vel.mult(0.25f));
+                            world.burst(pos.add(0, fig.height * 0.5f, 0), new ColorRGBA(0.5f, 1f, 0.85f, 1), 20);
+                            continue;
+                        }
                         float loss = 16 * (st.has(Ability.SCHILD) ? 0.5f : 1) * (st.gadget(Outfit.Gadget.DEFENSE) ? 0.4f : 1);
                         mana = Math.max(0, mana - loss);
                         invT = 1.2f;

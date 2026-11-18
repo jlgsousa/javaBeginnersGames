@@ -182,6 +182,14 @@ public class Shot {
             app.world.puzzles.apply(app.core.state);
             teleport(112, -26, FastMath.PI);
         });
+        step("protego", 4f, () -> {
+            GameState gs = app.core.state;
+            gs.flags.add("intro"); gs.flags.add("home:seen"); gs.flags.add("palace:visited");
+            app.core.setScene(new WorldScene(app.core));
+            gs.spells.add(Spell.SCHILD); gs.spell = Spell.SCHILD;
+            app.world.dayNight.time = 0.8f;
+        });
+        step("protego_cast", 5f, () -> press(java.awt.event.KeyEvent.VK_Q));
         step("players", 2f, () -> app.core.setScene(new PlayersScene(app.core)));
         step("two_players", 6f, () -> {
             GameState gs = app.core.state;
