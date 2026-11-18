@@ -222,6 +222,84 @@ public class Shot {
             app.world.palace.applyOpen(app.core.state);
             teleport(Palace.PX - 13f, Palace.PZ - 14.5f, -FastMath.HALF_PI);
         });
+        step("ch3_waves", 5f, () -> {
+            WorldScene ws = (WorldScene) app.core.scene();
+            GameState gs = app.core.state;
+            if (gs.flags.add("spellbook")) { }
+            for (Spell sp : new Spell[]{Spell.LICHT, Spell.FLAMME, Spell.SCHWEBE, Spell.SCHILD}) gs.spells.add(sp);
+            if (app.world.inPalace) ws.exitPalace();
+            Chapters.set(gs, 3, 2);
+            teleport(Saga.GROVE.x, Saga.GROVE.z + 13, FastMath.PI);
+            ws.saga.startWaves();
+        });
+        step("ch3_fox", 5f, () -> {
+            WorldScene ws = (WorldScene) app.core.scene();
+            Chapters.set(app.core.state, 3, 3);
+            teleport(Saga.GROVE.x + 2, Saga.GROVE.z + 6, FastMath.PI);
+            ws.saga.startFox();
+        });
+        step("ch4_village", 3f, () -> {
+            WorldScene ws = (WorldScene) app.core.scene();
+            ws.saga.endEncounter();
+            Chapters.set(app.core.state, 4, 1);
+            app.core.state.flags.add("lantern:0");
+            app.core.state.flags.add("lantern:2");
+            ws.saga.apply();
+            app.world.dayNight.time = 0.8f;
+            teleport(-78.5f, -41f, -FastMath.HALF_PI);
+        });
+        step("ch4_flight", 4f, () -> {
+            WorldScene ws = (WorldScene) app.core.scene();
+            ws.saga.startFlight();
+            ws.dialog = null;
+            app.world.dayNight.time = 0.4f;
+            ws.pos.set(-70, app.world.height(-70, -30) + 8, -30);
+        });
+        step("ch5_dark", 3f, () -> {
+            WorldScene ws = (WorldScene) app.core.scene();
+            ws.saga.endEncounter();
+            Chapters.set(app.core.state, 5, 1);
+            ws.enterPalace();
+            ws.dialog = null;
+            ws.saga.apply();
+            ws.teleportTo(ws.saga.dw(Depths.LIB_ARRIVE), FastMath.PI);
+        });
+        step("ch5_chasm", 3f, () -> {
+            WorldScene ws = (WorldScene) app.core.scene();
+            for (int i = 0; i < 3; i++) app.core.state.flags.add("lib:candle" + i);
+            app.core.state.flags.add("lib:stack0");
+            Chapters.set(app.core.state, 5, 2);
+            ws.saga.apply();
+            ws.teleportTo(ws.saga.dw(new Vector3f(112, Depths.LY, 9)), FastMath.PI - 0.4f);
+        });
+        step("ch5_runes", 5f, () -> {
+            WorldScene ws = (WorldScene) app.core.scene();
+            for (int i = 0; i < 3; i++) app.core.state.flags.add("lib:stack" + i);
+            Chapters.set(app.core.state, 5, 3);
+            ws.saga.apply();
+            ws.teleportTo(ws.saga.dw(new Vector3f(118, Depths.LY, -5)), FastMath.PI);
+        });
+        step("ch6_traps", 3f, () -> {
+            WorldScene ws = (WorldScene) app.core.scene();
+            ws.saga.endEncounter();
+            Chapters.set(app.core.state, 6, 1);
+            ws.teleportTo(ws.saga.dw(new Vector3f(154, Depths.RY, 13)), FastMath.PI);
+        });
+        step("ch6_golem", 5f, () -> {
+            WorldScene ws = (WorldScene) app.core.scene();
+            Chapters.set(app.core.state, 6, 2);
+            app.core.state.flags.add("ruin:plate");
+            ws.saga.apply();
+            ws.teleportTo(ws.saga.dw(new Vector3f(158, Depths.RY, -68)), FastMath.PI);
+            ws.saga.startGolem();
+        });
+        step("ch7_shade", 5f, () -> {
+            WorldScene ws = (WorldScene) app.core.scene();
+            Chapters.set(app.core.state, 7, 1);
+            ws.saga.apply();
+            ws.teleportTo(ws.saga.dw(new Vector3f(210, Depths.HY, 12)), FastMath.PI);
+            ws.saga.startShade();
+        });
         step("players", 2f, () -> app.core.setScene(new PlayersScene(app.core)));
         step("two_players", 6f, () -> {
             GameState gs = app.core.state;
@@ -267,6 +345,7 @@ public class Shot {
     private void teleport(float x, float z, float yaw) {
         if (!(app.core.scene() instanceof WorldScene ws)) return;
         ws.dialog = null;
+        ws.clearOverlays();
         ws.pos.set(x, app.world.height(x, z), z);
         try {
             java.lang.reflect.Field f = WorldScene.class.getDeclaredField("camYaw");

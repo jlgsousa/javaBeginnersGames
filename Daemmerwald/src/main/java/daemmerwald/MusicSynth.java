@@ -372,4 +372,94 @@ public final class MusicSynth {
         m.pluck(95, 0.08, 0.25, 0.4, 0.5, true);
         return m.finish(0.25, 0.5);
     }
+
+    /** Kurzer Knall aus gefiltertem Rauschen (Schritte, Treffer). */
+    private void thump(double start, double vol, double decay, double smooth, double pan, double toneHz) {
+        int s0 = (int) (start * RATE), len = (int) (decay * 5 * RATE);
+        double a = 0;
+        for (int i = 0; i < len && s0 + i < n; i++) {
+            double t = i / (double) RATE;
+            double env = Math.min(1, t / 0.003) * Math.exp(-t / decay);
+            a += smooth * ((rnd.nextDouble() * 2 - 1) - a);
+            double s = (a + (toneHz > 0 ? Math.sin(2 * Math.PI * toneHz * t * (1 - t * 2)) * 0.8 : 0)) * env * vol;
+            l[s0 + i] += s * (1 - pan);
+            r[s0 + i] += s * pan;
+        }
+    }
+
+    /** Schritt auf Stein oder Waldboden. */
+    public static byte[] step() {
+        MusicSynth m = new MusicSynth(0.3f);
+        m.thump(0, 1, 0.035, 0.25, 0.5, 90);
+        return m.finish(0.05, 0.5);
+    }
+
+    /** Schwere Holztür mit Knarren. */
+    public static byte[] door() {
+        MusicSynth m = new MusicSynth(1.6f);
+        for (int i = 0; i < 26000; i++) {
+            double t = i / (double) RATE;
+            double f = 180 + 90 * Math.sin(t * 7) + t * 60;
+            double s = Math.sin(2 * Math.PI * f * t) * Math.sin(2 * Math.PI * 23 * t) * Math.min(1, t * 8) * Math.max(0, 1 - t / 0.8) * 0.3;
+            m.l[i] += s; m.r[i] += s;
+        }
+        m.thump(0.9, 1.2, 0.09, 0.08, 0.5, 60);
+        return m.finish(0.35, 0.6);
+    }
+
+    /** Ruf einer Eule. */
+    public static byte[] owl() {
+        MusicSynth m = new MusicSynth(2.4f);
+        double[][] calls = {{0, 0.35}, {0.55, 0.18}, {0.85, 0.6}};
+        for (double[] c : calls) {
+            int s0 = (int) (c[0] * RATE), len = (int) (c[1] * RATE);
+            for (int i = 0; i < len; i++) {
+                double t = i / (double) RATE;
+                double f = 410 - 40 * t / c[1];
+                double env = Math.sin(Math.PI * t / c[1]);
+                double s = (Math.sin(2 * Math.PI * f * t) + 0.2 * Math.sin(4 * Math.PI * f * t)) * env * 0.4;
+                m.l[s0 + i] += s * 0.7; m.r[s0 + i] += s;
+            }
+        }
+        return m.finish(0.5, 0.4);
+    }
+
+    /** Treffer auf einem Gegner. */
+    public static byte[] hit() {
+        MusicSynth m = new MusicSynth(0.7f);
+        m.thump(0, 1, 0.08, 0.5, 0.5, 140);
+        m.pluck(64, 0, 0.3, 0.15, 0.5, true);
+        return m.finish(0.2, 0.6);
+    }
+
+    /** Tiefes Brüllen eines Bosses. */
+    public static byte[] roar() {
+        MusicSynth m = new MusicSynth(2.2f);
+        double a = 0, b = 0;
+        for (int i = 0; i < (int) (1.9 * RATE); i++) {
+            double t = i / (double) RATE;
+            double env = Math.min(1, t / 0.15) * Math.max(0, 1 - t / 1.9);
+            a += 0.04 * ((m.rnd.nextDouble() * 2 - 1) - a);
+            b += 0.04 * ((m.rnd.nextDouble() * 2 - 1) - b);
+            double f = 62 + 18 * Math.sin(t * 3);
+            double tone = Math.sin(2 * Math.PI * f * t) * (0.6 + 0.4 * Math.sin(2 * Math.PI * 31 * t));
+            m.l[i] += (a * 2.5 + tone) * env;
+            m.r[i] += (b * 2.5 + tone) * env;
+        }
+        return m.finish(0.4, 0.75);
+    }
+
+    /** Luftzug: Ausweichen, Sturzflug, Wurf. */
+    public static byte[] whoosh() {
+        MusicSynth m = new MusicSynth(0.8f);
+        double a = 0;
+        for (int i = 0; i < (int) (0.6 * RATE); i++) {
+            double t = i / (double) RATE;
+            double sm = 0.05 + 0.3 * Math.sin(Math.PI * t / 0.6);
+            a += sm * ((m.rnd.nextDouble() * 2 - 1) - a);
+            double env = Math.sin(Math.PI * t / 0.6);
+            m.l[i] += a * env * (1 - t); m.r[i] += a * env * t;
+        }
+        return m.finish(0.1, 0.5);
+    }
 }

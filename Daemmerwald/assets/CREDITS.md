@@ -40,3 +40,5 @@ für das Spiel in OGG umgewandelt (ansonsten unverändert):
 | dark1.ogg / dark2.ogg | Darkest Child / Unseen Horrors | dunkle Orte, böse Häuser |
 | drama1.ogg / drama2.ogg / drama3.ogg | Volatile Reaction / Five Armies / Clash Defiant | Duelle, Prüfungen, Rennen, Gefahr |
 | cafe1.ogg / cafe2.ogg | Gymnopedie No 1 / Heartwarming | Café, Zuhause, freundliche Häuser |
+| boss1.ogg / boss2.ogg | Final Battle of the Dark Wizards / Curse of the Scarab | Bosskämpfe |
+| deep1.ogg | Gathering Darkness | Unter dem Schloss: Bibliothek, Ruinen |

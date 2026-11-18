@@ -18,7 +18,7 @@ import java.util.*;
 import java.util.List;
 
 /** Die erkundbare 3D-Welt in Third-Person-Perspektive. */
-public class WorldScene implements Scene, Main.CameraDirector {
+public class WorldScene implements Scene, Main.CameraDirector, Combat.Host {
     private static final int SW = GamePanel.W, SH = GamePanel.H;
 
     final GamePanel game;
@@ -67,6 +67,12 @@ public class WorldScene implements Scene, Main.CameraDirector {
 
     // Rennen
     private Race race;
+
+    /** Kapitel 3–7: Kämpfe, Dorf, Tiefen unter dem Schloss. */
+    final Saga saga;
+    private Spell lastSpell;
+    private float lastSpellT = 99, stepT, bigT;
+    private String bigMsg;
 
     private static class FloatText {
         String s;
@@ -120,7 +126,55 @@ public class WorldScene implements Scene, Main.CameraDirector {
         dust.setParticlesPerSec(0);
         dust.setInWorldSpace(true);
         world.root.attachChild(dust);
+        saga = new Saga(this, this);
+        saga.apply();
     }
+
+    // ---------------------------------------------------------------- Combat.Host
+
+    @Override public Vector3f player() { return pos; }
+    @Override public float playerHeight() { return fig.height; }
+    @Override public boolean playerAirborne() { return !onGround && pos.y > world.height(pos.x, pos.z) + 0.35f; }
+    @Override public boolean shield() { return shieldT > 0; }
+    @Override public void text(String s, Vector3f at, Color c) { floatText(s, at, c); }
+    @Override public void sfx(String name, float pitch) { if (game.app.music != null) game.app.music.sfx(name, pitch); }
+
+    @Override
+    public void hurt(float hearts, Vector3f from) {
+        hurtT = 0.6f;
+        floatText(hearts >= 1 ? "-1 Herz" : "-½ Herz", pos.add(0, fig.height + 0.6f, 0), new Color(255, 120, 140));
+        Vector3f push = pos.subtract(from).setY(0);
+        if (push.lengthSquared() > 0.001f) {
+            push.normalizeLocal().multLocal(1.4f);
+            if (!world.blockedIgnoringWater(pos.x + push.x, pos.z + push.z, 0.4f)) { pos.x += push.x; pos.z += push.z; }
+        }
+        if (game.app.music != null) game.app.music.sfx("hit", 0.7f);
+    }
+
+    /** Spieler versetzen (Treppen, Ohnmacht). */
+    void teleportTo(Vector3f p, float newYaw) {
+        boolean palace = world.palace.roomAt(p.x, p.z) != null && p.y > world.palace.baseY - 100;
+        if (palace != world.inPalace) {
+            if (palace) { world.setPalace(true); world.palace.applyOpen(st); for (Creature c : creatures) c.remove(); creatures.clear(); }
+            else world.setPalace(false);
+        }
+        pos.set(p);
+        pos.y = world.height(p.x, p.z);
+        velY = 0;
+        yaw = camYaw = newYaw;
+        camInit = false;
+        if (p2 != null) { p2.pos.set(pos).addLocal(1.2f, 0, 0.6f); p2.yaw = newYaw; }
+    }
+
+    /** Große Ansage in der Bildmitte (Welle 2/3 …). */
+    void bigText(String s) { bigMsg = s; bigT = 2.6f; }
+
+    float treasureTime() { return treasureT; }
+
+    /** Für Testbilder: Titelkarten ausblenden. */
+    void clearOverlays() { cardT = 0; bigT = 0; }
+
+    public boolean bossFight() { return saga != null && saga.bossFight(); }
 
     void rebuildFigure() {
         if (fig != null) fig.node.removeFromParent();
@@ -150,16 +204,17 @@ public class WorldScene implements Scene, Main.CameraDirector {
     private float cardT;
 
     private void chapterCard(int c) {
-        cardTitle = "Kapitel " + c + " · " + (c < Chapters.TITLES.length ? Chapters.TITLES[c] : "");
+        cardTitle = c < Chapters.TITLES.length ? "Kapitel " + c + " · " + Chapters.TITLES[c] : "Epilog · Sternenhall erwacht";
         cardT = 6;
         if (game.app.music != null) game.app.music.sfx("chime", 0.8f);
     }
 
-    private void advance(int chapter, int step) {
+    void advance(int chapter, int step) {
         boolean newChapter = chapter != Chapters.chapter(st);
         Chapters.set(st, chapter, step);
         if (newChapter) chapterCard(chapter);
         applyChapterWorld();
+        if (saga != null) saga.apply();
         saveNow(false);
     }
 
@@ -249,6 +304,8 @@ public class WorldScene implements Scene, Main.CameraDirector {
             if (r > 0) st.effects.put(p, Math.max(0, r - dt));
         }
         updateTexts(dt);
+        lastSpellT += dt;
+        bigT = Math.max(0, bigT - dt);
         if (p2 != null) {
             boolean frozen = dialog != null || choice != null || shop || brew || menuTab >= 0 || (race != null && race.countdown > 0);
             p2.update(dt, in, frozen, pos);
@@ -342,6 +399,10 @@ public class WorldScene implements Scene, Main.CameraDirector {
             return;
         }
         updatePalace(use1 || (p2 != null && p2.useNow));
+        saga.update(dt, use1);
+        if (dialog != null) return;
+        if (palaceAction == null && saga.action != null) { palaceLabel = saga.label; palaceAction = saga.action; }
+        else if (palaceLabel == null && saga.label != null) palaceLabel = saga.label;
         if (palaceAction != null && (use1 || (p2 != null && p2.useNow)) && race == null) {
             Runnable a = palaceAction;
             palaceAction = null;
@@ -397,6 +458,8 @@ public class WorldScene implements Scene, Main.CameraDirector {
     private float maxMana() { return (float) st.hero.manaMax() + (st.effect(Potion.MANA) ? 30 : 0); }
 
     private void move(float dt) {
+        if (saga.broomRide) { broomMove(dt); return; }
+        stepSounds(dt);
         if (!in.rightDown || true) {
             camYaw -= (float) in.lookDX * 0.0042f;
             camPitch = FastMath.clamp(camPitch - (float) in.lookDY * 0.0032f, -0.45f, 1.15f);
@@ -473,8 +536,40 @@ public class WorldScene implements Scene, Main.CameraDirector {
 
     private float castLock;
 
+    /** Schritte: auf Stein lauter und heller, im Wald dumpf. */
+    private void stepSounds(float dt) {
+        if (game.app.music == null || moveSpeed < 0.5f || !onGround) { stepT = 0.15f; return; }
+        stepT -= dt * Math.max(0.8f, moveSpeed / 3.2f);
+        if (stepT <= 0) {
+            stepT = 0.36f;
+            boolean stone = world.inPalace;
+            game.app.music.sfx("step", (stone ? 1.15f : 0.8f) + FastMath.nextRandomFloat() * 0.15f, stone ? 0.22f : 0.12f);
+        }
+    }
+
+    /** Besenflug (Flugstunde bei Hedda): W vorwärts, Maus lenkt, Leertaste steigt, Umschalt sinkt. */
+    private float broomSpeed;
+
+    private void broomMove(float dt) {
+        camYaw -= (float) in.lookDX * 0.0042f;
+        camPitch = FastMath.clamp(camPitch - (float) in.lookDY * 0.0032f, -0.45f, 1.15f);
+        float want = in.isDown(KeyEvent.VK_W) ? 12 : in.isDown(KeyEvent.VK_S) ? 0 : 5;
+        broomSpeed += (want - broomSpeed) * Math.min(1, dt * 1.5f);
+        yaw += FastMath.normalize(camYaw - yaw, -FastMath.PI, FastMath.PI) * Math.min(1, dt * 4);
+        float vy = in.isDown(KeyEvent.VK_SPACE) ? 5 : in.isDown(KeyEvent.VK_SHIFT) || in.isDown(KeyEvent.VK_CONTROL) ? -5 : 0;
+        float nx = pos.x + FastMath.sin(yaw) * broomSpeed * dt, nz = pos.z + FastMath.cos(yaw) * broomSpeed * dt;
+        float ground = Math.max(world.height(nx, nz), WorldGen.WATER);
+        if (!world.chunks.blocked(nx, nz, 0.4f) || pos.y > ground + 6) { pos.x = nx; pos.z = nz; }
+        pos.y = FastMath.clamp(pos.y + vy * dt, ground + 0.6f, ground + 40);
+        velY = 0;
+        onGround = false;
+        flyingNow = true;
+        moveSpeed = broomSpeed;
+    }
+
     private boolean canGo(float x, float z, boolean air, boolean swim, float step) {
         if (air) {
+            if (world.inPalace) return !world.blockedIgnoringWater(x, z, 0.45f);
             return !world.chunks.blocked(x, z, 0.4f) || pos.y > world.height(x, z) + 8;
         }
         float hNew = world.height(x, z), hCur = world.height(pos.x, pos.z);
@@ -513,6 +608,8 @@ public class WorldScene implements Scene, Main.CameraDirector {
         float trailLife = -1;
 
         final Spell spell;
+        Combat.Foe homing;
+        Combat.Combo combo;
 
         Bolt(Vector3f from, Vector3f to, Spell spell) {
             p = from.clone();
@@ -539,6 +636,7 @@ public class WorldScene implements Scene, Main.CameraDirector {
                 if (trailLife < 0) node.removeFromParent();
                 return false;
             }
+            if (homing != null && !homing.dead) target.set(homing.center());
             Vector3f d = target.subtract(p);
             float step = 24 * dt;
             if (d.length() <= step) {
@@ -561,7 +659,7 @@ public class WorldScene implements Scene, Main.CameraDirector {
     private void updateBolts(float dt) {
         for (Iterator<Bolt> it = bolts.iterator(); it.hasNext(); ) {
             Bolt b = it.next();
-            if (b.fly(dt)) spellImpact(b.target, b.spell);
+            if (b.fly(dt)) spellImpact(b.target, b.spell, b.combo, b.homing);
             if (b.trailLife < 0 && b.node.getParent() == null) it.remove();
         }
     }
@@ -570,7 +668,7 @@ public class WorldScene implements Scene, Main.CameraDirector {
     private Geometry shieldGeo;
 
     private void releaseSpell() {
-        if (st.spell == Spell.SCHILD) { raiseShield(); return; }
+        if (st.spell == Spell.SCHILD) { raiseShield(); lastSpell = Spell.SCHILD; lastSpellT = 0; return; }
         releaseSpell(pos, yaw, fig.height);
     }
 
@@ -596,12 +694,40 @@ public class WorldScene implements Scene, Main.CameraDirector {
     int spellLevel(Spell s) { return Math.max(1, Math.min(3, st.stage("spell:" + s.name()))); }
 
     private void releaseSpell(Vector3f pos, float yaw, float figH) {
-        float reach = (st.has(Ability.LANZE) ? 9 : 5) + (spellLevel(st.spell) - 1) * 2;
+        float reach = (st.has(Ability.LANZE) ? 9 : 5) + (spellLevel(st.spell) - 1) * 2 + (st.flags.contains("equip:stab") ? 2 : 0);
         Vector3f fwd = new Vector3f(FastMath.sin(yaw), 0, FastMath.cos(yaw));
         Vector3f target = pos.add(fwd.mult(reach)).addLocal(0, 1.2f, 0);
         Vector3f hand = pos.add(fwd.mult(0.7f)).addLocal(0, figH * 0.72f, 0);
+        // Kombination: zwei Zauber kurz nacheinander
+        Combat.Combo combo = null;
+        if (pos == this.pos) {
+            Combat.Combo cc = lastSpell != null && lastSpellT < 2.2f ? Combat.Combo.of(lastSpell, st.spell) : null;
+            if (cc != null && st.flags.contains("combo:" + cc.name())) combo = cc;
+            lastSpell = combo != null ? null : st.spell;
+            lastSpellT = 0;
+        }
+        if (combo != null) {
+            floatText("✦ " + combo.title + "! ✦", pos.add(0, figH + 1.2f, 0), combo == Combat.Combo.FEUERKOMET ? Spell.FLAMME.color : combo == Combat.Combo.SPIEGELSTOSS ? Spell.SCHILD.color : Spell.LICHT.color);
+            if (game.app.music != null) game.app.music.sfx("chime", 0.8f);
+            if (combo == Combat.Combo.SPIEGELSTOSS) {
+                saga.combat.mirrorBlast(pos.clone(), spellLevel(Spell.FUNKE) * 0.35f + 0.65f);
+                world.burst(pos.add(0, figH * 0.5f, 0), new ColorRGBA(0.5f, 1f, 0.85f, 1), 120);
+                return;
+            }
+        }
+        // Zielhilfe: Gegner oder Rätselobjekt vor dir
+        Combat.Foe homing = saga.combat.aim(pos, yaw, reach);
+        if (homing != null) target = homing.center();
+        else {
+            Vector3f ap = saga.aimPoint(pos, yaw, reach, st.spell);
+            if (ap != null) target = ap;
+        }
         world.burst(hand, new ColorRGBA(1f, 0.95f, 0.8f, 1), 20);
-        bolts.add(new Bolt(hand, target, st.spell));
+        Bolt b = new Bolt(hand, target, st.spell);
+        b.homing = homing;
+        b.combo = combo;
+        if (combo != null) b.node.setLocalScale(2.2f);
+        bolts.add(b);
         lightBoost = 3;
     }
 
@@ -734,9 +860,29 @@ public class WorldScene implements Scene, Main.CameraDirector {
                 g.drawString("GEWÄHLT", (float) (r.getX() + r.getWidth() - 70), (float) r.getY() + 58);
             }
         }
+        // Kombinationen und Ausrüstung
+        double cy = 170 + 3 * 116 + 4;
+        g.setFont(new Font("Serif", Font.BOLD | Font.ITALIC, 20));
+        g.setColor(new Color(90, 40, 20));
+        g.drawString("Kombinationen", 670, (float) cy + 10);
+        int k = 0;
+        for (Combat.Combo cb : Combat.Combo.values()) {
+            boolean has = st.flags.contains("combo:" + cb.name());
+            g.setFont(new Font("Serif", Font.BOLD, 15));
+            g.setColor(has ? new Color(60, 30, 15) : new Color(150, 130, 100));
+            g.drawString(has ? "✦ " + cb.title + ":  " + cb.first.word + " → " + cb.second.word : "✦ ???  (Belohnung eines Kapitels)", 676, (float) cy + 34 + k * 22);
+            k++;
+        }
+        String eq = (st.flags.contains("equip:umhang") ? "Wächterumhang (+1 Herz)  " : "") + (st.flags.contains("equip:stab") ? "Sternenstab (Reichweite)  " : "")
+            + (st.flags.contains("equip:amulett") ? "Eulenamulett (Heilung)" : "");
+        if (!eq.isEmpty()) {
+            g.setFont(new Font("Serif", Font.ITALIC, 14));
+            g.setColor(new Color(90, 55, 25));
+            Art.drawWrapped(g, "Ausrüstung: " + eq, 676, cy + 108, 440, 16);
+        }
         g.setFont(Art.SMALL);
         g.setColor(new Color(220, 210, 190));
-        Art.centered(g, "Klick wählt einen Zauber · R wechselt auch ohne Buch · B oder Esc schließt", SW / 2.0, 712);
+        Art.centered(g, "Klick wählt einen Zauber · R wechselt auch ohne Buch · Kombination: zwei Zauber kurz nacheinander · B oder Esc schließt", SW / 2.0, 712);
     }
 
     private void updateFlashes(float dt) {
@@ -759,8 +905,14 @@ public class WorldScene implements Scene, Main.CameraDirector {
         }
     }
 
-    private void spellImpact(Vector3f target, Spell spell) {
+    private void spellImpact(Vector3f target, Spell spell, Combat.Combo combo, Combat.Foe homing) {
         spellEffect(target, spell);
+        if (combo != null) {
+            spellEffect(target, combo.first);
+            world.burst(target, G3.rgb(combo.first.color), 120);
+        }
+        float power = 1 + 0.35f * (spellLevel(spell) - 1);
+        if (saga.spell(target, spell, combo, power, homing)) return;
         if (palaceSpell(target, spell)) return;
         world.burst(target, G3.rgb(spell.color), 70);
         if (puzzleSpell(target, spell)) return;
@@ -1560,6 +1712,11 @@ public class WorldScene implements Scene, Main.CameraDirector {
 
     private void updateCreatures(float dt) {
         if (world.inPalace) return;
+        if (saga.combat.active() || saga.broomRide) {
+            for (Creature c : creatures) c.remove();
+            creatures.clear();
+            return;
+        }
         invT = Math.max(0, invT - dt);
         hurtT = Math.max(0, hurtT - dt);
         foxT = Math.max(0, foxT - dt);
@@ -2361,6 +2518,7 @@ public class WorldScene implements Scene, Main.CameraDirector {
         }
         drawSplit(g);
         drawHud(g);
+        if (calm() || dialog == null) drawCombatHud(g);
         if (race != null) drawRace(g);
         if (dialog == null && menuTab < 0 && !shop && !brew) drawTracker(g);
         if (choice != null) drawChoice(g);
@@ -2379,6 +2537,37 @@ public class WorldScene implements Scene, Main.CameraDirector {
             Art.shadowCentered(g, "Das Erwachen unter Sternenhall", SW / 2.0, SH / 2.0 + 52, Art.alpha(Art.PARCH, (int) (a * 255)));
         }
         if (dialog != null) dialog.render(g, game.time());
+    }
+
+    /** Herzen (nur im Kampf oder wenn verletzt), Bossleiste und große Ansagen. */
+    private void drawCombatHud(Graphics2D g) {
+        Combat cb = saga.combat;
+        if (cb.active() || cb.hearts < cb.maxHearts - 0.01f) {
+            for (int i = 0; i < (int) cb.maxHearts; i++) {
+                float fill = Math.max(0, Math.min(1, cb.hearts - i));
+                Art.heart(g, 34 + i * 34, SH - 78, 13, fill);
+            }
+        }
+        if (cb.boss != null && !cb.boss.dead && cb.boss instanceof Combat.Boss b) {
+            double w = Math.min(640, SW * 0.5), x = SW / 2.0 - w / 2, y = p2 != null ? 64 : 64;
+            g.setFont(new Font("Serif", Font.BOLD | Font.ITALIC, 24));
+            Art.shadowCentered(g, b.title, SW / 2.0, y + 2, new Color(255, 215, 170));
+            g.setColor(new Color(10, 6, 16, 200));
+            g.fill(new RoundRectangle2D.Double(x - 4, y + 12, w + 8, 22, 12, 12));
+            g.setColor(new Color(170, 40, 70));
+            g.fill(new RoundRectangle2D.Double(x, y + 16, w * b.bar(), 14, 8, 8));
+            g.setColor(new Color(255, 200, 150, 160));
+            g.draw(new RoundRectangle2D.Double(x - 4, y + 12, w + 8, 22, 12, 12));
+            if (cb.bossHint != null) {
+                g.setFont(Art.SMALL);
+                Art.shadowCentered(g, cb.bossHint, SW / 2.0, y + 54, new Color(230, 220, 255));
+            }
+        }
+        if (bigT > 0 && bigMsg != null) {
+            float a = Math.min(1, Math.min(bigT, 2.6f - bigT) * 2);
+            g.setFont(new Font("Serif", Font.BOLD | Font.ITALIC, 48));
+            Art.shadowCentered(g, bigMsg, SW / 2.0, SH * 0.32, Art.alpha(new Color(255, 200, 150), (int) (a * 255)));
+        }
     }
 
     private void drawHud(Graphics2D g) {

@@ -37,7 +37,9 @@ Der Spielstand liegt in `~/.daemmerwald/spielstand.properties`.
 |---|---|
 | WASD | laufen |
 | Maus | Kamera drehen (Mausrad: Zoom) |
-| Linksklick / Q | Lichtzauber: verbrennt die Welke, vertreibt Schattenwesen |
+| Linksklick / Q | gewählten Zauber sprechen (zielt automatisch auf Gegner und Rätselobjekte vor dir) |
+| R | Zauber wechseln (Arcanum, Lumen, Ignis, Levitaris, Protego …) |
+| B | Zauberbuch: Zauber, Stufen, Kombinationen, Ausrüstung |
 | Leertaste | springen (Troll) · flattern (Fee) · fliegen (mit Flügelmantel) |
 | Umschalt | rennen (ab Stufe 2) |
 | E | sprechen, benutzen, einkaufen, brauen |
@@ -45,6 +47,20 @@ Der Spielstand liegt in `~/.daemmerwald/spielstand.properties`.
 | Tab / Esc / M | Menü: Karte, Garderobe, Inventar, Missionen, Fähigkeiten, Tagebuch, Speichern |
 
 Rechts am Bildschirmrand stehen immer deine **aktuellen Missionen**.
+
+## Die Geschichte: Das Erwachen unter Sternenhall
+
+Sieben Kapitel, mit Titelkarte, Zielen rechts oben und Belohnungen:
+
+1. **Die Ankunft** – ein Brief ohne Absender, der Zauberpalast, das erste Zauberbuch, ein wanderndes Symbol.
+2. **Das erste Geheimnis** – ein versiegeltes Gemälde (Ignis, Levitaris, Lumen) und die Galerie der Gründer.
+3. **Der verbotene Wald** – drei Angriffswellen im Hain der Alten, dann der Bosskampf gegen Aschfell, den Uralten (ausweichen, Kristalle zerschlagen, Kugeln mit Protego zurückwerfen, mit Lumen befreien).
+4. **Das Dorf** – Hedda Wendelin in Laternhain: Laternen anzünden, eine Verfolgungsjagd mit dem Laternendieb, eine Flugstunde auf dem Besen durch zehn Ringe.
+5. **Die vergessene Bibliothek** – ein Rätsel in drei Stufen: Leuchter entzünden, eine Brücke aus Büchern schweben lassen, Runensäulen in der richtigen Reihenfolge – vorbei an Wächteraugen (Schleichen; Lumen blendet sie).
+6. **Die alten Ruinen** – Flammenfallen im Takt, Pfeilwände, ein Fallgitter mit Druckplatte, dann der Steinwächter: Schockwellen überspringen, Trümmersteine mit Levitaris auf ihn schleudern, das offene Runenherz treffen.
+7. **Das Erwachen** – das Finale gegen Malrik, den sechsten Gründer, in vier Phasen, und die Wahrheit über das Sternenherz.
+
+**Kämpfe:** Im Kampf hast du Herzen. Jeder Gegner hat eine Schwäche – Schattenflatterer (Arcanum), Dornenwürger (nur Ignis), Irrgeister (erst mit Lumen sichtbar). Protego hält jeden Treffer ab und wirft Schattenkugeln zurück. **Kombinationen** (zwei Zauber kurz nacheinander) schaltest du in den Kapiteln frei: Sternenblitz (Lumen → Arcanum), Feuerkomet (Ignis → Levitaris), Spiegelstoß (Protego → Arcanum).
 
 ## Was es gibt
 

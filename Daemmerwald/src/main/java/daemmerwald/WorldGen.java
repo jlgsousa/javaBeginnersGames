@@ -15,7 +15,7 @@ public final class WorldGen {
     public static final float[] ACADEMY = {0, -112}, COURTYARD = {0, -66}, HEART = {0, 12}, LAKE = {-124, -4},
         QUARRY = {120, -36}, SWAMP = {0, 92}, MUSHROOMS = {-120, 92}, RAVINE = {128, 84}, SHADOW = {-124, -92},
         MEADOW = {116, -104}, CAFE = {34, 194}, HOME = {-66, -52},
-        VILLAGE = {-92, -40}, PALACE = {0, -200};
+        VILLAGE = {-92, -40}, PALACE = {0, -200}, GROVE = {-150, -160};
 
     /** Der Laternbach: fließt durch das Feendorf Laternhain in den Mondsee. */
     public static final float[][] STREAM = {{-90, -84}, {-94, -62}, {-92, -44}, {-96, -28}, {-102, -15}, {-112, -6}};
@@ -24,12 +24,12 @@ public final class WorldGen {
     public static final float[][] PATHS = {
         {0, -92, 0, -14}, {0, 30, 0, 66}, {-26, 14, -88, -2}, {26, 6, 92, -30}, {-100, 22, -114, 74},
         {26, 94, 100, 84}, {20, -62, 94, -44}, {-20, -66, -100, -86}, {20, -74, 92, -98}, {12, 104, 30, 182},
-        {-16, -64, -58, -50}, {-58, -50, -84.3f, -37.8f}, {0, -132, 0, -170}, {-101.7f, -42.2f, -112, -60}
+        {-16, -64, -58, -50}, {-58, -50, -84.3f, -37.8f}, {0, -132, 0, -170}, {-101.7f, -42.2f, -112, -60}, {-124, -92, -140, -134}
     };
 
     private static final Feature[] FLAT = {
         new Feature(0, -100, 54), new Feature(COURTYARD, 30), new Feature(HEART, 34), new Feature(MEADOW, 36),
-        new Feature(MUSHROOMS, 22), new Feature(SHADOW, 28), new Feature(CAFE, 22), new Feature(LAKE, 46), new Feature(HOME, 28), new Feature(VILLAGE, 34), new Feature(PALACE, 46)
+        new Feature(MUSHROOMS, 22), new Feature(SHADOW, 28), new Feature(CAFE, 22), new Feature(LAKE, 46), new Feature(HOME, 28), new Feature(VILLAGE, 34), new Feature(PALACE, 46), new Feature(GROVE, 30)
     };
 
     private record Feature(float x, float z, float r) {
@@ -162,6 +162,7 @@ public final class WorldGen {
         d = Math.max(d, G3.smooth(40, 24, (float) dist(x, z, SWAMP)));
         d = Math.max(d, G3.smooth(44, 26, (float) dist(x, z, RAVINE)));
         d = Math.max(d, G3.smooth(42, 22, (float) dist(x, z, SHADOW)));
+        d = Math.max(d, G3.smooth(60, 30, (float) dist(x, z, GROVE)));
         if (Math.hypot(x, z) > 300) {
             double n = G3.fbm(x * 0.003 - 400, z * 0.003 + 90, 3);
             d = Math.max(d, G3.smooth(0.62f, 0.72f, (float) n));

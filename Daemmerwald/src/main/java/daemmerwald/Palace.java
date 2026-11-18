@@ -37,7 +37,7 @@ public final class Palace {
 
     public final Node exterior = new Node("palaceOutside");
     public final Node interior = new Node("palaceInside");
-    private final Node collide = new Node("palaceCollide");
+    final Node collide = new Node("palaceCollide");
 
     /** Raum: Rechteck (lokal), Bodenhöhe relativ zum Saal, Deckenhöhe. */
     public record Room(String id, String name, float x0, float x1, float z0, float z1, float y, float h) {
@@ -45,7 +45,7 @@ public final class Palace {
     }
 
     /** Wandstück (lokal) – mit Geheimgang-ID, falls es eine Geheimtür ist. */
-    private static final class Wall {
+    static final class Wall {
         final float x0, x1, z0, z1;
         final String secret;
         Spatial door;
@@ -71,14 +71,14 @@ public final class Palace {
     public record Portal(String secret, Vector3f from, Vector3f to, float yawTo, String label) { }
 
     public final List<Room> rooms = new ArrayList<>();
-    private final List<Wall> walls = new ArrayList<>();
+    final List<Wall> walls = new ArrayList<>();
     public final List<Secret> secrets = new ArrayList<>();
     public final List<Portal> portals = new ArrayList<>();
     public final List<PointLight> lights = new ArrayList<>();
     private final List<Geometry> candles = new ArrayList<>();
     private final Random rnd = new Random(3);
 
-    private Material stone, plaster, planks, marble, roofTiles, gold, darkWood, red, starCeiling;
+    Material stone, plaster, planks, marble, roofTiles, gold, darkWood, red, starCeiling;
 
     public Palace() {
         stone = G3.ph("mossy_stone_wall", new ColorRGBA(1f, 0.97f, 0.92f, 1));
@@ -94,7 +94,11 @@ public final class Palace {
         starCeiling = starMat();
         buildExterior();
         buildInterior();
+        depths = new Depths(this);
     }
+
+    /** Was unter dem Schloss liegt (Kapitel 5–7). */
+    public Depths depths;
 
     // ================================================================ Koordinaten
 
@@ -201,7 +205,7 @@ public final class Palace {
 
     // ================================================================ Hilfen
 
-    private Geometry box(Node n, Material m, float hx, float hy, float hz, float x, float y, float z, float tile) {
+    Geometry box(Node n, Material m, float hx, float hy, float hz, float x, float y, float z, float tile) {
         Box b = new Box(hx, hy, hz);
         if (tile > 0) b.scaleTextureCoordinates(new Vector2f(Math.max(1, Math.max(hx, hz) * tile), Math.max(1, hy * tile)));
         Geometry g = new Geometry("p", b);
@@ -211,7 +215,7 @@ public final class Palace {
         return g;
     }
 
-    private Geometry cylY(Node n, Material m, float r1, float r2, float h, int sides, float x, float y, float z) {
+    Geometry cylY(Node n, Material m, float r1, float r2, float h, int sides, float x, float y, float z) {
         Geometry g = new Geometry("c", new Cylinder(2, sides, r1, r2, h, true, false));
         g.setMaterial(m);
         g.setLocalTranslation(x, y, z);
@@ -333,7 +337,7 @@ public final class Palace {
 
     // ================================================================ Innen
 
-    private Room room(String id, String name, float x0, float x1, float z0, float z1, float y, float h) {
+    Room room(String id, String name, float x0, float x1, float z0, float z1, float y, float h) {
         Room r = new Room(id, name, x0, x1, z0, z1, y, h);
         rooms.add(r);
         return r;
@@ -427,7 +431,7 @@ public final class Palace {
     }
 
     /** Wand entlang x bei z (von xa bis xb), mit Lücken {von, bis, geheim?}. */
-    private void wallX(Room r, float z, float xa, float xb, float[][] gaps, String secret, Material m) {
+    void wallX(Room r, float z, float xa, float xb, float[][] gaps, String secret, Material m) {
         float cur = xa;
         for (float[] gp : gaps) {
             if (gp[0] > cur) segX(r, z, cur, gp[0], m, null);
@@ -438,7 +442,7 @@ public final class Palace {
         if (cur < xb) segX(r, z, cur, xb, m, null);
     }
 
-    private void wallZ(Room r, float x, float za, float zb, float[][] gaps, String secret, Material m) {
+    void wallZ(Room r, float x, float za, float zb, float[][] gaps, String secret, Material m) {
         float cur = za;
         for (float[] gp : gaps) {
             if (gp[0] > cur) segZ(r, x, cur, gp[0], m, null);
@@ -495,7 +499,7 @@ public final class Palace {
         collide.attachChild(g.clone(false));
     }
 
-    private void floorAndCeiling(Room r) {
+    void floorAndCeiling(Room r) {
         float hx = (r.x1() - r.x0()) / 2, hz = (r.z1() - r.z0()) / 2, cx = (r.x0() + r.x1()) / 2, cz = (r.z0() + r.z1()) / 2;
         Material fm = r.id().equals("hall") || r.id().equals("observatory") ? marble : r.id().equals("library") || r.id().equals("study") ? planks : stone;
         Box fb = new Box(hx, 0.1f, hz);
@@ -517,7 +521,7 @@ public final class Palace {
         lights.add(new PointLight(new Vector3f(PX + cx, baseY + r.y() + r.h() * 0.6f, PZ + cz), lc.mult(0.75f), Math.max(hx, hz) * 1.7f));
     }
 
-    private void candle(Node n, float x, float y, float z, boolean floating) {
+    void candle(Node n, float x, float y, float z, boolean floating) {
         Geometry c = new Geometry("candle", new Cylinder(2, 8, 0.05f, 0.35f, true));
         c.setMaterial(G3.lit(new ColorRGBA(0.95f, 0.92f, 0.82f, 1)));
         c.setLocalRotation(new Quaternion().fromAngleAxis(-FastMath.HALF_PI, Vector3f.UNIT_X));
@@ -693,7 +697,7 @@ public final class Palace {
         for (Wall w : walls) if ("regal".equals(w.secret)) { w.door.removeFromParent(); w.door = secretShelf; }
     }
 
-    private void shelf(Node n, float x, float z, float yaw, float scale) {
+    void shelf(Node n, float x, float z, float yaw, float scale) {
         Spatial s = G3.model("wooden_bookshelf_worn");
         s.setLocalScale(scale);
         s.setLocalTranslation(x, 0, z);
@@ -1037,6 +1041,7 @@ public final class Palace {
 
     public void update(float dt) {
         t += dt;
+        if (depths != null) depths.update(dt);
         if (teacher != null) teacher.update(dt, 0, false);
         if (symbol != null && symbolAt >= 0) {
             Geometry q = (Geometry) symbol.getChild("sigil");

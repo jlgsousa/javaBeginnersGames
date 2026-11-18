@@ -236,6 +236,27 @@ public final class Art {
         return y;
     }
 
+    /** Herz für die Lebensanzeige im Kampf (fill 0–1). */
+    public static void heart(Graphics2D g, double cx, double cy, double r, float fill) {
+        java.awt.geom.Path2D.Double h = new java.awt.geom.Path2D.Double();
+        h.moveTo(cx, cy + r * 0.95);
+        h.curveTo(cx - r * 1.6, cy - r * 0.1, cx - r * 0.9, cy - r * 1.3, cx, cy - r * 0.45);
+        h.curveTo(cx + r * 0.9, cy - r * 1.3, cx + r * 1.6, cy - r * 0.1, cx, cy + r * 0.95);
+        h.closePath();
+        g.setColor(new Color(20, 10, 20, 190));
+        g.fill(h);
+        if (fill > 0) {
+            java.awt.Shape old = g.getClip();
+            g.clip(new java.awt.geom.Rectangle2D.Double(cx - r * 1.7, cy - r * 1.4, r * 3.4 * fill, r * 2.6));
+            g.setPaint(new java.awt.GradientPaint((float) cx, (float) (cy - r), new Color(255, 120, 140), (float) cx, (float) (cy + r), new Color(190, 30, 70)));
+            g.fill(h);
+            g.setClip(old);
+        }
+        g.setColor(new Color(255, 220, 200, 200));
+        g.setStroke(new java.awt.BasicStroke(1.6f));
+        g.draw(h);
+    }
+
     public static void bar(Graphics2D g, double x, double y, double w, double h, double frac, Color c) {
         frac = clamp01(frac);
         g.setColor(new Color(0, 0, 0, 150));

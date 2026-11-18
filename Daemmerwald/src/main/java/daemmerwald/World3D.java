@@ -161,6 +161,9 @@ public class World3D {
 
     private void solid(float x, float z, float r) { statics.add(new float[]{x, z, r}); }
 
+    /** Hindernis für die Geschichte (Steine im Hain, Laternen im Dorf). */
+    public void addSolid(float x, float z, float r) { solid(x, z, r); }
+
     // ---------------------------------------------------------------- Eigenes Haus
 
     private com.jme3.scene.Node homeNode;

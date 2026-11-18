@@ -32,6 +32,12 @@ public class Music {
             gen.put("birds", MusicSynth::birds);
             gen.put("crickets", MusicSynth::crickets);
             gen.put("rain", MusicSynth::rain);
+            gen.put("step", MusicSynth::step);
+            gen.put("door", MusicSynth::door);
+            gen.put("owl", MusicSynth::owl);
+            gen.put("hit", MusicSynth::hit);
+            gen.put("roar", MusicSynth::roar);
+            gen.put("whoosh", MusicSynth::whoosh);
             for (Map.Entry<String, Supplier<byte[]>> e : gen.entrySet()) {
                 try {
                     ready.add(new Object[]{e.getKey(), e.getValue().get()});
@@ -58,7 +64,19 @@ public class Music {
         return n;
     }
 
+    private static final Set<String> SFX = Set.of("spell", "chime", "step", "door", "owl", "hit", "roar", "whoosh");
+
     public void sfx(String name) { sfx(name, 1f); }
+
+    /** Leiser Effekt (Schritte). */
+    public void sfx(String name, float pitch, float volume) {
+        AudioNode n = tracks.get(name);
+        if (n != null) {
+            n.setVolume(volume * masterVolume);
+            n.setPitch(Math.max(0.5f, Math.min(2f, pitch)));
+            n.playInstance();
+        }
+    }
 
     /** Soundeffekt mit Tonhöhe (jeder Zauber klingt anders). */
     public void sfx(String name, float pitch) {
@@ -75,7 +93,7 @@ public class Music {
         Object[] r;
         while ((r = ready.poll()) != null) {
             String name = (String) r[0];
-            boolean loop = !name.equals("spell") && !name.equals("chime");
+            boolean loop = !SFX.contains(name);
             AudioNode n = node(name, (byte[]) r[1], loop);
             tracks.put(name, n);
             vol.put(name, 0f);
@@ -89,21 +107,27 @@ public class Music {
         else if (s instanceof MiniGame) mood = "drama";
         else if (s instanceof WorldScene ws) {
             Palace.Room pr = world.inPalace ? world.palace.roomAt(ws.focus().x, ws.focus().z) : null;
-            if (ws.racing() || ws.danger()) mood = "drama";
-            else if (pr != null) mood = pr.id().equals("crypt") ? "dark" : "palace";
+            if (ws.bossFight()) mood = "boss";
+            else if (ws.racing() || ws.danger()) mood = "drama";
+            else if (pr != null) mood = pr.id().equals("crypt") ? "dark" : pr.id().startsWith("deep") ? "deep" : "palace";
             else if (world.zoneDark() > 0.45f) mood = "dark";
             else if (world.dayNight.night > 0.55f) mood = "night";
             else mood = "day";
         } else if (s instanceof EndingScene) mood = "epic";
         else mood = "title";
         orchestra(dt, mood);
+        owlT -= dt;
+        if (owlT <= 0) {
+            owlT = 25 + rnd.nextFloat() * 40;
+            if (s instanceof WorldScene && !world.inPalace && world.dayNight.night > 0.6f) sfx("owl", 0.9f + rnd.nextFloat() * 0.2f, 0.25f);
+        }
 
         boolean outdoors = s instanceof WorldScene;
         boolean cafe = s instanceof CafeScene;
         float rain = world.weather.rain;
         for (Map.Entry<String, AudioNode> e : tracks.entrySet()) {
             String k = e.getKey();
-            if (k.equals("spell") || k.equals("chime")) continue;
+            if (SFX.contains(k)) continue;
             float target = 0;
             switch (k) {
                 case "rain" -> target = (outdoors ? 0.55f : cafe ? 0.25f : 0) * rain;
@@ -130,19 +154,22 @@ public class Music {
         "dark", new String[]{"dark1", "dark2"},
         "drama", new String[]{"drama1", "drama2", "drama3"},
         "cafe", new String[]{"cafe1", "cafe2"},
-        "palace", new String[]{"day2", "night1", "epic"});
+        "palace", new String[]{"day2", "night1", "epic"},
+        "boss", new String[]{"boss1", "boss2"},
+        "deep", new String[]{"deep1", "dark2"});
     public static float musicVolume = 0.7f;
     private AudioNode current, fading;
     private String currentMood = "";
     private float currentVol, fadingVol, moodHold, trackTime;
     private final Map<String, Integer> nextIndex = new HashMap<>();
     private final Random rnd = new Random();
+    private float owlT = 20;
 
     private void orchestra(float dt, String mood) {
         // kurze Stimmungswechsel (z. B. ein Wolf huscht vorbei) nicht sofort umschalten
         if (!mood.equals(currentMood)) {
             moodHold += dt;
-            boolean urgent = mood.equals("drama") || currentMood.isEmpty();
+            boolean urgent = mood.equals("drama") || mood.equals("boss") || currentMood.isEmpty();
             if (moodHold > (urgent ? 0.6f : 4f)) {
                 moodHold = 0;
                 currentMood = mood;

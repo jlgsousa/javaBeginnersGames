@@ -41,7 +41,7 @@ public final class Chapters {
                 case 2 -> new String[]{head, "Erkunde den verborgenen Raum hinter dem Gemälde", "Lies die Tafel auf dem Pult"};
                 default -> new String[]{head, "Kapitel abgeschlossen", ""};
             };
-            default -> new String[]{head, "Fortsetzung folgt …", "Neue Kapitel sind in Arbeit"};
+            default -> Saga.objective(st, c >= TITLES.length ? "Epilog" : head, c, s);
         };
     }
 
