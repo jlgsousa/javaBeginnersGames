@@ -235,7 +235,7 @@ public final class Saga {
     static String[] objective(GameState st, String head, int c, int s) {
         return switch (c) {
             case 3 -> switch (s) {
-                case 0 -> new String[]{head, "Lerne Protego (Schutzschild)", "Zauberunterricht bei Professorin Funkelstein"};
+                case 0 -> new String[]{head, "Lerne Protego (Schutzschild)", "Zauberunterricht in der Zauberklasse"};
                 case 1 -> new String[]{head, "Finde den Hain der Alten im verbotenen Wald", "Nordwestlich, hinter dem Schattenhain – dem Pfad folgen"};
                 case 2 -> new String[]{head, "Überstehe den Angriff im Hain", "Flatterer: Arcanum · Dornen: Ignis · Irrgeister: erst Lumen · Q zaubern, R wechseln"};
                 case 3 -> new String[]{head, "Befreie Aschfell, den Uralten", "Ausweichen · Kristalle zerschlagen · Protego wirft Kugeln zurück · Lumen"};

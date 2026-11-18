@@ -503,7 +503,7 @@ public class WorldScene implements Scene, Main.CameraDirector, Combat.Host {
 
         moveSpeed = 0;
         // Beim Zaubern bleibt die Figur kurz stehen und führt die Zauberbewegung aus
-        if (castLock > 0) { castLock -= dt; dir.set(0, 0, 0); }
+        if (castLock > 0) castLock -= dt; // Zaubern im Laufen: kein Anhalten mehr
         if (dir.lengthSquared() > 0) {
             dir.normalizeLocal();
             // sanft drehen statt herumzuschnappen
@@ -2711,7 +2711,7 @@ public class WorldScene implements Scene, Main.CameraDirector, Combat.Host {
         String[] ch = Chapters.objective(st);
         m.add(0, new String[]{"Kapitel", ch[1], ch[0] + (ch[2].isEmpty() ? "" : " – " + ch[2])});
         Spell nl = nextLesson();
-        if (nl != null) m.add(new String[]{"Unterricht", "Zauberstunde: " + nl.label(), "Bei Professorin Funkelstein im großen Saal des Palasts"});
+        if (nl != null) m.add(new String[]{"Unterricht", "Zauberstunde: " + nl.label(), "Bei Professorin Funkelstein in der Zauberklasse (rechts vom großen Saal)"});
         SpellPuzzles.Puzzle np = nextPuzzle();
         if (np != null) m.add(new String[]{"Zauberrätsel", np.name + " (" + np.spell.word + ")", direction(np.pos)});
         if (!st.flags.contains("palace:visited")) m.add(new String[]{"Palast", "Betritt den Zauberpalast Sternenhall", "Nördlich hinter dem Akademiebaum"});

@@ -359,6 +359,13 @@ public class Shot {
             ws.clearOverlays();
             ws.teleportTo(app.world.palace.toWorld(new Vector3f(0, 0, 9)), 0);
         });
+        step("classroom", 3f, () -> {
+            WorldScene ws = (WorldScene) app.core.scene();
+            ws.enterPalace();
+            skipDialog();
+            ws.clearOverlays();
+            ws.teleportTo(app.world.palace.toWorld(new Vector3f(14.5f, 0, 14.6f)), FastMath.HALF_PI);
+        });
         step("players", 2f, () -> app.core.setScene(new PlayersScene(app.core)));
         step("two_players", 6f, () -> {
             GameState gs = app.core.state;

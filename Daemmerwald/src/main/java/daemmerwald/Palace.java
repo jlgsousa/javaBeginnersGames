@@ -352,6 +352,7 @@ public final class Palace {
         Room obs = room("observatory", "Geheime Sternwarte", 50, 66, -8, 8, 22, 9);
         Room crypt = room("crypt", "Gruft unter dem Palast", 50, 66, 22, 38, -9, 5);
         Room gallery = room("gallery", "Galerie der Gründer", -21.5f, -12f, -18f, -10.4f, 0, 6);
+        Room cls = room("classroom", "Zauberklasse", 12, 28, 10.7f, 18.5f, 0, 6.5f);
 
         // Wände (mit Durchgängen und Geheimtüren)
         float t = 0.35f;
@@ -359,7 +360,10 @@ public final class Palace {
         wallX(hall, hall.z0, -12, 12, new float[][]{{-2, 2, 1}}, "kamin", stone);     // Nordwand mit Kamin-Geheimtür
         wallX(hall, hall.z1, -12, 12, new float[][]{}, null, stone);                    // Südwand (Tor innen)
         wallZ(hall, hall.x0, -18, 18.5f, new float[][]{{-15f, -13f, 1}, {-2.2f, 2.2f, 0}}, "gemaelde", stone); // West: Gemälde-Geheimtür, Tür zur Bibliothek
-        wallZ(hall, hall.x1, -18, 18.5f, new float[][]{{-2.2f, 2.2f, 0}}, null, stone); // Ost: Tür zum Trankkeller
+        wallZ(hall, hall.x1, -18, 18.5f, new float[][]{{-2.2f, 2.2f, 0}, {13.2f, 16.2f, 0}}, null, stone); // Ost: Trankkeller, Zauberklasse
+        wallX(cls, cls.z0(), 12, 28, new float[][]{}, null, plaster);
+        wallX(cls, cls.z1(), 12, 28, new float[][]{}, null, plaster);
+        wallZ(cls, cls.x1(), cls.z0(), cls.z1(), new float[][]{}, null, plaster);
         // Bibliothek
         wallX(lib, lib.z0, -30, -12, new float[][]{{-27.2f, -24.8f, 1}}, "regal", plaster);
         wallX(lib, lib.z1, -30, -12, new float[][]{}, null, plaster);
@@ -392,6 +396,7 @@ public final class Palace {
         decorateHall(hall);
         decorateLibrary(lib);
         decorateCellar(cel);
+        decorateClassroom(cls);
         decorateSecretRooms(study, fire, obs, crypt);
 
         // Geheimnisse: wo zaubern? welche Rarität?
@@ -501,7 +506,7 @@ public final class Palace {
 
     void floorAndCeiling(Room r) {
         float hx = (r.x1() - r.x0()) / 2, hz = (r.z1() - r.z0()) / 2, cx = (r.x0() + r.x1()) / 2, cz = (r.z0() + r.z1()) / 2;
-        Material fm = r.id().equals("hall") || r.id().equals("observatory") ? marble : r.id().equals("library") || r.id().equals("study") ? planks : stone;
+        Material fm = r.id().equals("hall") || r.id().equals("observatory") ? marble : r.id().equals("library") || r.id().equals("study") || r.id().equals("classroom") ? planks : stone;
         Box fb = new Box(hx, 0.1f, hz);
         fb.scaleTextureCoordinates(new Vector2f(hx / (fm == marble ? 2f : 1.2f), hz / (fm == marble ? 2f : 1.2f)));
         Geometry f = new Geometry("floor", fb);
@@ -728,6 +733,52 @@ public final class Palace {
                 book.setLocalRotation(q);
             }
         }
+    }
+
+    /** Zauberklasse: Pulte in Reihen, Tafel mit Zauberzeichen, schwebende Kerzen, Bücherregale. */
+    private void decorateClassroom(Room r) {
+        Node n = interior;
+        // Pulte und Bänke (Blick nach Osten zur Tafel)
+        for (int row = 0; row < 3; row++) {
+            for (int col = 0; col < 2; col++) {
+                float x = 15 + row * 3.2f, z = 12.8f + col * 3.6f;
+                box(n, darkWood, 0.45f, 0.42f, 1.1f, x, 0.42f, z, 0);
+                box(n, darkWood, 0.5f, 0.03f, 1.2f, x + 0.05f, 0.86f, z, 0);
+                box(n, planks, 0.22f, 0.25f, 1.0f, x - 0.85f, 0.25f, z, 0.8f);
+                Geometry book = box(n, G3.lit(new ColorRGBA(0.5f + row * 0.1f, 0.2f, 0.25f + col * 0.2f, 1)), 0.18f, 0.03f, 0.13f, x, 0.92f, z - 0.3f, 0);
+                book.setLocalRotation(new Quaternion().fromAngleAxis(0.3f * (col - 0.5f), Vector3f.UNIT_Y));
+                walls.add(new Wall(x - 1.1f, x + 0.5f, z - 1.15f, z + 1.15f, null));
+            }
+        }
+        // Tafel an der Ostwand mit gezeichneten Zauberzeichen
+        BufferedImage img = new BufferedImage(512, 256, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g = img.createGraphics();
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g.setColor(new Color(28, 46, 36));
+        g.fillRect(0, 0, 512, 256);
+        for (int k = 0; k < 4; k++) g.drawImage(Depths.runeImg(k), 24 + k * 120, 40, 96, 96, null);
+        g.setColor(new Color(235, 235, 220));
+        g.setFont(new java.awt.Font("Serif", java.awt.Font.ITALIC, 30));
+        g.drawString("Lumen · Ignis · Levitaris · Protego", 40, 196);
+        g.setStroke(new BasicStroke(2));
+        g.drawLine(40, 210, 470, 210);
+        g.dispose();
+        Material chalk = G3.lit(ColorRGBA.White);
+        chalk.setTexture("DiffuseMap", G3.tex(img));
+        box(n, darkWood, 0.08f, 1.15f, 2.45f, 27.6f, 2.5f, 14.6f, 0);
+        Geometry board = new Geometry("blackboard", new com.jme3.scene.shape.Quad(4.6f, 2.1f));
+        board.setMaterial(chalk);
+        board.setLocalTranslation(27.5f, 1.45f, 12.3f);
+        board.setLocalRotation(new Quaternion().fromAngleAxis(-FastMath.HALF_PI, Vector3f.UNIT_Y));
+        n.attachChild(board);
+        // Regale an der Nordwand, Fensterbögen an der Südwand
+        for (int i = 0; i < 4; i++) shelf(n, 14.5f + i * 3.4f, 11.1f, 0, 1.4f);
+        Material winM = G3.litGlow(new ColorRGBA(0.3f, 0.38f, 0.6f, 1), new ColorRGBA(0.12f, 0.16f, 0.3f, 1));
+        for (int i = 0; i < 3; i++) box(n, winM, 0.7f, 1.4f, 0.04f, 15.5f + i * 4.2f, 3.2f, 18.1f, 0).setShadowMode(ShadowMode.Off);
+        // schwebende Kerzen und warmes Licht
+        for (int i = 0; i < 10; i++) candle(n, 14 + rnd.nextFloat() * 12, 3.8f + rnd.nextFloat() * 1.5f, 11.8f + rnd.nextFloat() * 5.6f, true);
+        lights.add(new PointLight(new Vector3f(PX + 20, baseY + 4.5f, PZ + 14.6f), new ColorRGBA(1f, 0.8f, 0.55f, 1).mult(1.3f), 14));
+        lights.add(new PointLight(new Vector3f(PX + 26, baseY + 3, PZ + 14.6f), new ColorRGBA(1f, 0.85f, 0.6f, 1).mult(0.9f), 8));
     }
 
     private void decorateCellar(Room r) {
@@ -1038,20 +1089,21 @@ public final class Palace {
     private float t;
     /** Professorin für den Zauberunterricht (im großen Saal am Pult). */
     public Figure teacher;
-    public static final Vector3f TEACHER_POS = new Vector3f(-7.6f, 0, 13.4f);
+    public static final Vector3f TEACHER_POS = new Vector3f(25.6f, 0, 14.6f);
 
     public void addTeacher(Look look) {
         if (teacher != null) return;
         teacher = new Figure(look);
         teacher.node.setLocalTranslation(TEACHER_POS);
-        teacher.node.setLocalRotation(new Quaternion().fromAngleAxis(FastMath.HALF_PI, Vector3f.UNIT_Y));
+        teacher.node.setLocalRotation(new Quaternion().fromAngleAxis(-FastMath.HALF_PI, Vector3f.UNIT_Y));
         interior.attachChild(teacher.node);
         // Pult mit aufgeschlagenem Zauberbuch und Kerze
-        box(interior, darkWood, 0.45f, 0.55f, 0.35f, TEACHER_POS.x + 1.1f, 0.55f, TEACHER_POS.z, 0);
-        Geometry book = box(interior, G3.lit(new ColorRGBA(0.95f, 0.9f, 0.78f, 1)), 0.35f, 0.03f, 0.25f, TEACHER_POS.x + 1.1f, 1.14f, TEACHER_POS.z, 0);
-        book.setLocalRotation(new Quaternion().fromAngleAxis(0.25f, Vector3f.UNIT_Z));
-        candle(interior, TEACHER_POS.x + 1.45f, 1.12f, TEACHER_POS.z + 0.25f, false);
-        walls.add(new Wall(TEACHER_POS.x - 0.5f, TEACHER_POS.x + 1.6f, TEACHER_POS.z - 0.5f, TEACHER_POS.z + 0.5f, null));
+        // Pult vor der Professorin (zur Klasse hin)
+        box(interior, darkWood, 0.35f, 0.55f, 0.8f, TEACHER_POS.x - 1.1f, 0.55f, TEACHER_POS.z, 0);
+        Geometry book = box(interior, G3.lit(new ColorRGBA(0.95f, 0.9f, 0.78f, 1)), 0.25f, 0.03f, 0.35f, TEACHER_POS.x - 1.1f, 1.14f, TEACHER_POS.z, 0);
+        book.setLocalRotation(new Quaternion().fromAngleAxis(0.25f, Vector3f.UNIT_X));
+        candle(interior, TEACHER_POS.x - 1.25f, 1.12f, TEACHER_POS.z + 0.6f, false);
+        walls.add(new Wall(TEACHER_POS.x - 1.5f, TEACHER_POS.x + 0.5f, TEACHER_POS.z - 0.9f, TEACHER_POS.z + 0.9f, null));
     }
 
     public void update(float dt) {

@@ -73,6 +73,8 @@ public class Figure {
         accessory(acc);
         if (mixamo) setupWand();
         node.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
+        // Figuren etwas aufhellen, damit man sie auch im Schatten und nachts gut erkennt
+        node.addLight(new com.jme3.light.AmbientLight(new ColorRGBA(0.42f, 0.4f, 0.38f, 1)));
         play(Anim.IDLE);
     }
 
@@ -630,7 +632,7 @@ public class Figure {
             castT -= tpf;
             if (castT <= 0) anim = null;
         }
-        if (castT <= 0) {
+        if (castT <= 0 || mixamo) {
             if (airborne && troll) play(Anim.JUMP);
             else play(speed > 0.5f ? Anim.RUN : Anim.IDLE);
         }

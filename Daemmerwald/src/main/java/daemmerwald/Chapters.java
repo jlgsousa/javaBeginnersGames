@@ -27,8 +27,8 @@ public final class Chapters {
         return switch (c) {
             case 1 -> switch (s) {
                 case 0 -> new String[]{head, "Betritt die Akademie Sternenhall", "Das Schloss mit der Kristallspitze, nördlich hinter dem Akademiebaum"};
-                case 1 -> new String[]{head, "Melde dich bei Professorin Funkelstein", "Am Pult im großen Saal, gleich links hinter dem Tor"};
-                case 2 -> new String[]{head, "Lerne Lumen im Unterricht", "Professorin Funkelstein, großer Saal"};
+                case 1 -> new String[]{head, "Melde dich bei Professorin Funkelstein", "In der Zauberklasse – rechts vom großen Saal, nahe dem Tor"};
+                case 2 -> new String[]{head, "Lerne Lumen im Unterricht", "Professorin Funkelstein, Zauberklasse"};
                 case 3 -> new String[]{head, "Erkunde die Akademie", visitHint(st)};
                 case 4 -> new String[]{head, "Ein Symbol leuchtet im großen Saal …", "An der Nordwand, rechts neben dem Kamin"};
                 case 5 -> new String[]{head, "Das Symbol ist in die Bibliothek gewandert", "Folge dem Leuchten (Westflügel)"};
