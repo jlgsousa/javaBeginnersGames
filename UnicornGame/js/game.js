@@ -11,8 +11,11 @@ window.addEventListener("keydown", e => {
   if (e.code.startsWith("Arrow") || e.code === "Space") e.preventDefault();
 });
 window.addEventListener("keyup", e => { keys[e.code] = false; });
+function toggleMute() { document.getElementById("mute").textContent = Sound.toggleMute() ? "🔇" : "🔊"; }
+window.addEventListener("keydown", e => { if (e.code === "KeyM") toggleMute(); });
+document.getElementById("mute").addEventListener("click", toggleMute);
 
-const cam = { yaw: Math.PI, pitch: 0.3, dist: 6.5, target: new THREE.Vector3(0, 1.5, 0) };
+const cam = { yaw: 0, pitch: 0.3, dist: 6.5, target: new THREE.Vector3(0, 1.5, 0) };
 
 let dragging = false, lastX = 0, lastY = 0;
 renderer.domElement.addEventListener("mousedown", e => { dragging = true; lastX = e.clientX; lastY = e.clientY; });
@@ -36,6 +39,7 @@ if ("ontouchstart" in window || navigator.maxTouchPoints > 0) {
   let stickId = null, camId = null, sx = 0, sy = 0;
   renderer.domElement.addEventListener("touchstart", e => {
     for (const t of e.changedTouches) {
+      if (game.state !== "play") continue;
       if (t.clientX < window.innerWidth / 2 && stickId === null) {
         stickId = t.identifier; sx = t.clientX; sy = t.clientY;
         stick.style.left = sx + "px"; stick.style.top = sy + "px"; stick.style.display = "block";
@@ -76,10 +80,11 @@ if ("ontouchstart" in window || navigator.maxTouchPoints > 0) {
   });
 }
 
+const canMove = () => game.state === "play";
 const input = {
-  get fwd()  { return (keys.KeyW || keys.ArrowUp ? 1 : 0) - (keys.KeyS || keys.ArrowDown ? 1 : 0) - touch.y; },
-  get side() { return (keys.KeyD || keys.ArrowRight ? 1 : 0) - (keys.KeyA || keys.ArrowLeft ? 1 : 0) + touch.x; },
-  get jump() { return keys.Space || touch.jump; },
+  get fwd()  { if (!canMove()) return 0; return (keys.KeyW || keys.ArrowUp ? 1 : 0) - (keys.KeyS || keys.ArrowDown ? 1 : 0) - touch.y; },
+  get side() { if (!canMove()) return 0; return (keys.KeyD || keys.ArrowRight ? 1 : 0) - (keys.KeyA || keys.ArrowLeft ? 1 : 0) + touch.x; },
+  get jump() { return canMove() && (keys.Space || touch.jump); },
   get run()  { return keys.ShiftLeft || keys.ShiftRight || touch.run; },
   get look() { return keys.KeyE || touch.look; },
 };
@@ -99,6 +104,18 @@ function dust() {
     new THREE.Vector3(Math.cos(a) * 1.5, 0.8 + Math.random(), Math.sin(a) * 1.5), 0.5, 1.6, 4);
 }
 
+function updateParticles(dt) {
+  for (let i = particles.length - 1; i >= 0; i--) {
+    const p = particles[i];
+    p.life -= dt;
+    p.vel.y -= p.gravity * dt;
+    p.m.position.addScaledVector(p.vel, dt);
+    p.m.rotation.y += dt * 4;
+    p.m.material.opacity = Math.max(0, p.life / p.max);
+    if (p.life <= 0) { scene.remove(p.m); p.m.material.dispose(); particles.splice(i, 1); }
+  }
+}
+
 // ---------------- Kollision ----------------
 // Wie weit steckt das Einhorn (Kreis) im Hindernis? → Schiebevektor oder null
 function penetration(o, x, z) {
@@ -114,13 +131,25 @@ function penetration(o, x, z) {
 // höchste Oberfläche unter den Hufen
 function supportHeight(p) {
   let s = 0;
-  for (const o of obstacles) if (o.h <= p.y + 0.05 && penetration(o, p.x, p.z)) s = Math.max(s, o.h);
+  for (const o of obstacles) if (!o.off && o.h <= p.y + 0.05 && penetration(o, p.x, p.z)) s = Math.max(s, o.h);
   return s;
 }
 const angleDiff = (a, b) => Math.atan2(Math.sin(b - a), Math.cos(b - a));
 
 // ---------------- Update ----------------
+const lastSafe = new THREE.Vector3();
 function update(dt, t) {
+  windTime.value = t;
+  updateStory(dt, t);
+  updateLevel(dt, t);
+  updateParticles(dt);
+  clouds.forEach(c => { c.position.x += dt * 0.8; if (c.position.x > 130) c.position.x = -130; });
+  sky.position.copy(camera.position);
+  sun.position.copy(uni.pos).addScaledVector(SUN_DIR, 40);
+  sun.target.position.copy(uni.pos);
+  if (game.state === "title") { animateUnicorn(dt, t); return; }
+  if (game.state === "intro") { game.t += dt; introUpdate(dt); animateUnicorn(dt, t); return; }
+
   const u = uni;
 
   // Bewegung relativ zur Kamera
@@ -144,6 +173,7 @@ function update(dt, t) {
   if (input.jump && u.onGround && !u.jumpHeld) {
     u.vel.y = JUMP + hs * 0.18;
     u.onGround = false;
+    Sound.jump();
     for (let i = 0; i < 10; i++) dust();
   }
   u.jumpHeld = input.jump;
@@ -152,12 +182,15 @@ function update(dt, t) {
   // horizontal bewegen + aus Hindernissen herausschieben
   u.pos.x += u.vel.x * dt; u.pos.z += u.vel.z * dt;
   for (const o of obstacles) {
-    if (u.pos.y >= o.h - 0.05) continue;
+    if (o.off || u.pos.y >= o.h - 0.05) continue;
     const p = penetration(o, u.pos.x, u.pos.z);
     if (p) { u.pos.x += p.x; u.pos.z += p.z; }
   }
-  const r = Math.hypot(u.pos.x, u.pos.z);
-  if (r > WORLD_R) { u.pos.x *= WORLD_R / r; u.pos.z *= WORLD_R / r; }
+  // Grenzen des Weges, geschlossene Tore und das Ende der Welt
+  const off = u.pos.x - pathX(u.pos.z);
+  if (Math.abs(off) > PATH_HALF) u.pos.x = pathX(u.pos.z) + Math.sign(off) * PATH_HALF;
+  u.pos.z = Math.min(12, Math.max(WORLD_END, u.pos.z));
+  for (const g of gates) if (!g.open && u.pos.z < g.z + 0.8 && u.pos.z > g.z - 3) u.pos.z = g.z + 0.8;
 
   // vertikal + landen
   const ground = supportHeight(u.pos);
@@ -171,8 +204,20 @@ function update(dt, t) {
     u.pos.y = ground; u.vel.y = 0; u.onGround = true;
   } else u.onGround = false;
 
+  // Erdbeermilch-Fluss: Platsch! → zurück ans Ufer
+  const inRiver = u.pos.z < RIVER.z1 && u.pos.z > RIVER.z0;
+  if (u.onGround && u.pos.y < 0.05 && inRiver) {
+    Sound.splash();
+    for (let i = 0; i < 25; i++) spawnParticle(u.pos.clone().setY(0.2), 0xff9ccc, new THREE.Vector3(rand(-2, 2), rand(2, 5), rand(-2, 2)), 0.8, 1.5, 12);
+    u.pos.copy(lastSafe); u.vel.set(0, 0, 0);
+  } else if (u.onGround && !inRiver) lastSafe.copy(u.pos);
+
+  // Musik passend zum Gebiet
+  if (game.state === "play") Sound.play(ZONES[zoneAt(u.pos.z)].song);
+
   animateUnicorn(dt, t);
   updateStars(dt, t);
+  if (game.state === "ending") endingUpdate(dt, t);
 
   // Regenbogen-Glitzer beim Rennen
   const sp = Math.hypot(u.vel.x, u.vel.z);
@@ -187,21 +232,8 @@ function update(dt, t) {
     spawnParticle(hp, 0xffffff, new THREE.Vector3(0, 0.5, 0), 0.6, 0.8, 0);
   }
 
-  // Partikel bewegen
-  for (let i = particles.length - 1; i >= 0; i--) {
-    const p = particles[i];
-    p.life -= dt;
-    p.vel.y -= p.gravity * dt;
-    p.m.position.addScaledVector(p.vel, dt);
-    p.m.rotation.y += dt * 4;
-    p.m.material.opacity = Math.max(0, p.life / p.max);
-    if (p.life <= 0) { scene.remove(p.m); p.m.material.dispose(); particles.splice(i, 1); }
-  }
-
-  // Wolken ziehen langsam
-  clouds.forEach(c => { c.position.x += dt * 0.8; if (c.position.x > 230) c.position.x = -230; });
-
   // --- Third-Person-Kamera ---
+  if (game.state === "ending") { cam.yaw += dt * 0.25; cam.pitch += (0.35 - cam.pitch) * dt; cam.dist += (9 - cam.dist) * dt; }
   cam.target.lerp(new THREE.Vector3(u.pos.x, u.pos.y + 1.5, u.pos.z), Math.min(1, dt * 8));
   if (moving && !dragging && f > 0.1) {      // dreht sich beim Laufen langsam hinter das Einhorn
     cam.yaw += angleDiff(cam.yaw, u.heading + Math.PI) * Math.min(1, dt * 1.2);
@@ -213,12 +245,6 @@ function update(dt, t) {
     cam.target.z + Math.cos(cam.yaw) * cp * cam.dist);
   if (camera.position.y < 0.4) camera.position.y = 0.4;
   camera.lookAt(cam.target);
-  sky.position.copy(camera.position);
-
-  // Sonne & Schatten folgen dem Einhorn
-  sun.position.copy(u.pos).addScaledVector(SUN_DIR, 40);
-  sun.target.position.copy(u.pos);
-  windTime.value = t;
 }
 
 // ---------------- Spielschleife ----------------

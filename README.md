@@ -31,15 +31,13 @@ A set of interactive games to exercise core java features
 ## Java RMI simple application  
 ![](RMI/introScreen.png "Intro Screen") 
 
-## Einhorn-Wiese 3D (HTML5 + Three.js)</br>
-Ein pinkes Einhorn mit Regenbogen-Mähne auf einer kleinen Wiese, aus der Third-Person-Perspektive.
-Keine Installation nötig: einfach `UnicornGame/index.html` im Browser öffnen (läuft auch offline, Three.js liegt in `UnicornGame/lib/`).
+## Rosi rettet Prinzessin Alma (HTML5 + Three.js, 3D)</br>
+Ein kindgerechtes 3D-Abenteuer: Die frechen Trolle haben Prinzessin Alma mitgenommen. Das Einhorn Rosi reist durch
+Blumenwiese, Regenbogen-Berge, Süßigkeiten-Fluss, Schlösser-Tal und Trolldorf, sammelt Sterne, trifft Hoppel, Funki,
+Quaki, Fee Funkel und Trollo und löst ihre Rätsel. Mit Intro-Film, fröhlicher Musik (live im Browser erzeugt) und Happy End.
 
-Ziel: alle Sterne auf der Wiese einsammeln – manche liegen auf Heuballen, Steinen oder hoch in der Luft.
+Starten: `UnicornGame/index.html` im Browser öffnen (läuft auch offline).
 
-Steuerung: W A S D / Pfeile laufen · Shift rennen · Leertaste springen · Maus ziehen Kamera drehen · Mausrad Zoom · E umschauen · R neue Runde.
+Steuerung: W A S D / Pfeile laufen · Shift rennen · Leertaste springen · Maus ziehen Kamera · Mausrad Zoom · E umschauen · M Musik an/aus.
 
-Code-Aufbau: `js/world.js` (Himmel, Wiese, Hindernisse), `js/unicorn.js` (Einhorn-Modell & Animation), `js/stars.js` (Sterne), `js/game.js` (Steuerung, Physik, Kamera).
-Auf Tablets: linke Bildschirmhälfte = Joystick, rechte Hälfte = Kamera, dazu Buttons zum Springen und Rennen.
-
-![](UnicornGame/screenshot.png "Einhorn springt")
+![](UnicornGame/screenshot.png "Rosi und Alma")
