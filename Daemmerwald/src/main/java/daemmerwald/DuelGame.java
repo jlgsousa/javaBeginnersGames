@@ -18,7 +18,7 @@ public class DuelGame extends MiniGame {
     /** Gewonnen nach so vielen geschafften Kombinationen (0 = nur über den Strahl). */
     private final int winRounds;
 
-    public DuelGame(GamePanel g, String enemyName, Look enemyLook) { this(g, enemyName, enemyLook, 0); }
+    public DuelGame(GamePanel g, String enemyName, Look enemyLook) { this(g, enemyName, enemyLook, 15); }
 
     public DuelGame(GamePanel g, String enemyName, Look enemyLook, int winRounds) {
         super(g);
