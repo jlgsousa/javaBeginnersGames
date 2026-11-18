@@ -60,4 +60,38 @@ public final class Chapters {
         }
         return "Noch offen: " + sb;
     }
+
+    // ================================================================ Freie Gebiete je Kapitel
+
+    /** Gebiete {Mitte x, Mitte z, Radius, ab Kapitel}. Die Welt wächst mit der Geschichte. */
+    public static final float[][] ZONES = {
+        {0, -150, 115, 1},      // Akademie, Schloss und etwa 100 m Umgebung
+        {-120, -130, 75, 3},    // Weg in den verbotenen Wald (Hain der Alten)
+        {-85, -45, 65, 4},      // Laternhain und dein Haus
+        {0, 0, 340, 5},         // die ganze Kernwelt
+    };
+
+    /** Ab diesem Kapitel ist die endlose Wildnis offen. */
+    public static final int WILD = 6;
+
+    public static boolean allowed(GameState st, float x, float z) {
+        int c = chapter(st);
+        if (c >= WILD || st.flags.contains("finale")) return true;
+        for (float[] zn : ZONES) {
+            if (c < zn[3]) continue;
+            float dx = x - zn[0], dz = z - zn[1];
+            if (dx * dx + dz * dz < zn[2] * zn[2]) return true;
+        }
+        return false;
+    }
+
+    /** Ab welchem Kapitel ist dieser Ort offen? */
+    public static int opensAt(float x, float z) {
+        int best = WILD;
+        for (float[] zn : ZONES) {
+            float dx = x - zn[0], dz = z - zn[1];
+            if (dx * dx + dz * dz < zn[2] * zn[2]) best = Math.min(best, (int) zn[3]);
+        }
+        return best;
+    }
 }

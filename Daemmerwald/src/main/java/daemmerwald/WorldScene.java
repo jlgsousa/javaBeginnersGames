@@ -128,6 +128,10 @@ public class WorldScene implements Scene, Main.CameraDirector, Combat.Host {
         world.root.attachChild(dust);
         saga = new Saga(this, this);
         saga.apply();
+        if (!st.flags.contains("savedInPalace") && !open(pos.x, pos.z)) {
+            pos.set(world.palace.gateOutside());
+            pos.y = world.height(pos.x, pos.z);
+        }
         // im Schloss oder in den Tiefen gespeichert: dort weiterspielen
         if (st.flags.contains("savedInPalace")) {
             if (world.palace.roomAt(st.px, st.pz) != null) {
@@ -571,7 +575,7 @@ public class WorldScene implements Scene, Main.CameraDirector, Combat.Host {
         float vy = in.isDown(KeyEvent.VK_SPACE) ? 5 : in.isDown(KeyEvent.VK_SHIFT) || in.isDown(KeyEvent.VK_CONTROL) ? -5 : 0;
         float nx = pos.x + FastMath.sin(yaw) * broomSpeed * dt, nz = pos.z + FastMath.cos(yaw) * broomSpeed * dt;
         float ground = Math.max(world.height(nx, nz), WorldGen.WATER);
-        if (!world.chunks.blocked(nx, nz, 0.4f) || pos.y > ground + 6) { pos.x = nx; pos.z = nz; }
+        if ((!world.chunks.blocked(nx, nz, 0.4f) || pos.y > ground + 6) && !zoneBlock(nx, nz)) { pos.x = nx; pos.z = nz; }
         pos.y = FastMath.clamp(pos.y + vy * dt, ground + 0.6f, ground + 40);
         velY = 0;
         onGround = false;
@@ -579,7 +583,23 @@ public class WorldScene implements Scene, Main.CameraDirector, Combat.Host {
         moveSpeed = broomSpeed;
     }
 
+    private float edgeT;
+
+    /** Grenze des freien Gebiets: sanft zurückhalten und erklären. */
+    private boolean zoneBlock(float x, float z) {
+        if (world.inPalace || race != null || open(x, z)) return false;
+        edgeT -= 0.016f;
+        if (edgeT <= 0) {
+            edgeT = 3.5f;
+            int at = Chapters.opensAt(x, z);
+            floatText(at >= Chapters.WILD ? "Dichter Nebel – hier geht es erst später weiter."
+                : "Der Nebel lichtet sich hier ab Kapitel " + at + ".", pos.add(0, fig.height + 1.2f, 0), new Color(200, 210, 255));
+        }
+        return true;
+    }
+
     private boolean canGo(float x, float z, boolean air, boolean swim, float step) {
+        if (zoneBlock(x, z)) return false;
         if (air) {
             if (world.inPalace) return !world.blockedIgnoringWater(x, z, 0.45f);
             return !world.chunks.blocked(x, z, 0.4f) || pos.y > world.height(x, z) + 8;
@@ -2687,9 +2707,19 @@ public class WorldScene implements Scene, Main.CameraDirector, Combat.Host {
     }
 
     /** Missionsliste am rechten Rand. */
+    /** Ist dieser Ort schon freigegeben (Gebiete wachsen mit den Kapiteln)? */
+    boolean open(float x, float z) { return Chapters.allowed(st, x, z); }
+
+    private boolean npcOpen(String id) {
+        Vector3f p = world.npcPos.get(id);
+        return p != null && open(p.x, p.z);
+    }
+
     private List<String[]> missions() {
         List<String[]> m = new ArrayList<>();
-        if (!st.allShards()) {
+        if (Chapters.chapter(st) < 5) {
+            // Die alte Splitter-Suche führt durch den ganzen Wald – sie beginnt, wenn die Welt offen ist
+        } else if (!st.allShards()) {
             Shard next = null;
             for (Shard s : Shard.values()) if (!st.has(s)) { next = s; break; }
             m.add(new String[]{"Hauptquest", "Splitter des Paktsteins: " + st.count() + "/6", "Nächster: " + next.where});
@@ -2701,24 +2731,27 @@ public class WorldScene implements Scene, Main.CameraDirector, Combat.Host {
             m.add(new String[]{"Endlos", "Werde stärker: Stufe " + st.level, st.gamesWon + " Prüfungen · " + st.racesWon + " Rennen · " + st.brewed + " Tränke"});
         }
         for (Map.Entry<String, int[]> e : st.quests.entrySet()) {
+            if (!npcOpen(e.getKey())) continue;
             Item it = Item.values()[e.getValue()[0]];
             String who = npcName(e.getKey());
             boolean done = st.items(it) >= e.getValue()[1];
             m.add(new String[]{"Auftrag", who + ": " + Math.min(st.items(it), e.getValue()[1]) + "/" + e.getValue()[1] + " " + it.title,
                 done ? "Fertig – zurück zu " + who.split(" ")[0] : "Zu finden: " + it.where});
         }
-        if (st.quests.size() < 2) m.add(new String[]{"Tipp", "Frag Borga, Ysolde, Grumhild, Oberion oder Aurin", "nach Sammelaufträgen (Glimmertaler)"});
-        m.add(new String[]{"Optional", "Rennen gegen Brumm (Stufe " + st.stage("brumm") + ")", "Akademiehof, rechts vom Weg"});
-        m.add(new String[]{"Optional", "Rätsel bei Steinwächter Grol (Stufe " + st.stage("grol") + ")", "Weg zum Schattenhain"});
+        boolean givers = false;
+        for (String id : new String[]{"borga", "ysolde", "grumhild", "oberion", "aurin"}) givers |= npcOpen(id);
+        if (st.quests.size() < 2 && givers) m.add(new String[]{"Tipp", "Frag Borga, Ysolde, Grumhild, Oberion oder Aurin", "nach Sammelaufträgen (Glimmertaler)"});
+        if (npcOpen("brumm")) m.add(new String[]{"Optional", "Rennen gegen Brumm (Stufe " + st.stage("brumm") + ")", "Akademiehof, rechts vom Weg"});
+        if (npcOpen("grol")) m.add(new String[]{"Optional", "Rätsel bei Steinwächter Grol (Stufe " + st.stage("grol") + ")", "Weg zum Schattenhain"});
         Outfit cheapest = null;
         for (Outfit o : Outfit.values()) if (!st.owned.contains(o) && (cheapest == null || o.price < cheapest.price)) cheapest = o;
-        if (cheapest != null) m.add(new String[]{"Laden", "Nächstes Gewand: " + cheapest.title, cheapest.price + " Taler bei Pimpernell (Hof)"});
+        if (cheapest != null && npcOpen("pimpernell")) m.add(new String[]{"Laden", "Nächstes Gewand: " + cheapest.title, cheapest.price + " Taler bei Pimpernell (Hof)"});
         String[] ch = Chapters.objective(st);
         m.add(0, new String[]{"Kapitel", ch[1], ch[0] + (ch[2].isEmpty() ? "" : " – " + ch[2])});
         Spell nl = nextLesson();
         if (nl != null) m.add(new String[]{"Unterricht", "Zauberstunde: " + nl.label(), "Bei Professorin Funkelstein in der Zauberklasse (rechts vom großen Saal)"});
         SpellPuzzles.Puzzle np = nextPuzzle();
-        if (np != null) m.add(new String[]{"Zauberrätsel", np.name + " (" + np.spell.word + ")", direction(np.pos)});
+        if (np != null && open(np.pos.x, np.pos.z)) m.add(new String[]{"Zauberrätsel", np.name + " (" + np.spell.word + ")", direction(np.pos)});
         if (!st.flags.contains("palace:visited")) m.add(new String[]{"Palast", "Betritt den Zauberpalast Sternenhall", "Nördlich hinter dem Akademiebaum"});
         else {
             int open = 0, taken = 0;
@@ -2734,7 +2767,7 @@ public class WorldScene implements Scene, Main.CameraDirector, Combat.Host {
             }
         }
         m.add(new String[]{"Sammeln", "Raritäten: " + st.treasureKinds() + "/" + Treasure.values().length + " · Magierkarten: " + Cards.count(st) + "/" + Cards.Mage.values().length, "Taste I zeigt deine Tasche und Gerüchte"});
-        if (st.homeLevel + 1 < Home.LEVELS.size()) {
+        if (st.homeLevel + 1 < Home.LEVELS.size() && open(Home.X, Home.Z)) {
             Home.Level nx = Home.LEVELS.get(st.homeLevel + 1);
             StringBuilder need = new StringBuilder();
             for (Map.Entry<String, Integer> e : nx.needs().entrySet())
@@ -2742,9 +2775,10 @@ public class WorldScene implements Scene, Main.CameraDirector, Combat.Host {
             need.append(nx.coins()).append(" Taler");
             m.add(new String[]{"Zuhause", "Ausbau: " + nx.title(), need.toString()});
         }
-        m.add(new String[]{"Speichern", "Nächstes Café: " + nearestCafeText(), "Im Café ins Gästebuch eintragen"});
-        if (!st.flags.contains("cafe")) m.add(new String[]{"Ruhe", "Besuche das Café Wolkenrand", "Auf der Klippe im Süden"});
-        if (!st.flags.contains("visit:knorz")) m.add(new String[]{"Besuch", "Oma Knorz wohnt in einer Hügelhöhle", "beim Steinbruch – sie hat immer Tee"});
+        if (!st.flags.contains("cafe") && open(world.cafeDoor.x, world.cafeDoor.z)) m.add(new String[]{"Ruhe", "Besuche das Café Wolkenrand", "Auf der Klippe im Süden"});
+        if (!st.flags.contains("visit:knorz") && open(WorldGen.QUARRY[0], WorldGen.QUARRY[1])) m.add(new String[]{"Besuch", "Oma Knorz wohnt in einer Hügelhöhle", "beim Steinbruch – sie hat immer Tee"});
+        if (Chapters.chapter(st) < Chapters.WILD)
+            m.add(new String[]{"Welt", "Die Welt wächst mit der Geschichte", "Mit jedem Kapitel öffnen sich neue Gebiete, Häuser und Begegnungen"});
         return m;
     }
 
@@ -3125,9 +3159,30 @@ public class WorldScene implements Scene, Main.CameraDirector, Combat.Host {
             return;
         }
         g.drawImage(mapImg, (int) mx, (int) my, (int) ms, (int) ms, null);
+        float range = 330;
+        // Noch verschlossene Gebiete im Nebel
+        if (Chapters.chapter(st) < Chapters.WILD && !st.flags.contains("finale")) {
+            java.awt.geom.Area fog = new java.awt.geom.Area(new java.awt.geom.Rectangle2D.Double(mx, my, ms, ms));
+            for (float[] zn : Chapters.ZONES) {
+                if (Chapters.chapter(st) < zn[3]) continue;
+                double cx = mx + (zn[0] + range) / (2 * range) * ms, cy = my + (zn[1] + range) / (2 * range) * ms, r = zn[2] / (2 * range) * ms;
+                fog.subtract(new java.awt.geom.Area(new Ellipse2D.Double(cx - r, cy - r, 2 * r, 2 * r)));
+            }
+            g.setColor(new Color(20, 18, 34, 175));
+            g.fill(fog);
+            g.setColor(new Color(200, 190, 255, 110));
+            g.setStroke(new BasicStroke(1.5f));
+            g.draw(fog);
+            // Wann öffnet sich was?
+            g.setFont(Art.SMALL);
+            for (float[] zn : Chapters.ZONES) {
+                if (Chapters.chapter(st) >= zn[3] || zn[2] > 300) continue;
+                double cx = mx + (zn[0] + range) / (2 * range) * ms, cy = my + (zn[1] + range) / (2 * range) * ms;
+                Art.shadowCentered(g, "ab Kapitel " + (int) zn[3], cx, cy + 4, new Color(200, 190, 255));
+            }
+        }
         g.setColor(Art.alpha(Art.GOLD, 160));
         g.draw(new java.awt.Rectangle((int) mx, (int) my, (int) ms, (int) ms));
-        float range = 330;
         String[][] labels = {{"Akademie", "0", "-112"}, {"Herzbaum", "0", "12"}, {"Mondsee", "-124", "-4"}, {"Steinbruch", "120", "-36"},
             {"Moor", "0", "92"}, {"Pilzkreis", "-120", "92"}, {"Dornenschlucht", "128", "84"}, {"Schattenhain", "-124", "-92"},
             {"Lichtwiese", "116", "-104"}, {"Café Wolkenrand", "34", "194"}, {"Meer", "0", "300"}};
@@ -3171,17 +3226,35 @@ public class WorldScene implements Scene, Main.CameraDirector, Combat.Host {
         }
         double px = mx + (pos.x + range) / (2 * range) * ms, py = my + (pos.z + range) / (2 * range) * ms;
         boolean inside = px > mx && px < mx + ms && py > my && py < my + ms;
-        if (inside) {
-            g.setColor(Color.WHITE);
-            g.fill(new Ellipse2D.Double(px - 6, py - 6, 12, 12));
-            g.setColor(Color.RED);
-            g.fill(new Ellipse2D.Double(px - 4, py - 4, 8, 8));
-            g.setColor(Color.WHITE);
-            g.drawLine((int) px, (int) py, (int) (px + Math.sin(yaw) * 16), (int) (py + Math.cos(yaw) * 16));
+        // Der rote Punkt ist immer zu sehen – weit draußen am Kartenrand mit Pfeil
+        double dx = Math.max(mx + 8, Math.min(mx + ms - 8, px)), dy = Math.max(my + 8, Math.min(my + ms - 8, py));
+        float blink = 0.6f + 0.4f * FastMath.sin((float) game.time() * 6);
+        g.setColor(new Color(255, 80, 80, (int) (90 * blink)));
+        g.fill(new Ellipse2D.Double(dx - 14, dy - 14, 28, 28));
+        g.setColor(Color.WHITE);
+        g.fill(new Ellipse2D.Double(dx - 7, dy - 7, 14, 14));
+        g.setColor(Color.RED);
+        g.fill(new Ellipse2D.Double(dx - 5, dy - 5, 10, 10));
+        g.setColor(Color.WHITE);
+        g.setStroke(new BasicStroke(2));
+        g.drawLine((int) dx, (int) dy, (int) (dx + Math.sin(yaw) * 18), (int) (dy + Math.cos(yaw) * 18));
+        if (!inside) {
+            double ang = Math.atan2(py - dy, px - dx);
+            g.setColor(new Color(255, 120, 120));
+            java.awt.geom.Path2D ar = new java.awt.geom.Path2D.Double();
+            ar.moveTo(dx + Math.cos(ang) * 22, dy + Math.sin(ang) * 22);
+            ar.lineTo(dx + Math.cos(ang + 2.6) * 12, dy + Math.sin(ang + 2.6) * 12);
+            ar.lineTo(dx + Math.cos(ang - 2.6) * 12, dy + Math.sin(ang - 2.6) * 12);
+            ar.closePath();
+            g.fill(ar);
         }
         g.setFont(Art.UI);
-        float d = (float) Math.hypot(pos.x, pos.z);
-        Art.shadowText(g, inside ? "Du bist hier (rot)." : "Du bist " + (int) d + " m vom Herzbaum entfernt – weit draußen in der Wildnis.", 330, 692, Art.PARCH);
+        Art.shadowText(g, inside ? "Du bist hier (roter Punkt)." : "Du bist weit draußen – der rote Pfeil zeigt, wo.", 330, 692, Art.PARCH);
+        // So kommst du zurück
+        g.setFont(Art.SMALL);
+        Vector3f gate = world.palace.gateOutside();
+        Art.shadowText(g, "Zurück zur Akademie: " + direction(gate), 920, 190, new Color(255, 215, 160));
+        if (open(Home.X, Home.Z)) Art.shadowText(g, "Nach Hause: " + direction(new Vector3f(Home.X, 0, Home.Z)), 920, 214, new Color(255, 215, 160));
         g.setFont(Art.SMALL);
         g.setColor(new Color(180, 180, 200));
         Art.str(g, "Die Welt endet nie: Hinter der Karte warten Wälder, Berge, Seen und Steinkreise.", 920, 140);

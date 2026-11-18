@@ -122,6 +122,7 @@ public class Mate {
     }
 
     private boolean canGo(float x, float z, boolean air, float step) {
+        if (!world.inPalace && !Chapters.allowed(st, x, z)) return false;
         if (air) return !world.chunks.blocked(x, z, 0.4f) || pos.y > world.height(x, z) + 8;
         float hNew = world.height(x, z), hCur = world.height(pos.x, pos.z);
         if ((hNew - hCur) / Math.max(0.001f, step) > 1.5f && hNew > hCur + 0.05f) return false;
