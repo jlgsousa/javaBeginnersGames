@@ -381,7 +381,18 @@ public class Shot {
                 p.setFloat(ws, -0.25f);
             } catch (Exception e) { }
         });
-        step("castle_side", 4f, () -> teleport(Float.parseFloat(System.getProperty("dw.cx", "95")), Float.parseFloat(System.getProperty("dw.cz", "-170")), Float.parseFloat(System.getProperty("dw.cyaw", "-1.88"))));
+        step("castle_side", 4f, () -> {
+            app.world.dayNight.time = Float.parseFloat(System.getProperty("dw.daytime", "0.5"));
+            teleport(Float.parseFloat(System.getProperty("dw.cx", "95")), Float.parseFloat(System.getProperty("dw.cz", "-170")), Float.parseFloat(System.getProperty("dw.cyaw", "-1.88")));
+            try {
+                java.lang.reflect.Field z = WorldScene.class.getDeclaredField("zoom");
+                z.setAccessible(true);
+                z.setFloat(app.core.scene(), 1.9f);
+                java.lang.reflect.Field p = WorldScene.class.getDeclaredField("camPitch");
+                p.setAccessible(true);
+                p.setFloat(app.core.scene(), Float.parseFloat(System.getProperty("dw.cpitch", "0.35")));
+            } catch (Exception e) { }
+        });
         step("voice_test", 4f, () -> {
             WorldScene ws = (WorldScene) app.core.scene();
             ws.say("Ysmira Funkelstein", CharacterDef.ALL.get(9).look, new String[]{"Ah! Du musst die Neue sein – oder der Neue. Der Brief kam also wirklich an. Ich bin Ysmira Funkelstein und, nun ja, die einzige Lehrerin hier."}, null);

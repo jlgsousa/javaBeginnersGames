@@ -5,7 +5,7 @@ os.makedirs(OUT+'/f',exist_ok=True); os.makedirs(OUT+'/m',exist_ok=True)
 voices={'f':PiperVoice.load(os.environ.get('PIPER_DIR','.')+'/de_DE-kerstin-medium.onnx'),'m':PiperVoice.load(os.environ.get('PIPER_DIR','.')+'/de_DE-thorsten-high.onnx')}
 def unesc(s):
     return s.replace('\\"','"').replace('\\\\','\\')
-lines=[l for l in open('os.path.join(os.path.dirname(__file__),'spoken.txt')').read().split('\n') if l]
+lines=[l for l in open(os.path.join(os.path.dirname(__file__),'spoken.txt')).read().split('\n') if l]
 done=0
 for raw in lines:
     key=unesc(raw[1:] if raw.startswith('>') else raw)
