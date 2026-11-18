@@ -22,7 +22,7 @@ public class IntroScene implements Scene {
         t += dt;
         total += dt;
         // Der Erzähler liest die Anfangsgeschichte vor (Musik leise im Hintergrund)
-        if (spoken != page && page < Story.INTRO.length) { spoken = page; Voice.narrate(Story.INTRO[page].trim()); }
+        if (spoken != page && page < Story.INTRO.length && t > 0.25) { spoken = page; Voice.narrate(Story.INTRO[page].trim()); }
         if (in.wasPressed(KeyEvent.VK_ESCAPE)) { Voice.stop(); game.setScene(new CharacterSelectScene(game)); return; }
         if (t > 0.4 && (in.confirm() || in.mouseClicked)) {
             page++;

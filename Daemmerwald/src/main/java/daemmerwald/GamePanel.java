@@ -22,7 +22,18 @@ public class GamePanel {
         scene.onEnter();
     }
 
-    public void setScene(Scene s) { next = s; }
+    public void setScene(Scene s) { next = s; log("Szene: " + s.getClass().getSimpleName()); }
+
+    /** Kleines Protokoll (~/.daemmerwald/protokoll.txt), damit sich Probleme beim Spielstart finden lassen. */
+    public static void log(String msg) {
+        try {
+            java.nio.file.Path f = Mixamo.DIR.getParent().resolve("protokoll.txt");
+            java.nio.file.Files.createDirectories(f.getParent());
+            if (java.nio.file.Files.exists(f) && java.nio.file.Files.size(f) > 200_000) java.nio.file.Files.delete(f);
+            java.nio.file.Files.writeString(f, java.time.LocalTime.now() + "  " + msg + System.lineSeparator(),
+                java.nio.file.StandardOpenOption.CREATE, java.nio.file.StandardOpenOption.APPEND);
+        } catch (Exception ignored) { }
+    }
 
     public Scene scene() { return scene; }
 
@@ -30,12 +41,16 @@ public class GamePanel {
 
     void tick(double dt) {
         time += dt;
+        long t0 = System.nanoTime();
+        boolean changed = next != null;
         if (next != null) {
             scene = next;
             next = null;
             scene.onEnter();
         }
         scene.update(dt);
+        long ms = (System.nanoTime() - t0) / 1_000_000;
+        if (changed || ms > 500) log("Bild in " + scene.getClass().getSimpleName() + ": " + ms + " ms");
         input.endFrame();
     }
 

@@ -95,6 +95,29 @@ public final class Palace {
         buildExterior();
         buildInterior();
         depths = new Depths(this);
+        batchInterior();
+    }
+
+    /** Alles Unbewegliche im Schloss zusammenfassen; Türen, Kerzen, Siegel und Rätselteile bleiben beweglich. */
+    private void batchInterior() {
+        java.util.Set<Spatial> dyn = new java.util.HashSet<>();
+        for (Wall w : walls) if (w.door != null) dyn.add(w.door);
+        dyn.addAll(candles);
+        for (Secret sc : secrets) if (sc.treasureGeo != null) dyn.add(sc.treasureGeo);
+        if (symbol != null) dyn.add(symbol);
+        if (painting != null) dyn.add(painting);
+        for (String nm : new String[]{"fireplaceBack", "tapestry", "moonPlate", "secretShelf"}) {
+            Spatial c = interior.getChild(nm);
+            if (c != null) dyn.add(c);
+        }
+        Depths d = depths;
+        for (Geometry g : d.candleFlames) dyn.add(g);
+        for (Node pn : d.pillarNodes) dyn.add(pn);
+        for (Geometry g : d.bookStacks) dyn.add(g);
+        for (Geometry[] row : d.flameJets) for (Geometry g : row) dyn.add(g);
+        for (Geometry g : d.braziers) dyn.add(g);
+        for (Spatial sp : new Spatial[]{d.muralGlyphs, d.bookOfFive, d.gate, d.blockGeo, d.plateGeo, d.starHeart, d.libPortal, d.heartPortal}) if (sp != null) dyn.add(sp);
+        G3.batch(interior, dyn);
     }
 
     /** Was unter dem Schloss liegt (Kapitel 5–7). */
@@ -359,6 +382,7 @@ public final class Palace {
             n.attachChild(rg);
         }
         G3.tangents(n);
+        jme3tools.optimize.GeometryBatchFactory.optimize(n);
         n.setShadowMode(ShadowMode.CastAndReceive);
         n.setLocalTranslation(PX, groundY - 0.4f, PZ);
         stone = oldStone;
@@ -941,6 +965,18 @@ public final class Palace {
 
     void shelf(Node n, float x, float z, float yaw, float scale) { shelf(n, x, 0, z, yaw, scale); }
 
+    /** Zwölf Buchfarben, gemeinsam genutzt (damit sich die Regale zusammenfassen lassen). */
+    private Material[] bookMats;
+
+    private Material bookMat() {
+        if (bookMats == null) {
+            bookMats = new Material[12];
+            Random r = new Random(8);
+            for (int i = 0; i < 12; i++) bookMats[i] = G3.lit(new ColorRGBA(0.25f + r.nextFloat() * 0.6f, 0.1f + r.nextFloat() * 0.35f, 0.1f + r.nextFloat() * 0.45f, 1));
+        }
+        return bookMats[rnd.nextInt(12)];
+    }
+
     void shelf(Node n, float x, float y0, float z, float yaw, float scale) {
         Spatial s = G3.model("wooden_bookshelf_worn");
         s.setLocalScale(scale);
@@ -952,7 +988,7 @@ public final class Palace {
         for (int f = 0; f < 4; f++) {
             for (int b = 0; b < 7; b++) {
                 Vector3f p = q.mult(new Vector3f(-0.85f + b * 0.27f, 0.42f + f * 0.72f, 0.05f));
-                Geometry book = box(n, G3.lit(new ColorRGBA(0.25f + rnd.nextFloat() * 0.6f, 0.1f + rnd.nextFloat() * 0.35f, 0.1f + rnd.nextFloat() * 0.45f, 1)),
+                Geometry book = box(n, bookMat(),
                     0.06f, 0.2f + rnd.nextFloat() * 0.06f, 0.18f, x + p.x, y0 + p.y, z + p.z, 0);
                 book.setLocalRotation(q);
             }

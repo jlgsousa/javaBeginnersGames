@@ -121,10 +121,15 @@ public class World3D {
         for (com.jme3.light.PointLight l : street.lights) root.addLight(l);
         houses.addAll(street.shops);
         village = new Village();
+        G3.batch(village.root);
         root.attachChild(village.root);
         for (float[] v : village.solids) solid(v[0], v[1], v[2]);
         for (com.jme3.light.PointLight l : village.lights) root.addLight(l);
         G3.tangents(root);
+        if (Boolean.getBoolean("dw.timing")) {
+            for (com.jme3.scene.Spatial c : root.getChildren()) if (count(c) > 40) System.out.println("  " + c.getName() + ": " + count(c));
+            System.out.println("Geometrien: Welt " + count(root) + ", Schloss " + count(palace.exterior) + ", Gasse " + count(street.root) + ", Innen " + count(palace.interior));
+        }
         buildNpcs();
         buildParticles();
         setupFilters();
@@ -166,6 +171,12 @@ public class World3D {
             if (!Float.isNaN(d) && d > hg) return d;
         }
         return hg;
+    }
+
+    static int count(com.jme3.scene.Spatial s) {
+        int[] n = {0};
+        s.depthFirstTraversal(sp -> { if (sp instanceof com.jme3.scene.Geometry) n[0]++; });
+        return n[0];
     }
 
     public Vector3f ground(float x, float z) { return new Vector3f(x, height(x, z), z); }

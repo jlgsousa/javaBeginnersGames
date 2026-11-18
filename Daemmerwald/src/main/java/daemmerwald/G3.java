@@ -703,4 +703,34 @@ public final class G3 {
         c.scaleTextureCoordinates(new com.jme3.math.Vector2f(2, len / 2));
         return c;
     }
+
+    private static boolean isInside(Spatial sp, Spatial anc) {
+        for (Spatial p = sp; p != null; p = p.getParent()) if (p == anc) return true;
+        return false;
+    }
+
+    /** Unbewegliche Teile eines Knotens zusammenfassen (viel weniger Zeichenaufrufe). Partikel bleiben einzeln. */
+    static void batch(com.jme3.scene.Node n) { batch(n, java.util.Set.of()); }
+
+    /** Wie batch, lässt aber die angegebenen (beweglichen) Teile einzeln. */
+    static void batch(com.jme3.scene.Node n, java.util.Set<Spatial> dynamic) {
+        java.util.List<Spatial> keep = new java.util.ArrayList<>();
+        n.breadthFirstTraversal(sp -> {
+            if (sp == n) return;
+            for (Spatial k : keep) if (isInside(sp, k)) return;
+            if (sp instanceof ParticleEmitter || sp.getControl(com.jme3.anim.AnimComposer.class) != null || dynamic.contains(sp)) keep.add(sp);
+        });
+        java.util.List<com.jme3.math.Transform> rel = new java.util.ArrayList<>();
+        for (Spatial sp : keep) {
+            com.jme3.math.Transform t = sp.getLocalTransform().clone();
+            for (com.jme3.scene.Node p = sp.getParent(); p != null && p != n; p = p.getParent()) t.combineWithParent(p.getLocalTransform());
+            rel.add(t);
+            sp.removeFromParent();
+        }
+        jme3tools.optimize.GeometryBatchFactory.optimize(n);
+        for (int k = 0; k < keep.size(); k++) {
+            keep.get(k).setLocalTransform(rel.get(k));
+            n.attachChild(keep.get(k));
+        }
+    }
 }

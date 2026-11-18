@@ -94,7 +94,8 @@ public class Music {
                     app.getRootNode().attachChild(n);
                     n.play();
                     voiceNode = n;
-                } catch (Exception e) {
+                } catch (Throwable e) {
+                    GamePanel.log("Sprachdatei nicht abspielbar: " + asset + " " + e);
                     voiceNode = null;
                 }
             }

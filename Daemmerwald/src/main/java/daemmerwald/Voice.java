@@ -47,16 +47,25 @@ public final class Voice {
         List<String> paths = new ArrayList<>();
         for (String k : keys) paths.addAll(resolve(k, "n"));
         if (Boolean.getBoolean("dw.voicelog")) System.out.println("Buch: " + paths.size() + " Absätze");
-        if (paths.isEmpty()) stop(); else player.play(paths, 0.92f);
+        try {
+            if (paths.isEmpty()) stop(); else player.play(paths, 0.92f);
+        } catch (Throwable t) {
+            GamePanel.log("Vorlesen fehlgeschlagen: " + t);
+        }
     }
 
     private static boolean ready() { return enabled && player != null && lang.equals("de"); }
 
     private static void speak(String key, String v, float pitch) {
         if (!ready() || key == null || key.isBlank()) return;
-        List<String> paths = resolve(key, v);
-        if (Boolean.getBoolean("dw.voicelog")) System.out.println("Stimme " + v + ": " + paths);
-        if (paths.isEmpty()) stop(); else player.play(paths, pitch);
+        try {
+            List<String> paths = resolve(key, v);
+            if (Boolean.getBoolean("dw.voicelog")) System.out.println("Stimme " + v + ": " + paths);
+            if (paths.isEmpty()) stop(); else player.play(paths, pitch);
+        } catch (Throwable t) {
+            GamePanel.log("Stimme fehlgeschlagen: " + t);
+            enabled = false;   // lieber stumm als hängen
+        }
     }
 
     public static void stop() {

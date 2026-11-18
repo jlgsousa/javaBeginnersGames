@@ -35,6 +35,10 @@ import java.util.Random;
 public final class MarketStreet {
     public static final float Z = -95, X0 = -120, X1 = -62;
     public final Node root = new Node("marketStreet");
+    /** Unbewegliches (wird zu wenigen Teilen zusammengefasst) und die Passanten. */
+    private final Node still = new Node("streetStatic"), people = new Node("streetPeople");
+    private Material winLit, winDark, box1;
+    private final Material[] blooms = new Material[3];
     public final List<float[]> solids = new ArrayList<>();
     public final List<PointLight> lights = new ArrayList<>();
     private final List<Walker> walkers = new ArrayList<>();
@@ -64,6 +68,14 @@ public final class MarketStreet {
         stone = G3.ph("castle_wall_varriation", new ColorRGBA(0.85f, 0.8f, 0.72f, 1));
         cobble = G3.ph("cobblestone_floor_01", new ColorRGBA(0.85f, 0.82f, 0.78f, 1));
         iron = G3.lit(new ColorRGBA(0.1f, 0.1f, 0.11f, 1));
+        winLit = G3.litGlow(new ColorRGBA(1f, 0.8f, 0.45f, 1), new ColorRGBA(0.6f, 0.38f, 0.12f, 1));
+        winDark = G3.lit(new ColorRGBA(0.12f, 0.14f, 0.2f, 1));
+        box1 = G3.lit(new ColorRGBA(0.35f, 0.22f, 0.12f, 1));
+        blooms[0] = G3.lit(new ColorRGBA(0.9f, 0.3f, 0.35f, 1));
+        blooms[1] = G3.lit(new ColorRGBA(0.95f, 0.8f, 0.3f, 1));
+        blooms[2] = G3.lit(new ColorRGBA(0.7f, 0.4f, 0.9f, 1));
+        root.attachChild(still);
+        root.attachChild(people);
         buildStreet();
         int si = 0;
         float[] north = {-114, -105, -96, -87, -78, -69};
@@ -73,7 +85,9 @@ public final class MarketStreet {
         fountain(-91.5f, Z + 7);
         stringLights();
         for (int i = 0; i < 6; i++) walkers.add(new Walker(i));
-        G3.tangents(root);
+        G3.tangents(still);
+        // Alles Unbewegliche zu wenigen Teilen zusammenfassen – sonst wird die Grafikkarte langsam
+        jme3tools.optimize.GeometryBatchFactory.optimize(still);
     }
 
     private float h(float x, float z) { return WorldGen.height(x, z); }
@@ -107,7 +121,7 @@ public final class MarketStreet {
         Geometry g = new Geometry("cobbles", m);
         g.setMaterial(cobble);
         g.setShadowMode(ShadowMode.Receive);
-        root.attachChild(g);
+        still.attachChild(g);
         // Straßenlaternen auf beiden Seiten
         for (int i = 0; i < 4; i++) {
             float x = X0 + 8 + i * 14, z = Z + (i % 2 == 0 ? -4.6f : 4.6f);
@@ -116,15 +130,15 @@ public final class MarketStreet {
             post.setMaterial(iron);
             post.setLocalRotation(new Quaternion().fromAngleAxis(-FastMath.HALF_PI, Vector3f.UNIT_X));
             post.setLocalTranslation(x, y + 1.7f, z);
-            root.attachChild(post);
+            still.attachChild(post);
             Spatial l = G3.model("Lantern_01");
             l.setLocalScale(1.5f);
             l.setLocalTranslation(x, y + 3.3f, z);
-            root.attachChild(l);
+            still.attachChild(l);
             Geometry glow = new Geometry("lampGlow", new Sphere(8, 8, 0.13f));
             glow.setMaterial(G3.emissive(new ColorRGBA(1f, 0.72f, 0.35f, 1)));
             glow.setLocalTranslation(x, y + 3.58f, z);
-            root.attachChild(glow);
+            still.attachChild(glow);
             lights.add(new PointLight(new Vector3f(x, y + 3.5f, z), new ColorRGBA(1f, 0.68f, 0.35f, 1).mult(1.6f), 14));
             solids.add(new float[]{x, z, 0.3f});
         }
@@ -178,17 +192,16 @@ public final class MarketStreet {
             // Fenster mit Sprossen, warm erleuchtet oder dunkel
             for (int k = -1; k <= 1; k += 2) {
                 boolean lit = rnd.nextFloat() < 0.65f;
-                Material wm = lit ? G3.litGlow(new ColorRGBA(1f, 0.8f, 0.45f, 1), new ColorRGBA(0.6f, 0.38f, 0.12f, 1))
-                    : G3.lit(new ColorRGBA(0.12f, 0.14f, 0.2f, 1));
+                Material wm = lit ? winLit : winDark;
                 Geometry gw = box(n, wm, 0.42f, 0.55f, 0.03f, k * ow * 0.45f, y + fh * 0.5f, fz + 0.02f, 0);
                 gw.setShadowMode(ShadowMode.Off);
                 box(n, timber, 0.03f, 0.55f, 0.04f, k * ow * 0.45f, y + fh * 0.5f, fz + 0.04f, 0);
                 box(n, timber, 0.42f, 0.03f, 0.04f, k * ow * 0.45f, y + fh * 0.5f, fz + 0.04f, 0);
                 // Blumenkasten
-                box(n, G3.lit(new ColorRGBA(0.35f, 0.22f, 0.12f, 1)), 0.5f, 0.1f, 0.15f, k * ow * 0.45f, y + fh * 0.5f - 0.7f, fz + 0.15f, 0);
+                box(n, box1, 0.5f, 0.1f, 0.15f, k * ow * 0.45f, y + fh * 0.5f - 0.7f, fz + 0.15f, 0);
                 for (int fl = 0; fl < 4; fl++) {
                     Geometry b = new Geometry("bloom", new Sphere(5, 5, 0.08f));
-                    b.setMaterial(G3.lit(new ColorRGBA[]{new ColorRGBA(0.9f, 0.3f, 0.35f, 1), new ColorRGBA(0.95f, 0.8f, 0.3f, 1), new ColorRGBA(0.7f, 0.4f, 0.9f, 1)}[(fl + idx) % 3]));
+                    b.setMaterial(blooms[(fl + idx) % 3]);
                     b.setLocalTranslation(k * ow * 0.45f - 0.35f + fl * 0.23f, y + fh * 0.5f - 0.56f, fz + 0.18f);
                     n.attachChild(b);
                 }
@@ -216,7 +229,7 @@ public final class MarketStreet {
             Geometry t = box(n, timber, 0.07f, len / 2 * 0.95f, 0.05f, s * rw / 4, y + rh / 2, od + 0.06f, 0);
             t.setLocalRotation(new Quaternion().fromAngleAxis(s * (FastMath.HALF_PI - slope), Vector3f.UNIT_Z));
         }
-        Geometry gw = box(n, G3.litGlow(new ColorRGBA(1f, 0.8f, 0.45f, 1), new ColorRGBA(0.55f, 0.35f, 0.1f, 1)), 0.32f, 0.42f, 0.03f, 0, y + rh * 0.35f, od + 0.05f, 0);
+        Geometry gw = box(n, winLit, 0.32f, 0.42f, 0.03f, 0, y + rh * 0.35f, od + 0.05f, 0);
         gw.setShadowMode(ShadowMode.Off);
         // Schornstein
         box(n, stone, 0.35f, 0.9f, 0.35f, ow * 0.45f, y + rh * 0.7f, -od * 0.3f, 0.8f);
@@ -231,7 +244,7 @@ public final class MarketStreet {
         n.setLocalRotation(new Quaternion().fromAngleAxis(yaw, Vector3f.UNIT_Y));
         n.setLocalTranslation(cx, base, cz);
         n.setShadowMode(ShadowMode.CastAndReceive);
-        root.attachChild(n);
+        still.attachChild(n);
         // Hindernisse und begehbarer Laden
         for (float ox = -2.6f; ox <= 2.61f; ox += 2.6f) solids.add(new float[]{cx + ox, cz, 2.9f});
         House shopHouse = new House("shop" + idx, shop[1], shop[0], cx, cz, yaw, false, false,
@@ -344,22 +357,22 @@ public final class MarketStreet {
         rim.setMaterial(st);
         rim.setLocalRotation(new Quaternion().fromAngleAxis(-FastMath.HALF_PI, Vector3f.UNIT_X));
         rim.setLocalTranslation(x, y + 0.35f, z);
-        root.attachChild(rim);
+        still.attachChild(rim);
         Geometry water = new Geometry("fountainWater", new Cylinder(2, 24, 1.9f, 0.05f, true));
         water.setMaterial(G3.litGlow(new ColorRGBA(0.3f, 0.5f, 0.6f, 1), new ColorRGBA(0.05f, 0.12f, 0.16f, 1)));
         water.setLocalRotation(rim.getLocalRotation());
         water.setLocalTranslation(x, y + 0.65f, z);
-        root.attachChild(water);
+        still.attachChild(water);
         Geometry col = new Geometry("fountainCol", new Cylinder(2, 12, 0.25f, 1.8f, true));
         col.setMaterial(st);
         col.setLocalRotation(rim.getLocalRotation());
         col.setLocalTranslation(x, y + 1.3f, z);
-        root.attachChild(col);
+        still.attachChild(col);
         Geometry bowl = new Geometry("fountainBowl", new Cylinder(2, 16, 0.75f, 0.2f, true));
         bowl.setMaterial(st);
         bowl.setLocalRotation(rim.getLocalRotation());
         bowl.setLocalTranslation(x, y + 2.2f, z);
-        root.attachChild(bowl);
+        still.attachChild(bowl);
         com.jme3.effect.ParticleEmitter spray = G3.particles("fountainSpray", 60, null, new ColorRGBA(0.85f, 0.95f, 1f, 0.8f), new ColorRGBA(0.85f, 0.95f, 1f, 0), 0.08f, 0.04f, 0.8f, 1.1f);
         spray.setShape(new com.jme3.effect.shapes.EmitterSphereShape(Vector3f.ZERO, 0.1f));
         spray.getParticleInfluencer().setInitialVelocity(new Vector3f(0, 2.6f, 0));
@@ -367,7 +380,7 @@ public final class MarketStreet {
         spray.setGravity(0, 4, 0);
         spray.setParticlesPerSec(50);
         spray.setLocalTranslation(x, y + 2.4f, z);
-        root.attachChild(spray);
+        people.attachChild(spray);
         solids.add(new float[]{x, z, 2.3f});
     }
 
@@ -385,7 +398,7 @@ public final class MarketStreet {
                 bl.setMaterial(bulbs[(k + i) % 3]);
                 bl.setLocalTranslation(p);
                 bl.setShadowMode(ShadowMode.Off);
-                root.attachChild(bl);
+                still.attachChild(bl);
             }
         }
     }
@@ -406,7 +419,7 @@ public final class MarketStreet {
             dir = rnd.nextBoolean() ? 1 : -1;
             speed = 1.1f + rnd.nextFloat() * 0.5f;
             lane = Z + (rnd.nextFloat() - 0.5f) * 5;
-            root.attachChild(fig.node);
+            people.attachChild(fig.node);
         }
 
         void update(float dt) {
