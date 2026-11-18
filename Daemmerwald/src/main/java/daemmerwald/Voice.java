@@ -39,7 +39,7 @@ public final class Voice {
     }
 
     /** Die Erzählerin liest. */
-    public static void narrate(String key) { speak(key, "n", 0.97f); }
+    public static void narrate(String key) { speak(key, "n", 0.92f); }
 
     /** Mehrere Absätze nacheinander vorlesen (Bücher). */
     public static void narrateAll(List<String> keys) {
@@ -47,7 +47,7 @@ public final class Voice {
         List<String> paths = new ArrayList<>();
         for (String k : keys) paths.addAll(resolve(k, "n"));
         if (Boolean.getBoolean("dw.voicelog")) System.out.println("Buch: " + paths.size() + " Absätze");
-        if (paths.isEmpty()) stop(); else player.play(paths, 0.97f);
+        if (paths.isEmpty()) stop(); else player.play(paths, 0.92f);
     }
 
     private static boolean ready() { return enabled && player != null && lang.equals("de"); }

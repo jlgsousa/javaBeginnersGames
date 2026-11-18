@@ -125,6 +125,25 @@ public class Main extends SimpleApplication implements RawInputListener {
         if (tour != null) shot = new Shot(this, tour);
     }
 
+    /** Fehler nicht hinter einem versteckten Dialog verschwinden lassen: protokollieren und im Bild melden. */
+    public static volatile String errorMsg;
+    private int errors;
+
+    @Override
+    public void handleError(String errMsg, Throwable t) {
+        try {
+            java.nio.file.Path f = Mixamo.DIR.getParent().resolve("fehler.txt");
+            java.nio.file.Files.createDirectories(f.getParent());
+            java.io.StringWriter sw = new java.io.StringWriter();
+            if (t != null) t.printStackTrace(new java.io.PrintWriter(sw));
+            java.nio.file.Files.writeString(f, java.time.LocalDateTime.now() + "  " + errMsg + "\n" + sw + "\n",
+                java.nio.file.StandardOpenOption.CREATE, java.nio.file.StandardOpenOption.APPEND);
+            errorMsg = "Ein Fehler ist aufgetreten – Details in " + f;
+        } catch (Exception ignored) { }
+        if (t != null) t.printStackTrace();
+        if (++errors > 200) super.handleError(errMsg, t);
+    }
+
     @Override
     public void simpleUpdate(float tpf) {
         float dt = Math.min(tpf, 0.1f);

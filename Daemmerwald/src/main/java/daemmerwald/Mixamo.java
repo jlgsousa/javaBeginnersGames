@@ -71,9 +71,12 @@ public final class Mixamo {
         for (String f : new String[]{own, fallback}) {
             if (f == null || !Files.exists(DIR.resolve(f)) || !Files.exists(DIR.resolve("Soldier.glb"))) continue;
             try {
+                long t0 = System.nanoTime();
                 Spatial s = am.loadModel(f).clone();
                 stripMorphs(s);
-                if (retarget(s)) { G3.toPhong(s); return s; }
+                boolean ok = retarget(s);
+                if (Boolean.getBoolean("dw.timing")) System.out.println("Figur " + f + ": " + (System.nanoTime() - t0) / 1_000_000 + " ms");
+                if (ok) { G3.toPhong(s); return s; }
             } catch (Exception e) {
                 System.err.println("Mixamo-Figur " + f + " nicht lesbar: " + e.getMessage());
             }

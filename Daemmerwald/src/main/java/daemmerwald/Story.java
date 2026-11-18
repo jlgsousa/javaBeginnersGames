@@ -11,19 +11,17 @@ public final class Story {
     private Story() { }
 
     public static final String[] INTRO = {
-        "Wurzelhain. Eine Akademie, gewachsen aus den Wurzeln eines Baumes, der älter ist als jede Krone. "
-      + "Dreihundert Jahre lang hat der Pakt gehalten: Die Trolle hüten die Steine, die Feen das Licht, "
-      + "und die Akademie lehrt beide – im Namen eines Friedens, den niemand mehr hinterfragt.",
+        "Es heißt, tief im Dämmerwald stehe eine Akademie, die seit fünfhundert Jahren niemand mehr betreten hat: Sternenhall. "
+      + "Ihre Türme glänzen golden über einem stillen See, und Wasserfälle stürzen von den Felsen, auf denen sie thront.",
 
-        "Dann kam die Welke. Zuerst verloren die Birken am Mondsee ihre Farbe. Dann wurden die Quellen im Steinbruch bitter. "
-      + "Heute frisst sie sich in violetten Adern durch den Dämmerwald, und mit jedem toten Baum werden die Stimmen im Rat lauter. "
-      + "Die Clans beschuldigen den Feenhof. Der Hof beschuldigt die Clans.",
+        "Fünf Gründer haben sie einst erbaut. Was sie unter dem Schloss verborgen haben, steht in keinem Buch. "
+      + "Nur ein Name ist geblieben, in alten Liedern geflüstert: die Kammer von Cabeceiras.",
 
-        "Die Akademie schweigt. Und in Wurzelhain hat Schweigen immer einen Preis. "
-      + "Der Paktstein, der die Völker einst band, wurde vor vierzig Jahren in sechs Splitter zerschlagen "
-      + "und an jene verteilt, die ihn hüten sollten. Wer alle sechs zum Herzbaum trägt, kann den Pakt erneuern – oder ihn brechen.",
+        "Eines Morgens liegt ein Brief vor deiner Tür. Kein Absender, kein Siegel. Nur dein Name, in goldener Tinte geschrieben. "
+      + "Und darunter ein einziger Satz: Sternenhall erwartet dich.",
 
-        "Du bist im letzten Jahr deines Studiums. Niemand hat dich gebeten, das zu tun.\n\nGenau deshalb wirst du es tun."
+        "Du packst deine Tasche, nimmst den alten Zauberstab deiner Familie und machst dich auf den Weg. "
+      + "Hinter dir bleibt die Welt, die du kennst. Vor dir beginnt deine Geschichte."
     };
 
     public static final Look BORGA = Look.troll(rgb(116, 136, 104), rgb(92, 70, 50), rgb(240, 180, 90), rgb(50, 40, 30), false).hair(true, Look.BRAIDS);

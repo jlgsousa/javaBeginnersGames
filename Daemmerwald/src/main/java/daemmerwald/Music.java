@@ -85,7 +85,7 @@ public class Music {
                 String asset = voiceQueue.remove(0);
                 float pitch = voicePitch;
                 try {
-                    AudioKey key = new AudioKey(asset, false, false);
+                    AudioKey key = new AudioKey(asset, true, false);
                     AudioNode n = new AudioNode((AudioData) app.getAssetManager().loadAsset(key), key);
                     n.setPositional(false);
                     n.setLooping(false);

@@ -29,6 +29,7 @@ public class CharacterSelectScene implements Scene {
 
     @Override
     public void update(double dt) {
+        game.app.world.dayNight.time = 0.42f; // helle Auswahl bei Tageslicht
         t += dt;
         if (in.wasPressed(KeyEvent.VK_LEFT, KeyEvent.VK_A)) sel = (sel + 9) % 10;
         if (in.wasPressed(KeyEvent.VK_RIGHT, KeyEvent.VK_D)) sel = (sel + 1) % 10;
@@ -46,7 +47,7 @@ public class CharacterSelectScene implements Scene {
     private void choose() {
         if (player == 2) {
             game.state.hero2 = all.get(sel);
-            game.setScene(new WorldScene(game));
+            game.setScene(new LoadingScene(game, () -> new WorldScene(game)));
             return;
         }
         game.state.hero = all.get(sel);
@@ -54,12 +55,12 @@ public class CharacterSelectScene implements Scene {
         game.state.px = Palace.PX;
         game.state.pz = Palace.PZ + 34;
         if (game.state.twoPlayers) {
-            game.state.dayTime = 0.235f;
+            game.state.dayTime = 0.34f;
             game.setScene(new CharacterSelectScene(game, 2));
             return;
         }
-        game.state.dayTime = 0.235f;
-        game.setScene(new WorldScene(game));
+        game.state.dayTime = 0.34f;
+        game.setScene(new LoadingScene(game, () -> new WorldScene(game)));
     }
 
     @Override

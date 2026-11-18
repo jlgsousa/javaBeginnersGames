@@ -62,6 +62,13 @@ public class Overlay {
         g.scale(iw / (double) GamePanel.W, ih / (double) GamePanel.H);
         Art.hints(g);
         core.render(g);
+        if (Main.errorMsg != null) {
+            g.setColor(new java.awt.Color(120, 20, 30, 220));
+            g.fillRect(0, GamePanel.H - 30, GamePanel.W, 30);
+            g.setColor(java.awt.Color.WHITE);
+            g.setFont(Art.SMALL);
+            g.drawString(Main.errorMsg, 14, GamePanel.H - 10);
+        }
         g.dispose();
         byte[] data = ((DataBufferByte) img.getRaster().getDataBuffer()).getData();
         buf.clear();

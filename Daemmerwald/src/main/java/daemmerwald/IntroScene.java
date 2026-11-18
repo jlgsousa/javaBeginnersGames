@@ -15,15 +15,19 @@ public class IntroScene implements Scene {
         this.in = game.input;
     }
 
+    private int spoken = -1;
+
     @Override
     public void update(double dt) {
         t += dt;
         total += dt;
-        if (in.wasPressed(KeyEvent.VK_ESCAPE)) { game.setScene(new CharacterSelectScene(game)); return; }
+        // Der Erzähler liest die Anfangsgeschichte vor (Musik leise im Hintergrund)
+        if (spoken != page && page < Story.INTRO.length) { spoken = page; Voice.narrate(Story.INTRO[page].trim()); }
+        if (in.wasPressed(KeyEvent.VK_ESCAPE)) { Voice.stop(); game.setScene(new CharacterSelectScene(game)); return; }
         if (t > 0.4 && (in.confirm() || in.mouseClicked)) {
             page++;
             t = 0;
-            if (page >= Story.INTRO.length) game.setScene(new CharacterSelectScene(game));
+            if (page >= Story.INTRO.length) { Voice.stop(); game.setScene(new CharacterSelectScene(game)); }
         }
     }
 

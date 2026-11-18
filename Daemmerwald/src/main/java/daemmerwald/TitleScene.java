@@ -45,7 +45,7 @@ public class TitleScene implements Scene {
             if (s != null) {
                 game.state = s;
                 DialogBox.playerName = s.playerName;
-                game.setScene(new WorldScene(game));
+                game.setScene(new LoadingScene(game, () -> new WorldScene(game)));
             }
             return;
         }
