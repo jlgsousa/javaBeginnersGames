@@ -5,6 +5,9 @@
 
 const STARS_NEEDED = 5;
 
+// Schlüssel einer Aufnahme: deutsche Sätze direkt, andere Stimmen mit Vorsilbe (z. B. "avoF|Olá!")
+const clipKey = (text, voice) => (voice && voice !== "de" ? voice + "|" : "") + text;
+
 // ---------------- Märchenstimme: liest alles auf Deutsch vor ----------------
 // Nutzt nur echte deutsche Stimmen, die auf dem Computer installiert sind (kein Akzent).
 // Bevorzugt: Mädchen-/Frauenstimmen und natürlich klingende Stimmen.
@@ -56,15 +59,15 @@ const Voice = (() => {
     const part = queue.shift();
     if (part === undefined) { Sound.duck(false); return; }
     Sound.duck(true);                                    // Musik leiser, solange erzählt wird
-    const file = CLIPS[part];
+    const file = CLIPS[part.key];
     if (file) {
       const a = new Audio(file);
       current = a;
       a.onended = () => { if (current === a) setTimeout(playNext, 250); };
       a.onerror = () => { if (current === a) playNext(); };
       a.play().catch(() => { if (current === a) playNext(); });
-    } else if (synth && voice) {
-      const u = new SpeechSynthesisUtterance(part);
+    } else if (synth && voice && part.voice === "de") {
+      const u = new SpeechSynthesisUtterance(part.text);
       u.voice = voice; u.lang = voice.lang; u.rate = 0.88; u.pitch = GIRL.test(voice.name) ? 1.05 : 1.25;
       current = u;
       u.onend = u.onerror = () => { if (current === u) playNext(); };
@@ -74,7 +77,11 @@ const Voice = (() => {
   function speak(parts) {
     if (muted) return;
     stop();
-    queue = (Array.isArray(parts) ? parts : [parts]).map(clean).filter(Boolean);
+    // Ein Teil ist entweder ein Text (deutsche Erzählerin) oder { text, voice } (z. B. "avoF" = Avó)
+    queue = (Array.isArray(parts) ? parts : [parts]).map(p => {
+      const text = clean(typeof p === "string" ? p : (p && p.text) || ""), v = (p && p.voice) || "de";
+      return text ? { text, voice: v, key: clipKey(text, v) } : null;
+    }).filter(Boolean);
     playNext();
   }
   function stop() {
@@ -248,7 +255,7 @@ function showNext() {
   dlgAvatar.textContent = step.emoji; dlgName.textContent = step.name;
   dlgOpts.innerHTML = "";
   if (step.riddle) {
-    dlgText.innerHTML = "🧩 <b>Rätsel:</b> " + step.riddle.q;
+    dlgText.innerHTML = (step.lang === "pt" ? "🧩 <b>Adivinha:</b> " : "🧩 <b>Rätsel:</b> ") + step.riddle.q;
     step.riddle.options.forEach((o, i) => {
       const b = document.createElement("button");
       b.textContent = o;
@@ -262,11 +269,14 @@ function showNext() {
   }
   Sound.talk();
   // Erzählerin nennt den Sprecher, wenn ein neuer anfängt
-  const intro = step.name !== dlg.lastSpeaker ? (NARRATOR[step.name] || "") : "";
+  const pt = step.lang === "pt";
+  const intro = { text: step.name !== dlg.lastSpeaker ? (NARRATOR[step.name] || "") : "", voice: pt ? "pt" : "de" };
+  const own = step.voice || "de";
   dlg.lastSpeaker = step.name;
   if (step.riddle) {
-    Voice.speak([intro, "Hör gut zu:", step.riddle.q, riddleAsk(step.riddle)]);
-  } else Voice.speak([intro, step.text]);
+    Voice.speak([intro, { text: pt ? "Ouve com atenção:" : "Hör gut zu:", voice: own }, { text: step.riddle.q, voice: own }, { text: riddleAsk(step.riddle), voice: own }]);
+  } else Voice.speak([intro, { text: step.text, voice: own }]);
+  dlgNext.textContent = pt ? "Seguinte ▶" : "Weiter ▶";
 }
 function answer(i) {
   const step = dlg.current;
@@ -280,8 +290,9 @@ function answer(i) {
     showNext();
   } else {
     Sound.wrong();
-    dlgText.innerHTML = "🤔 Hmm, das stimmt noch nicht ganz. Versuch es einfach noch einmal.<br><br>🧩 " + step.riddle.q;
-    Voice.speak(WRONG_TEXT);
+    const pt = step.lang === "pt", w = pt ? WRONG_TEXT_PT : WRONG_TEXT;
+    dlgText.innerHTML = "🤔 " + w + "<br><br>🧩 " + step.riddle.q;
+    Voice.speak({ text: w, voice: step.voice || "de" });
     [...dlgOpts.children][i].disabled = true;
   }
 }
@@ -302,6 +313,7 @@ window.addEventListener("keydown", e => {
   else if (["Enter", "Space", "KeyE"].includes(e.code) && !e.repeat) showNext();
 });
 
+const WRONG_TEXT_PT = "Quase! Tenta outra vez.";
 const WRONG_TEXT = "Hmm, das stimmt noch nicht ganz. Versuch es einfach noch einmal.";
 const END_TEXT = "Und so feierten Rosi, Prinzessin Alma und die Trolle ein großes Fest. Von nun an waren sie die besten Freunde. Und wenn sie nicht müde geworden sind, dann spielen sie noch heute.";
 const readyText = have => `Oh, du hast schon ${have} Sterne gefunden! Wie schön. Dann stelle ich dir jetzt mein Rätsel.`;
@@ -569,17 +581,22 @@ placeIntroStart();
 
 // Liste aller Sätze, die vorgelesen werden (zum Aufnehmen der Märchenstimme)
 function collectVoiceLines() {
-  const out = new Set(), add = t => { const c = Voice.clean(t || ""); if (c) out.add(c); };
+  const out = new Map();
+  const add = (t, voice = "de") => {
+    if (t && typeof t === "object") { voice = t.voice || voice; t = t.text; }
+    const c = Voice.clean(t || ""); if (c) out.set(clipKey(c, voice), { text: c, voice });
+  };
   CAPTIONS.forEach(c => add(c[1]));
-  Object.values(NARRATOR).forEach(add);
+  Object.values(NARRATOR).forEach(t => add(t));
   NPCS.forEach(n => {
     [...n.intro, ...n.solved, ...n.done].forEach(t => add(typeof t === "string" ? t : t.text));
     add(n.riddle.q); add(riddleAsk(n.riddle));
   });
-  ["Hör gut zu:", WRONG_TEXT, END_TEXT, "Es war einmal ein kleines rosa Einhorn.", "Es war einmal ein kleines rosa Einhorn. Es hieß Rosi."].forEach(add);
+  ["Hör gut zu:", WRONG_TEXT, END_TEXT, "Es war einmal ein kleines rosa Einhorn.", "Es war einmal ein kleines rosa Einhorn. Es hieß Rosi."].forEach(t => add(t));
   for (let h = 0; h < STARS_NEEDED; h++) add(waitText(h));
   for (let h = STARS_NEEDED; h <= 10; h++) add(readyText(h));
-  if (typeof CH2_VOICE_LINES !== "undefined") CH2_VOICE_LINES.forEach(add);
-  if (typeof PAINT_VOICE_LINES !== "undefined") PAINT_VOICE_LINES.forEach(add);
-  return [...out];
+  if (typeof CH2_VOICE_LINES !== "undefined") CH2_VOICE_LINES.forEach(t => add(t));
+  if (typeof PAINT_VOICE_LINES !== "undefined") PAINT_VOICE_LINES.forEach(t => add(t));
+  if (typeof CH3_VOICE_LINES !== "undefined") CH3_VOICE_LINES().forEach(l => add(l));
+  return [...out.values()];
 }

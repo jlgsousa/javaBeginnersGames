@@ -40,7 +40,13 @@ Quaki, Fee Funkel und Trollo und löst ihre Rätsel. Mit Intro-Film, fröhlicher
 goldenen Buchstaben des Weihnachtsgrußes „WIR WÜNSCHEN FROHE WEIHNACHTEN“, hilft am Nordpol den Elfen mit Rätseln beim
 Einpacken der Geschenke und bekommt vom Weihnachtsmann ein Malbuch (6 Bilder, 10 Farben, Farbeimer & Pinsel).
 
-Alle Texte werden von einer offline aufgenommenen deutschen Märchenstimme vorgelesen (`tools/make_voice.py`, Piper).
+**Kapitel 3 – Voar até Portugal (auf Portugiesisch aus Portugal):** Alma fliegt als kleine Hexe auf dem Besen übers Meer zum
+riesigen Haus von Avó und Avô. Dort lernt sie 8 Gefühle auf Portugiesisch und Deutsch (Gesichter zeigen sie), sucht mit dem Avô
+Bilder mit Gefühlen im Haus, löst mit der Avó ein Kreuzworträtsel, verkleidet und schminkt sich im Baú der Avó und tanzt am Ende
+mit beiden „A Dança dos Sentimentos“.
+
+Alle Texte werden von offline aufgenommenen Stimmen vorgelesen (`tools/make_voice.py`, Piper): eine deutsche Erzählerin sowie
+portugiesische Stimmen für Avó, Avô, Alma und die Erzählerin.
 
 Starten: `UnicornGame/index.html` im Browser öffnen (läuft auch offline).
 

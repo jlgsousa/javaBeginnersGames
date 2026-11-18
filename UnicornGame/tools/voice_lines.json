@@ -1,117 +1,846 @@
 [
- "Es war einmal ein kleines rosa Einhorn, das hieß Rosi.",
- "Rosi hatte eine allerbeste Freundin: die liebe Prinzessin Alma.",
- "Jeden Tag spielten die beiden zusammen auf der großen Blumenwiese.",
- "Sie hüpften und lachten, und sie hatten einander von Herzen lieb.",
- "Doch eines Tages kamen drei kleine Trolle aus dem Wald gelaufen.",
- "Sie nahmen Prinzessin Alma mit und liefen mit ihr davon. Rosi, hilf mir!, rief Alma.",
- "Da wusste Rosi, was zu tun war: Sie wollte ihre Freundin wiederfinden. Und so begann ihre große Reise.",
- "Da sprach der kleine Hase Hoppel:",
- "Da sprach der kleine Drache Funki:",
- "Da sprach der Froschkönig Quaki:",
- "Da sprach die Fee Funkel:",
- "Da sprach Trollo, der König der Trolle:",
- "Da sagte Prinzessin Alma:",
- "Und Rosi sagte:",
- "Da sprach das Rentier Sven:",
- "Da sprach der Weihnachtsmann:",
- "Da sprach die Elfe Flocke:",
- "Da sprach der Elf Zimtstern:",
- "Da sprach die Elfe Glöckchen:",
- "Guten Tag, liebes Einhorn. Ich bin Hoppel, der kleine Hase.",
- "Ich habe gesehen, wie die Trolle mit Prinzessin Alma hier vorbeigelaufen sind.",
- "Bitte bring mir fünf Sterne von der Blumenwiese. Dann stelle ich dir ein Rätsel. Wenn du es löst, verrate ich dir, wohin die Trolle gegangen sind.",
- "Das ist richtig, die Sonne! Das hast du wunderbar gemacht.",
- "Die Trolle sind hinauf in die Regenbogen-Berge gegangen.",
- "Ich öffne dir das Regenbogentor. Ich wünsche dir viel Glück, liebe Rosi!",
- "Die Trolle sind in die Regenbogen-Berge gegangen. Geh nur durch das Regenbogentor.",
- "Ich bin gelb und rund und leuchte hoch am Himmel. Wenn ich scheine, wird es schön warm. Wer bin ich?",
- "Ist es der Mond, die Sonne oder eine Wolke?",
- "Hallo, Rosi! Ich bin Funki, der kleine Drache.",
- "Ich fliege jeden Tag über die Berge und sehe alles, was hier geschieht.",
- "Sammle fünf Sterne in den Bergen. Dann bekommst du mein Rätsel.",
- "Ganz genau, ein Einhorn! So wie du.",
- "Von hier oben habe ich die Trolle gesehen. Sie sind hinunter zum Süßigkeiten-Fluss gegangen.",
- "Das Regenbogentor ist nun offen. Gute Reise, liebe Rosi!",
- "Die Trolle sind zum Süßigkeiten-Fluss gegangen. Geh durch das Regenbogentor.",
- "Ich habe vier Beine, eine bunte Mähne und ein Horn auf der Stirn. Wer bin ich?",
- "Ist es ein Pferd, ein Einhorn oder ein Drache?",
- "Quak, quak! Sei gegrüßt, Rosi. Ich bin Quaki, der Froschkönig vom Erdbeermilch-Fluss.",
- "Die Trolle sind auf meinen Zauber-Macarons über den Fluss gehüpft.",
- "Bring mir fünf Sterne und löse mein Rätsel. Dann lasse ich die Macarons wieder auftauchen.",
- "Richtig, Rosa! Genau wie dein schönes Fell.",
- "Sieh nur, die Macarons tauchen auf. Hüpf von einem zum anderen über den Fluss.",
- "Dahinter liegt das Schlösser-Tal. Dorthin sind die Trolle gegangen.",
- "Hüpf über die Macarons. Dahinter liegt das Schlösser-Tal.",
- "Welche Farbe bekommst du, wenn du Rot und Weiß zusammen mischst?",
- "Ist es Grün, Rosa oder Blau?",
- "Sei willkommen, liebes Einhorn. Ich bin die Fee Funkel.",
- "Die Trolle sind durch das große Schlosstor gegangen. Doch nun ist das Tor fest verschlossen.",
- "Bring mir fünf Sterne. Wenn du dann mein Rätsel löst, zaubere ich das Tor für dich auf.",
- "Wunderbar, es sind fünf Türme!",
- "Simsalabim! Das Schlosstor ist nun offen.",
- "Hinter dem Tor liegt das Trolldorf. Dort wartet Prinzessin Alma auf dich.",
- "Das Tor ist offen. Im Trolldorf wartet Prinzessin Alma auf dich.",
- "Ein Schloss hat zwei Türme. Ein anderes Schloss hat drei Türme. Wie viele Türme sind das zusammen?",
- "Sind es vier, fünf oder sechs Türme?",
- "Ho, ho! Ich bin Trollo, der König der Trolle.",
- "Du möchtest Prinzessin Alma wieder nach Hause bringen?",
- "Wir Trolle haben Sterne ganz besonders gern. Bring uns fünf Sterne und löse unser Rätsel.",
- "Ja, das stimmt. Du bist ihre allerbeste Freundin.",
- "Weißt du, wir haben Alma nur mitgenommen, weil wir so allein waren.",
- "Wir wollten auch einmal mit jemandem spielen.",
- "Aber lieber Trollo, dafür musst du doch niemanden mitnehmen.",
- "Frag einfach, ob wir zusammen spielen. Dann spielen wir alle miteinander!",
- "Ja! Mit vielen Freunden macht das Spielen am meisten Freude.",
- "Wirklich? Oh, wie schön! Dann sind wir jetzt alle Freunde.",
- "Wie schön, dass wir jetzt alle Freunde sind!",
- "Wer ist die allerbeste Freundin von Prinzessin Alma?",
- "Ist es Trollo, Rosi, das Einhorn oder ein Kürbis?",
- "Hör gut zu:",
- "Hmm, das stimmt noch nicht ganz. Versuch es einfach noch einmal.",
- "Und so feierten Rosi, Prinzessin Alma und die Trolle ein großes Fest. Von nun an waren sie die besten Freunde. Und wenn sie nicht müde geworden sind, dann spielen sie noch heute.",
- "Es war einmal ein kleines rosa Einhorn.",
- "Es war einmal ein kleines rosa Einhorn. Es hieß Rosi.",
- "Du hast schon 0 von 5 Sternen gefunden. Schau dich gut um. Manche Sterne liegen ganz hoch, dorthin musst du springen.",
- "Du hast schon 1 von 5 Sternen gefunden. Schau dich gut um. Manche Sterne liegen ganz hoch, dorthin musst du springen.",
- "Du hast schon 2 von 5 Sternen gefunden. Schau dich gut um. Manche Sterne liegen ganz hoch, dorthin musst du springen.",
- "Du hast schon 3 von 5 Sternen gefunden. Schau dich gut um. Manche Sterne liegen ganz hoch, dorthin musst du springen.",
- "Du hast schon 4 von 5 Sternen gefunden. Schau dich gut um. Manche Sterne liegen ganz hoch, dorthin musst du springen.",
- "Oh, du hast schon 5 Sterne gefunden! Wie schön. Dann stelle ich dir jetzt mein Rätsel.",
- "Oh, du hast schon 6 Sterne gefunden! Wie schön. Dann stelle ich dir jetzt mein Rätsel.",
- "Oh, du hast schon 7 Sterne gefunden! Wie schön. Dann stelle ich dir jetzt mein Rätsel.",
- "Oh, du hast schon 8 Sterne gefunden! Wie schön. Dann stelle ich dir jetzt mein Rätsel.",
- "Oh, du hast schon 9 Sterne gefunden! Wie schön. Dann stelle ich dir jetzt mein Rätsel.",
- "Oh, du hast schon 10 Sterne gefunden! Wie schön. Dann stelle ich dir jetzt mein Rätsel.",
- "Und so flogen Alma und Sven hinauf in den Abendhimmel. Sammle alle goldenen Buchstaben ein!",
- "Ihr habt alle Buchstaben gefunden! Seht ihr dort unten die Lichter? Das ist der Nordpol.",
- "Hallo, Prinzessin Alma! Hallo, Rosi! Ich bin Sven, das Rentier vom Weihnachtsmann.",
- "Ein Wintersturm hat die Buchstaben vom großen Weihnachtsgruß davongeweht. Ohne sie kann der Weihnachtsmann seine Karten nicht schreiben.",
- "Prinzessin Alma, hilfst du mir, sie zu suchen? Steig auf meinen Rücken, dann fliegen wir zum Nordpol!",
- "Oh ja, sehr gern!",
- "Flieg nur, liebe Alma. Ich warte hier mit den Trollen auf dich.",
- "Ho, ho, ho! Willkommen am Nordpol, Prinzessin Alma. Und hallo, Sven!",
- "Ihr habt alle Buchstaben von meinem Weihnachtsgruß gefunden. Lies doch einmal vor, was dort steht.",
- "Wir wünschen frohe Weihnachten!",
- "Wunderbar! Jetzt kann ich meine Weihnachtskarten an alle Kinder schicken.",
- "Meine Elfen haben aber noch viel zu tun. Hilfst du ihnen beim Einpacken der Geschenke? Zu jedem Geschenk gibt es ein kleines Rätsel.",
- "Ho, ho, ho! Alle Geschenke sind eingepackt. Ihr seid die allerbesten Helfer!",
- "Als Dankeschön schenke ich dir ein Malbuch. Viel Freude beim Ausmalen!",
- "Ich bin grün, stehe im Wohnzimmer und trage Kugeln und Lichter. Wer bin ich?",
- "Ist es der Weihnachtsbaum, ein Kaktus oder ein Brokkoli?",
- "Richtig, der Weihnachtsbaum! Schau, das erste Geschenk ist eingepackt.",
- "Ich bin weiß und kalt und falle im Winter leise vom Himmel. Was bin ich?",
- "Ist es der Regen, der Sand oder der Schnee?",
- "Ganz genau, der Schnee! Schon ist das nächste Geschenk fertig.",
- "Ein Elf hat zwei Geschenke. Ein anderer Elf hat drei Geschenke. Wie viele Geschenke sind das zusammen?",
- "Sind es fünf, vier oder sechs Geschenke?",
- "Fünf Geschenke, das stimmt! Du kannst aber gut rechnen.",
- "Welche Farbe hat der Mantel vom Weihnachtsmann?",
- "Ist es Blau, Rot oder Grün?",
- "Richtig, rot! So rot wie die Bänder an diesem Geschenk.",
- "Wer zieht den Schlitten vom Weihnachtsmann durch die Luft?",
- "Ist es die Kühe, die Rentiere oder die Fische?",
- "Die Rentiere, so wie unser Sven! Das letzte Geschenk ist eingepackt.",
- "Such dir eine Farbe aus und tippe auf eine Fläche, dann wird sie bunt.",
- "Und so war Weihnachten gerettet. Alma, Sven, Rosi und alle ihre Freunde wünschen dir frohe Weihnachten!"
+ {
+  "text": "Es war einmal ein kleines rosa Einhorn, das hieß Rosi.",
+  "voice": "de"
+ },
+ {
+  "text": "Rosi hatte eine allerbeste Freundin: die liebe Prinzessin Alma.",
+  "voice": "de"
+ },
+ {
+  "text": "Jeden Tag spielten die beiden zusammen auf der großen Blumenwiese.",
+  "voice": "de"
+ },
+ {
+  "text": "Sie hüpften und lachten, und sie hatten einander von Herzen lieb.",
+  "voice": "de"
+ },
+ {
+  "text": "Doch eines Tages kamen drei kleine Trolle aus dem Wald gelaufen.",
+  "voice": "de"
+ },
+ {
+  "text": "Sie nahmen Prinzessin Alma mit und liefen mit ihr davon. Rosi, hilf mir!, rief Alma.",
+  "voice": "de"
+ },
+ {
+  "text": "Da wusste Rosi, was zu tun war: Sie wollte ihre Freundin wiederfinden. Und so begann ihre große Reise.",
+  "voice": "de"
+ },
+ {
+  "text": "Da sprach der kleine Hase Hoppel:",
+  "voice": "de"
+ },
+ {
+  "text": "Da sprach der kleine Drache Funki:",
+  "voice": "de"
+ },
+ {
+  "text": "Da sprach der Froschkönig Quaki:",
+  "voice": "de"
+ },
+ {
+  "text": "Da sprach die Fee Funkel:",
+  "voice": "de"
+ },
+ {
+  "text": "Da sprach Trollo, der König der Trolle:",
+  "voice": "de"
+ },
+ {
+  "text": "Da sagte Prinzessin Alma:",
+  "voice": "de"
+ },
+ {
+  "text": "Und Rosi sagte:",
+  "voice": "de"
+ },
+ {
+  "text": "Da sprach das Rentier Sven:",
+  "voice": "de"
+ },
+ {
+  "text": "Da sprach der Weihnachtsmann:",
+  "voice": "de"
+ },
+ {
+  "text": "Da sprach die Elfe Flocke:",
+  "voice": "de"
+ },
+ {
+  "text": "Da sprach der Elf Zimtstern:",
+  "voice": "de"
+ },
+ {
+  "text": "Da sprach die Elfe Glöckchen:",
+  "voice": "de"
+ },
+ {
+  "text": "Guten Tag, liebes Einhorn. Ich bin Hoppel, der kleine Hase.",
+  "voice": "de"
+ },
+ {
+  "text": "Ich habe gesehen, wie die Trolle mit Prinzessin Alma hier vorbeigelaufen sind.",
+  "voice": "de"
+ },
+ {
+  "text": "Bitte bring mir fünf Sterne von der Blumenwiese. Dann stelle ich dir ein Rätsel. Wenn du es löst, verrate ich dir, wohin die Trolle gegangen sind.",
+  "voice": "de"
+ },
+ {
+  "text": "Das ist richtig, die Sonne! Das hast du wunderbar gemacht.",
+  "voice": "de"
+ },
+ {
+  "text": "Die Trolle sind hinauf in die Regenbogen-Berge gegangen.",
+  "voice": "de"
+ },
+ {
+  "text": "Ich öffne dir das Regenbogentor. Ich wünsche dir viel Glück, liebe Rosi!",
+  "voice": "de"
+ },
+ {
+  "text": "Die Trolle sind in die Regenbogen-Berge gegangen. Geh nur durch das Regenbogentor.",
+  "voice": "de"
+ },
+ {
+  "text": "Ich bin gelb und rund und leuchte hoch am Himmel. Wenn ich scheine, wird es schön warm. Wer bin ich?",
+  "voice": "de"
+ },
+ {
+  "text": "Ist es der Mond, die Sonne oder eine Wolke?",
+  "voice": "de"
+ },
+ {
+  "text": "Hallo, Rosi! Ich bin Funki, der kleine Drache.",
+  "voice": "de"
+ },
+ {
+  "text": "Ich fliege jeden Tag über die Berge und sehe alles, was hier geschieht.",
+  "voice": "de"
+ },
+ {
+  "text": "Sammle fünf Sterne in den Bergen. Dann bekommst du mein Rätsel.",
+  "voice": "de"
+ },
+ {
+  "text": "Ganz genau, ein Einhorn! So wie du.",
+  "voice": "de"
+ },
+ {
+  "text": "Von hier oben habe ich die Trolle gesehen. Sie sind hinunter zum Süßigkeiten-Fluss gegangen.",
+  "voice": "de"
+ },
+ {
+  "text": "Das Regenbogentor ist nun offen. Gute Reise, liebe Rosi!",
+  "voice": "de"
+ },
+ {
+  "text": "Die Trolle sind zum Süßigkeiten-Fluss gegangen. Geh durch das Regenbogentor.",
+  "voice": "de"
+ },
+ {
+  "text": "Ich habe vier Beine, eine bunte Mähne und ein Horn auf der Stirn. Wer bin ich?",
+  "voice": "de"
+ },
+ {
+  "text": "Ist es ein Pferd, ein Einhorn oder ein Drache?",
+  "voice": "de"
+ },
+ {
+  "text": "Quak, quak! Sei gegrüßt, Rosi. Ich bin Quaki, der Froschkönig vom Erdbeermilch-Fluss.",
+  "voice": "de"
+ },
+ {
+  "text": "Die Trolle sind auf meinen Zauber-Macarons über den Fluss gehüpft.",
+  "voice": "de"
+ },
+ {
+  "text": "Bring mir fünf Sterne und löse mein Rätsel. Dann lasse ich die Macarons wieder auftauchen.",
+  "voice": "de"
+ },
+ {
+  "text": "Richtig, Rosa! Genau wie dein schönes Fell.",
+  "voice": "de"
+ },
+ {
+  "text": "Sieh nur, die Macarons tauchen auf. Hüpf von einem zum anderen über den Fluss.",
+  "voice": "de"
+ },
+ {
+  "text": "Dahinter liegt das Schlösser-Tal. Dorthin sind die Trolle gegangen.",
+  "voice": "de"
+ },
+ {
+  "text": "Hüpf über die Macarons. Dahinter liegt das Schlösser-Tal.",
+  "voice": "de"
+ },
+ {
+  "text": "Welche Farbe bekommst du, wenn du Rot und Weiß zusammen mischst?",
+  "voice": "de"
+ },
+ {
+  "text": "Ist es Grün, Rosa oder Blau?",
+  "voice": "de"
+ },
+ {
+  "text": "Sei willkommen, liebes Einhorn. Ich bin die Fee Funkel.",
+  "voice": "de"
+ },
+ {
+  "text": "Die Trolle sind durch das große Schlosstor gegangen. Doch nun ist das Tor fest verschlossen.",
+  "voice": "de"
+ },
+ {
+  "text": "Bring mir fünf Sterne. Wenn du dann mein Rätsel löst, zaubere ich das Tor für dich auf.",
+  "voice": "de"
+ },
+ {
+  "text": "Wunderbar, es sind fünf Türme!",
+  "voice": "de"
+ },
+ {
+  "text": "Simsalabim! Das Schlosstor ist nun offen.",
+  "voice": "de"
+ },
+ {
+  "text": "Hinter dem Tor liegt das Trolldorf. Dort wartet Prinzessin Alma auf dich.",
+  "voice": "de"
+ },
+ {
+  "text": "Das Tor ist offen. Im Trolldorf wartet Prinzessin Alma auf dich.",
+  "voice": "de"
+ },
+ {
+  "text": "Ein Schloss hat zwei Türme. Ein anderes Schloss hat drei Türme. Wie viele Türme sind das zusammen?",
+  "voice": "de"
+ },
+ {
+  "text": "Sind es vier, fünf oder sechs Türme?",
+  "voice": "de"
+ },
+ {
+  "text": "Ho, ho! Ich bin Trollo, der König der Trolle.",
+  "voice": "de"
+ },
+ {
+  "text": "Du möchtest Prinzessin Alma wieder nach Hause bringen?",
+  "voice": "de"
+ },
+ {
+  "text": "Wir Trolle haben Sterne ganz besonders gern. Bring uns fünf Sterne und löse unser Rätsel.",
+  "voice": "de"
+ },
+ {
+  "text": "Ja, das stimmt. Du bist ihre allerbeste Freundin.",
+  "voice": "de"
+ },
+ {
+  "text": "Weißt du, wir haben Alma nur mitgenommen, weil wir so allein waren.",
+  "voice": "de"
+ },
+ {
+  "text": "Wir wollten auch einmal mit jemandem spielen.",
+  "voice": "de"
+ },
+ {
+  "text": "Aber lieber Trollo, dafür musst du doch niemanden mitnehmen.",
+  "voice": "de"
+ },
+ {
+  "text": "Frag einfach, ob wir zusammen spielen. Dann spielen wir alle miteinander!",
+  "voice": "de"
+ },
+ {
+  "text": "Ja! Mit vielen Freunden macht das Spielen am meisten Freude.",
+  "voice": "de"
+ },
+ {
+  "text": "Wirklich? Oh, wie schön! Dann sind wir jetzt alle Freunde.",
+  "voice": "de"
+ },
+ {
+  "text": "Wie schön, dass wir jetzt alle Freunde sind!",
+  "voice": "de"
+ },
+ {
+  "text": "Wer ist die allerbeste Freundin von Prinzessin Alma?",
+  "voice": "de"
+ },
+ {
+  "text": "Ist es Trollo, Rosi, das Einhorn oder ein Kürbis?",
+  "voice": "de"
+ },
+ {
+  "text": "Hör gut zu:",
+  "voice": "de"
+ },
+ {
+  "text": "Hmm, das stimmt noch nicht ganz. Versuch es einfach noch einmal.",
+  "voice": "de"
+ },
+ {
+  "text": "Und so feierten Rosi, Prinzessin Alma und die Trolle ein großes Fest. Von nun an waren sie die besten Freunde. Und wenn sie nicht müde geworden sind, dann spielen sie noch heute.",
+  "voice": "de"
+ },
+ {
+  "text": "Es war einmal ein kleines rosa Einhorn.",
+  "voice": "de"
+ },
+ {
+  "text": "Es war einmal ein kleines rosa Einhorn. Es hieß Rosi.",
+  "voice": "de"
+ },
+ {
+  "text": "Du hast schon 0 von 5 Sternen gefunden. Schau dich gut um. Manche Sterne liegen ganz hoch, dorthin musst du springen.",
+  "voice": "de"
+ },
+ {
+  "text": "Du hast schon 1 von 5 Sternen gefunden. Schau dich gut um. Manche Sterne liegen ganz hoch, dorthin musst du springen.",
+  "voice": "de"
+ },
+ {
+  "text": "Du hast schon 2 von 5 Sternen gefunden. Schau dich gut um. Manche Sterne liegen ganz hoch, dorthin musst du springen.",
+  "voice": "de"
+ },
+ {
+  "text": "Du hast schon 3 von 5 Sternen gefunden. Schau dich gut um. Manche Sterne liegen ganz hoch, dorthin musst du springen.",
+  "voice": "de"
+ },
+ {
+  "text": "Du hast schon 4 von 5 Sternen gefunden. Schau dich gut um. Manche Sterne liegen ganz hoch, dorthin musst du springen.",
+  "voice": "de"
+ },
+ {
+  "text": "Oh, du hast schon 5 Sterne gefunden! Wie schön. Dann stelle ich dir jetzt mein Rätsel.",
+  "voice": "de"
+ },
+ {
+  "text": "Oh, du hast schon 6 Sterne gefunden! Wie schön. Dann stelle ich dir jetzt mein Rätsel.",
+  "voice": "de"
+ },
+ {
+  "text": "Oh, du hast schon 7 Sterne gefunden! Wie schön. Dann stelle ich dir jetzt mein Rätsel.",
+  "voice": "de"
+ },
+ {
+  "text": "Oh, du hast schon 8 Sterne gefunden! Wie schön. Dann stelle ich dir jetzt mein Rätsel.",
+  "voice": "de"
+ },
+ {
+  "text": "Oh, du hast schon 9 Sterne gefunden! Wie schön. Dann stelle ich dir jetzt mein Rätsel.",
+  "voice": "de"
+ },
+ {
+  "text": "Oh, du hast schon 10 Sterne gefunden! Wie schön. Dann stelle ich dir jetzt mein Rätsel.",
+  "voice": "de"
+ },
+ {
+  "text": "Und so flogen Alma und Sven hinauf in den Abendhimmel. Sammle alle goldenen Buchstaben ein!",
+  "voice": "de"
+ },
+ {
+  "text": "Ihr habt alle Buchstaben gefunden! Seht ihr dort unten die Lichter? Das ist der Nordpol.",
+  "voice": "de"
+ },
+ {
+  "text": "Hallo, Prinzessin Alma! Hallo, Rosi! Ich bin Sven, das Rentier vom Weihnachtsmann.",
+  "voice": "de"
+ },
+ {
+  "text": "Ein Wintersturm hat die Buchstaben vom großen Weihnachtsgruß davongeweht. Ohne sie kann der Weihnachtsmann seine Karten nicht schreiben.",
+  "voice": "de"
+ },
+ {
+  "text": "Prinzessin Alma, hilfst du mir, sie zu suchen? Steig auf meinen Rücken, dann fliegen wir zum Nordpol!",
+  "voice": "de"
+ },
+ {
+  "text": "Oh ja, sehr gern!",
+  "voice": "de"
+ },
+ {
+  "text": "Flieg nur, liebe Alma. Ich warte hier mit den Trollen auf dich.",
+  "voice": "de"
+ },
+ {
+  "text": "Ho, ho, ho! Willkommen am Nordpol, Prinzessin Alma. Und hallo, Sven!",
+  "voice": "de"
+ },
+ {
+  "text": "Ihr habt alle Buchstaben von meinem Weihnachtsgruß gefunden. Lies doch einmal vor, was dort steht.",
+  "voice": "de"
+ },
+ {
+  "text": "Wir wünschen frohe Weihnachten!",
+  "voice": "de"
+ },
+ {
+  "text": "Wunderbar! Jetzt kann ich meine Weihnachtskarten an alle Kinder schicken.",
+  "voice": "de"
+ },
+ {
+  "text": "Meine Elfen haben aber noch viel zu tun. Hilfst du ihnen beim Einpacken der Geschenke? Zu jedem Geschenk gibt es ein kleines Rätsel.",
+  "voice": "de"
+ },
+ {
+  "text": "Ho, ho, ho! Alle Geschenke sind eingepackt. Ihr seid die allerbesten Helfer!",
+  "voice": "de"
+ },
+ {
+  "text": "Als Dankeschön schenke ich dir ein Malbuch. Viel Freude beim Ausmalen!",
+  "voice": "de"
+ },
+ {
+  "text": "Ich bin grün, stehe im Wohnzimmer und trage Kugeln und Lichter. Wer bin ich?",
+  "voice": "de"
+ },
+ {
+  "text": "Ist es der Weihnachtsbaum, ein Kaktus oder ein Brokkoli?",
+  "voice": "de"
+ },
+ {
+  "text": "Richtig, der Weihnachtsbaum! Schau, das erste Geschenk ist eingepackt.",
+  "voice": "de"
+ },
+ {
+  "text": "Ich bin weiß und kalt und falle im Winter leise vom Himmel. Was bin ich?",
+  "voice": "de"
+ },
+ {
+  "text": "Ist es der Regen, der Sand oder der Schnee?",
+  "voice": "de"
+ },
+ {
+  "text": "Ganz genau, der Schnee! Schon ist das nächste Geschenk fertig.",
+  "voice": "de"
+ },
+ {
+  "text": "Ein Elf hat zwei Geschenke. Ein anderer Elf hat drei Geschenke. Wie viele Geschenke sind das zusammen?",
+  "voice": "de"
+ },
+ {
+  "text": "Sind es fünf, vier oder sechs Geschenke?",
+  "voice": "de"
+ },
+ {
+  "text": "Fünf Geschenke, das stimmt! Du kannst aber gut rechnen.",
+  "voice": "de"
+ },
+ {
+  "text": "Welche Farbe hat der Mantel vom Weihnachtsmann?",
+  "voice": "de"
+ },
+ {
+  "text": "Ist es Blau, Rot oder Grün?",
+  "voice": "de"
+ },
+ {
+  "text": "Richtig, rot! So rot wie die Bänder an diesem Geschenk.",
+  "voice": "de"
+ },
+ {
+  "text": "Wer zieht den Schlitten vom Weihnachtsmann durch die Luft?",
+  "voice": "de"
+ },
+ {
+  "text": "Ist es die Kühe, die Rentiere oder die Fische?",
+  "voice": "de"
+ },
+ {
+  "text": "Die Rentiere, so wie unser Sven! Das letzte Geschenk ist eingepackt.",
+  "voice": "de"
+ },
+ {
+  "text": "Such dir eine Farbe aus und tippe auf eine Fläche, dann wird sie bunt.",
+  "voice": "de"
+ },
+ {
+  "text": "Und so war Weihnachten gerettet. Alma, Sven, Rosi und alle ihre Freunde wünschen dir frohe Weihnachten!",
+  "voice": "de"
+ },
+ {
+  "text": "O Pai Natal deu à Alma uma vassoura mágica e um chapéu de bruxinha.",
+  "voice": "pt"
+ },
+ {
+  "text": "Agora a Alma vai voar até Portugal, para visitar a Avó e o Avô. Apanha os corações pelo caminho!",
+  "voice": "pt"
+ },
+ {
+  "text": "Olha! Ali está a casa enorme da Avó e do Avô!",
+  "voice": "pt"
+ },
+ {
+  "text": "Em alemão diz-se:",
+  "voice": "pt"
+ },
+ {
+  "text": "A Avó é carinhosa e adora palavras. O Avô é brincalhão e adora rir. A Alma adora mascarar-se, pintar a cara e dançar. Cada um é diferente, e juntos são uma família muito feliz!",
+  "voice": "pt"
+ },
+ {
+  "text": "Olá, minha querida Alma! Que saudades! Anda cá dar um abraço à avó.",
+  "voice": "avoF"
+ },
+ {
+  "text": "Olá, princesa! Chegaste de vassoura? Que bruxinha tão corajosa!",
+  "voice": "avoM"
+ },
+ {
+  "text": "Olá, Avó! Olá, Avô! Eu também tinha muitas saudades vossas!",
+  "voice": "alma"
+ },
+ {
+  "text": "Hoje vamos aprender uma coisa muito importante: os sentimentos.",
+  "voice": "avoF"
+ },
+ {
+  "text": "Sim! Às vezes estamos felizes, às vezes tristes. Todos os sentimentos são importantes.",
+  "voice": "avoM"
+ },
+ {
+  "text": "Olha bem para as nossas caras. Nós vamos mostrar-te os sentimentos, um de cada vez.",
+  "voice": "avoF"
+ },
+ {
+  "text": "Muito bem! Agora já conheces oito sentimentos.",
+  "voice": "avoM"
+ },
+ {
+  "text": "E agora vamos jogar! Pela casa há seis fotografias com caras.",
+  "voice": "avoM"
+ },
+ {
+  "text": "Encontra as fotografias e diz-me como se sente cada pessoa. Vamos lá, detetive!",
+  "voice": "avoM"
+ },
+ {
+  "text": "Encontraste todas as fotografias! És uma detetive de sentimentos!",
+  "voice": "avoM"
+ },
+ {
+  "text": "Sabes uma piada? Porque é que o livro de matemática estava triste? Porque tinha muitos problemas! Ha, ha, ha!",
+  "voice": "avoM"
+ },
+ {
+  "text": "Ha, ha! Ó Avô, tu és tão brincalhão!",
+  "voice": "alma"
+ },
+ {
+  "text": "Agora é a minha vez! Eu adoro palavras cruzadas. Vamos escrever palavras de sentimentos, letra a letra.",
+  "voice": "avoF"
+ },
+ {
+  "text": "Fantástico! Escreveste todas as palavras sozinha. Estou tão orgulhosa de ti!",
+  "voice": "avoF"
+ },
+ {
+  "text": "Avó, sabes do que eu gosto muito? De me mascarar e de pintar a cara!",
+  "voice": "alma"
+ },
+ {
+  "text": "Eu sei! Por isso, o meu baú está cheio de roupas e maquilhagem. Anda, vamos experimentar!",
+  "voice": "avoF"
+ },
+ {
+  "text": "Ena! Que linda que estás! Pareces uma estrela!",
+  "voice": "avoM"
+ },
+ {
+  "text": "Obrigada, Avô! Agora apetece-me dançar!",
+  "voice": "alma"
+ },
+ {
+  "text": "Então vamos fazer uma festa! Eu digo os passos, e dançamos os três juntos!",
+  "voice": "avoM"
+ },
+ {
+  "text": "E agora... um grande abraço de família!",
+  "voice": "avoM"
+ },
+ {
+  "text": "Olha para a minha cara. Eu estou feliz! Quando estou feliz, eu sorrio e apetece-me cantar.",
+  "voice": "avoF"
+ },
+ {
+  "text": "glücklich",
+  "voice": "de"
+ },
+ {
+  "text": "Agora eu. Grrr! Eu estou zangado! Franzo a testa. Mas depois respiro fundo, e passa.",
+  "voice": "avoM"
+ },
+ {
+  "text": "wütend",
+  "voice": "de"
+ },
+ {
+  "text": "Agora estou triste. Quando estou triste, às vezes choro. Um abraço ajuda muito.",
+  "voice": "avoF"
+ },
+ {
+  "text": "traurig",
+  "voice": "de"
+ },
+ {
+  "text": "Ai, ai! Eu estou com medo! Quando tenho medo, gosto de dar a mão a alguém.",
+  "voice": "avoM"
+ },
+ {
+  "text": "ängstlich",
+  "voice": "de"
+ },
+ {
+  "text": "Eu estou envergonhada. Olha, as minhas bochechas ficam vermelhas!",
+  "voice": "avoF"
+ },
+ {
+  "text": "verlegen",
+  "voice": "de"
+ },
+ {
+  "text": "Oh! Eu estou surpreendido! Abro muito os olhos e a boca.",
+  "voice": "avoM"
+ },
+ {
+  "text": "überrascht",
+  "voice": "de"
+ },
+ {
+  "text": "Agora estou calma. Respiro devagar, como as ondas do mar.",
+  "voice": "avoF"
+ },
+ {
+  "text": "ruhig",
+  "voice": "de"
+ },
+ {
+  "text": "Ahh... eu estou cansado. Preciso de uma sesta!",
+  "voice": "avoM"
+ },
+ {
+  "text": "müde",
+  "voice": "de"
+ },
+ {
+  "text": "Ouve com atenção:",
+  "voice": "avoM"
+ },
+ {
+  "text": "Como se sente esta menina?",
+  "voice": "avoM"
+ },
+ {
+  "text": "Ela está feliz, triste ou zangada?",
+  "voice": "avoM"
+ },
+ {
+  "text": "Quase! Tenta outra vez.",
+  "voice": "avoM"
+ },
+ {
+  "text": "Boa! Ela está triste.",
+  "voice": "avoM"
+ },
+ {
+  "text": "Como se sente este menino?",
+  "voice": "avoM"
+ },
+ {
+  "text": "Ele está surpreendido, cansado ou triste?",
+  "voice": "avoM"
+ },
+ {
+  "text": "Boa! Ele está surpreendido.",
+  "voice": "avoM"
+ },
+ {
+  "text": "Ele está calmo, feliz ou zangado?",
+  "voice": "avoM"
+ },
+ {
+  "text": "Boa! Ele está zangado.",
+  "voice": "avoM"
+ },
+ {
+  "text": "Ela está feliz, com medo ou triste?",
+  "voice": "avoM"
+ },
+ {
+  "text": "Boa! Ela está feliz.",
+  "voice": "avoM"
+ },
+ {
+  "text": "Ela está zangada, cansada ou surpreendida?",
+  "voice": "avoM"
+ },
+ {
+  "text": "Boa! Ela está cansada.",
+  "voice": "avoM"
+ },
+ {
+  "text": "Ele está feliz, calmo ou com medo?",
+  "voice": "avoM"
+ },
+ {
+  "text": "Boa! Ele está com medo.",
+  "voice": "avoM"
+ },
+ {
+  "text": "Escolhe uma imagem e escreve a palavra, letra a letra.",
+  "voice": "avoF"
+ },
+ {
+  "text": "Quase! Tenta outra vez.",
+  "voice": "avoF"
+ },
+ {
+  "text": "Muito bem! amor!",
+  "voice": "avoF"
+ },
+ {
+  "text": "die Liebe",
+  "voice": "de"
+ },
+ {
+  "text": "Muito bem! feliz!",
+  "voice": "avoF"
+ },
+ {
+  "text": "Muito bem! medo!",
+  "voice": "avoF"
+ },
+ {
+  "text": "die Angst",
+  "voice": "de"
+ },
+ {
+  "text": "Muito bem! triste!",
+  "voice": "avoF"
+ },
+ {
+  "text": "á",
+  "voice": "avoF"
+ },
+ {
+  "text": "dê",
+  "voice": "avoF"
+ },
+ {
+  "text": "é",
+  "voice": "avoF"
+ },
+ {
+  "text": "éfe",
+  "voice": "avoF"
+ },
+ {
+  "text": "i",
+  "voice": "avoF"
+ },
+ {
+  "text": "éle",
+  "voice": "avoF"
+ },
+ {
+  "text": "éme",
+  "voice": "avoF"
+ },
+ {
+  "text": "ó",
+  "voice": "avoF"
+ },
+ {
+  "text": "érre",
+  "voice": "avoF"
+ },
+ {
+  "text": "ésse",
+  "voice": "avoF"
+ },
+ {
+  "text": "tê",
+  "voice": "avoF"
+ },
+ {
+  "text": "zê",
+  "voice": "avoF"
+ },
+ {
+  "text": "Uma princesa linda!",
+  "voice": "avoF"
+ },
+ {
+  "text": "Uma bruxinha mágica!",
+  "voice": "avoF"
+ },
+ {
+  "text": "Uma rainha do gelo, que brilha como a neve!",
+  "voice": "avoF"
+ },
+ {
+  "text": "Uma menina forte e divertida, com tranças!",
+  "voice": "avoF"
+ },
+ {
+  "text": "Bochechas cor-de-rosa!",
+  "voice": "avoF"
+ },
+ {
+  "text": "Brilhos mágicos!",
+  "voice": "avoF"
+ },
+ {
+  "text": "Uma estrela na cara!",
+  "voice": "avoF"
+ },
+ {
+  "text": "Um coração na cara!",
+  "voice": "avoF"
+ },
+ {
+  "text": "Batom vermelho!",
+  "voice": "avoF"
+ },
+ {
+  "text": "Bate palmas!",
+  "voice": "avoM"
+ },
+ {
+  "text": "Mãos no ar!",
+  "voice": "avoM"
+ },
+ {
+  "text": "Dá uma volta!",
+  "voice": "avoM"
+ },
+ {
+  "text": "Salta!",
+  "voice": "avoM"
+ },
+ {
+  "text": "Faz uma cara feliz!",
+  "voice": "avoM"
+ },
+ {
+  "text": "Abana os braços!",
+  "voice": "avoM"
+ },
+ {
+  "text": "Boa!",
+  "voice": "avoF"
+ },
+ {
+  "text": "Muito bem!",
+  "voice": "avoF"
+ },
+ {
+  "text": "Isso mesmo!",
+  "voice": "avoF"
+ },
+ {
+  "text": "Fantástico!",
+  "voice": "avoF"
+ }
 ]

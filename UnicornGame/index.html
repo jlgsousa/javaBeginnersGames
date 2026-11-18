@@ -109,6 +109,59 @@
   #final h1 { font-size: clamp(32px, 6vw, 64px); color: #fff3a0; margin: 0; text-shadow: 3px 3px 0 #ff5fa2; animation: bob 2s ease-in-out infinite; }
   #final p { font-size: 22px; color: #8a3d78; background: rgba(255,255,255,.85); border-radius: 16px; padding: 10px 18px; }
 
+  /* ---- Kapitel 3 ---- */
+  #ch3Hud { display: none; position: absolute; top: 12px; left: 50%; transform: translateX(-50%); text-align: center; pointer-events: none; }
+  #ch3Count { display: inline-block; font-size: 30px; font-weight: bold; color: #c2185b; background: rgba(255,255,255,.88); padding: 6px 20px; border-radius: 18px; }
+  #ch3Hint { margin-top: 6px; font-size: 14px; color: #fff; text-shadow: 1px 1px 3px #000; }
+  .ov3 { position: absolute; inset: 0; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 10px; box-sizing: border-box; }
+  .card3 { background: rgba(255,255,255,.95); border-radius: 22px; box-shadow: 0 8px 26px rgba(0,0,0,.2); padding: 14px 20px; border: 4px solid #ffb3d9; }
+  #feel { justify-content: flex-end; padding-bottom: 18px; }
+  #feel .card3 { display: flex; gap: 18px; align-items: center; max-width: 94vw; }
+  #feelFace canvas { width: 150px; height: 150px; border-radius: 18px; }
+  #feelWho { color: #b388ff; font-weight: bold; font-size: 18px; }
+  #feelPt { font-size: clamp(30px, 5vw, 48px); font-weight: bold; color: #c2185b; line-height: 1.1; }
+  #feelDe { font-size: 20px; color: #5a2a50; }
+  #feelText { font-size: 17px; color: #5a2a50; max-width: 460px; margin-top: 4px; }
+  #feelDots { color: #ff5fa2; letter-spacing: 3px; margin-top: 4px; }
+  .btn3 { font-size: 20px; padding: 10px 20px; border: none; border-radius: 18px; color: #fff; background: var(--pink); box-shadow: 0 4px 0 var(--pink-dark); }
+  #cross { background: linear-gradient(135deg, #fff3e0, #e3f2ff); }
+  #cross h2, #dress h2, #dance h2 { margin: 0; color: #c2185b; font-size: clamp(22px, 3.4vw, 34px); }
+  #crossMain { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; justify-content: center; }
+  #crossGrid { display: grid; grid-template-columns: repeat(6, clamp(40px, 7vw, 64px)); grid-auto-rows: clamp(40px, 7vw, 64px); gap: 4px; }
+  #crossGrid .cell { position: relative; background: #fff; border: 3px solid #7e57c2; border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    font-size: clamp(22px, 4vw, 38px); font-weight: bold; color: #c2185b; cursor: pointer; }
+  #crossGrid .cell.empty { visibility: hidden; }
+  #crossGrid .cell.sel { background: #fff0f7; border-color: #ff5fa2; }
+  #crossGrid .cell.next { animation: blink 1s infinite; }
+  #crossGrid .cell.ok { background: #e8fff0; }
+  #crossGrid .num { position: absolute; top: 1px; left: 4px; font-size: 12px; color: #7e57c2; }
+  @keyframes blink { 50% { background: #ffd6ec; } }
+  #crossClues { display: grid; grid-template-columns: repeat(2, auto); gap: 8px; }
+  #crossClues .clue { background: #fff; border: 3px solid #ddd; border-radius: 14px; padding: 4px; font-size: 16px; color: #7e57c2; font-weight: bold; }
+  #crossClues .clue canvas { width: 70px; height: 70px; display: block; border-radius: 10px; }
+  #crossClues .clue.on { border-color: #ff5fa2; }
+  #crossClues .clue.done { border-color: #3ddc84; opacity: .6; }
+  .bigEmoji { font-size: 52px; width: 70px; height: 70px; display: flex; align-items: center; justify-content: center; }
+  #crossKeys { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; max-width: 720px; }
+  #crossKeys button { width: 58px; height: 58px; font-size: 28px; font-weight: bold; border: none; border-radius: 14px; color: #fff; background: #7e57c2; box-shadow: 0 4px 0 #4527a0; }
+  .shake { animation: shake .4s; }
+  @keyframes shake { 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+  #dress { justify-content: space-between; pointer-events: none; }
+  #dress > * { pointer-events: auto; }
+  #dress .row3 { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+  #dress .row3 button { font-size: 17px; padding: 10px 14px; border-radius: 16px; border: 3px solid #fff; background: rgba(255,255,255,.92); color: #8a3d78; box-shadow: 0 3px 8px rgba(0,0,0,.15); }
+  #dress .row3 button.on { border-color: #ff5fa2; background: #fff0f7; }
+  #dance { justify-content: space-between; pointer-events: none; }
+  #dance > * { pointer-events: auto; }
+  #danceCall { font-size: clamp(26px, 4.5vw, 44px); color: #c2185b; display: flex; flex-direction: column; align-items: center; }
+  #danceCall small { font-size: 18px; color: #5a2a50; }
+  #moves { display: grid; grid-template-columns: repeat(3, minmax(120px, 190px)); gap: 10px; }
+  #moves button { display: flex; flex-direction: column; align-items: center; padding: 8px; border: 3px solid #fff; border-radius: 18px; background: rgba(255,255,255,.93); box-shadow: 0 4px 10px rgba(0,0,0,.15); }
+  #moves .em { font-size: 34px; } #moves .pt { font-size: 17px; font-weight: bold; color: #c2185b; } #moves .de { font-size: 12px; color: #8a3d78; }
+  #end3 { background: rgba(255,214,236,.35); }
+  #end3 h1 { font-size: clamp(34px, 6vw, 64px); color: #ff5fa2; margin: 0; text-shadow: 3px 3px 0 #fff; animation: bob 2s ease-in-out infinite; }
+  #end3 p { max-width: 640px; font-size: 20px; color: #5a2a50; background: rgba(255,255,255,.9); border-radius: 16px; padding: 12px 18px; text-align: center; }
+
   /* ---- Touch ---- */
   #touch { position: absolute; right: 16px; bottom: 60px; display: none; gap: 12px; }
   #touch button { width: 76px; height: 76px; border-radius: 50%; border: 3px solid #fff;
@@ -142,7 +195,7 @@
   <h1>🦄 Rosi rettet<br>Prinzessin Alma 👑</h1>
   <p>Drei kleine Trolle haben Prinzessin Alma mitgenommen.<br>Hilf dem Einhorn Rosi, Sterne zu sammeln, Rätsel zu lösen und seine beste Freundin wiederzufinden.</p>
   <button id="start">▶ Los geht's!</button>
-  <div class="titleBtns"><button id="ch2Direct">❄️ Kapitel 2: Zum Nordpol</button><button id="paintFromTitle">🎨 Malbuch</button></div>
+  <div class="titleBtns"><button id="ch2Direct">❄️ Kapitel 2: Zum Nordpol</button><button id="ch3Direct">🧹 Kapitel 3: Portugal</button><button id="paintFromTitle">🎨 Malbuch</button></div>
   <div id="voiceRow"><span>🗣️ Vorlesestimme:</span><select id="voiceSel"></select><button id="voiceTest">▶ Probe hören</button></div>
   <div id="voiceInfo">Auf diesem Computer ist keine deutsche Vorlesestimme installiert, darum bleibt die Erzählerin still.<br>
     Tipp: Öffne das Spiel in <b>Microsoft Edge</b> oder <b>Google Chrome</b>, dort gibt es schöne deutsche Stimmen.</div>
@@ -182,7 +235,51 @@
 <div id="final">
   <h1>🎄 Frohe Weihnachten! 🎄</h1>
   <p>Weihnachten ist gerettet! Alma, Sven, Rosi und alle ihre Freunde<br>wünschen dir ein wunderschönes Weihnachtsfest. 💖</p>
-  <div class="row"><button id="paintMore">Weiter malen 🎨</button><button onclick="location.reload()">Nochmal spielen 🌈</button></div>
+  <div class="row"><button id="ch3Btn">Kapitel 3: Ab nach Portugal 🧹</button><button id="paintMore">Weiter malen 🎨</button><button onclick="location.reload()">Nochmal spielen 🌈</button></div>
+</div>
+<div id="ch3Hud"><div id="ch3Count"></div><div id="ch3Hint"></div></div>
+
+<div id="feel" class="ov3">
+  <div class="card3">
+    <div id="feelFace"></div>
+    <div><div id="feelWho"></div><div id="feelPt"></div><div id="feelDe"></div><div id="feelText"></div><div id="feelDots"></div></div>
+    <button id="feelNext" class="btn3">Seguinte ▶</button>
+  </div>
+</div>
+
+<div id="cross" class="ov3">
+  <h2>✏️ Palavras cruzadas da Avó</h2>
+  <div id="crossMain"><div id="crossClues"></div><div id="crossGrid"></div></div>
+  <div id="crossKeys"></div>
+</div>
+
+<div id="dress" class="ov3">
+  <div class="card3"><h2>🎭 O baú da Avó</h2></div>
+  <div class="card3">
+    <div class="row3">
+      <button data-costume="princesa">👑 Princesa</button><button data-costume="bruxa">🧙‍♀️ Bruxinha</button>
+      <button data-costume="gelo">❄️ Rainha do Gelo</button><button data-costume="trancas">🧡 Menina das Tranças</button>
+    </div>
+    <div class="row3" style="margin-top:8px">
+      <button data-makeup="blush">🌸 Bochechas</button><button data-makeup="glitter">✨ Brilhos</button><button data-makeup="estrela">⭐ Estrela</button>
+      <button data-makeup="coracao">❤️ Coração</button><button data-makeup="batom">💄 Batom</button>
+      <button id="dressDone" style="background:#3ddc84;color:#fff">Pronto ✔</button>
+    </div>
+  </div>
+</div>
+
+<div id="dance" class="ov3">
+  <div class="card3"><h2>💃 A Dança dos Sentimentos</h2><div id="danceCall"></div><div id="danceDots" style="text-align:center"></div></div>
+  <div id="moves"></div>
+</div>
+
+<div id="end3" class="ov3">
+  <h1>❤️ Juntos é melhor! ❤️</h1>
+  <p>A Avó é carinhosa e adora palavras. 👵<br>O Avô é brincalhão e adora rir. 👴<br>A Alma adora mascarar-se, pintar a cara e dançar. 👸<br><b>Cada um é diferente – e juntos são uma família muito feliz!</b></p>
+  <div class="row" style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center">
+    <button id="danceAgain" class="btn3">Dançar outra vez 💃</button><button id="paint3" class="btn3">Livro de colorir 🎨</button>
+    <button class="btn3" onclick="location.reload()">Jogar outra vez 🌈</button>
+  </div>
 </div>
 <div id="fade"></div>
 
@@ -199,6 +296,9 @@
 <script src="js/story.js"></script>       <!-- Intro, Dialoge, Rätsel, Ende -->
 <script src="js/chapter2.js"></script>    <!-- Kapitel 2: mit Sven zum Nordpol -->
 <script src="js/paint.js"></script>       <!-- das Malbuch -->
+<script src="js/feelings.js"></script>    <!-- Gefühle: Wörter & Gesichter -->
+<script src="js/chapter3.js"></script>    <!-- Kapitel 3: Portugal, Avó & Avô -->
+<script src="js/chapter3ui.js"></script>  <!-- Kapitel 3: Kreuzworträtsel, Verkleiden, Tanz -->
 <script src="js/game.js"></script>        <!-- Steuerung, Physik, Kamera -->
 </body>
 </html>

@@ -64,7 +64,7 @@ function makePrincess() {
   const head = new THREE.Group(); head.position.y = 1.27; body.add(head);
   head.add(mesh(new THREE.SphereGeometry(0.17, 20, 16), skin));
   addEyes(head, 0.06, 0.02, 0.15, 0.025);
-  addSmile(head, -0.05, 0.155, 0.04);
+  const smile = addSmile(head, -0.05, 0.155, 0.04);
   addCheeks(head, 0.1, -0.03, 0.13, 0.03);
   const nose = mesh(new THREE.SphereGeometry(0.018, 8, 6), skin, false); nose.position.set(0, -0.01, 0.17); head.add(nose);
   // Haare: Kappe + Pony + zwei Zöpfe mit Schleifen
@@ -100,7 +100,8 @@ function makePrincess() {
   // Schuhe
   const feet = [-1, 1].map(s => { const f = mesh(new THREE.SphereGeometry(0.06, 10, 6), mat(0xff3d8b)); f.scale.set(0.8, 0.6, 1.3); f.position.set(s * 0.09, 0.03, 0.06); root.add(f); return f; });
 
-  const p = { root, body, head, arms, braids, feet, walk: 0, phase: 0, wave: 0, cheer: 0 };
+  const p = { root, body, head, arms, braids, feet, walk: 0, phase: 0, wave: 0, cheer: 0,
+    mats: { dress, dress2, hair }, crown, smile, braidsOut: false };   // für Verkleiden & Schminken (Kapitel 3)
   p.update = (dt, t) => {
     p.phase += dt * 9 * p.walk;
     const step = Math.sin(p.phase) * p.walk;
@@ -113,7 +114,10 @@ function makePrincess() {
       a.rotation.x = step * 0.6 * (i ? -1 : 1) * (1 - waveArm);
       a.rotation.z = s * (0.25 + waveArm * (2.4 + Math.sin(t * 12 + i) * 0.35));
     });
-    braids.forEach((b, i) => { b.rotation.x = 0.2 + Math.sin(t * 3 + i) * 0.08 + p.walk * 0.25; b.rotation.z = (i ? -1 : 1) * (0.15 + Math.sin(p.phase) * 0.1 * p.walk); });
+    braids.forEach((b, i) => {
+      if (p.braidsOut) { b.rotation.x = 0; b.rotation.z = (i ? -1 : 1) * (1.45 + Math.sin(t * 4 + i) * 0.05); return; }   // abstehende Zöpfe
+      b.rotation.x = 0.2 + Math.sin(t * 3 + i) * 0.08 + p.walk * 0.25; b.rotation.z = (i ? -1 : 1) * (0.15 + Math.sin(p.phase) * 0.1 * p.walk);
+    });
     head.rotation.z = Math.sin(t * 1.5) * 0.05;
   };
   scene.add(root);
