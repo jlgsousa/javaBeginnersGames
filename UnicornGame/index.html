@@ -26,6 +26,11 @@
   @keyframes bob { 50% { transform: translateY(-10px) rotate(-1deg); } }
   @keyframes rainbow { to { background-position: 200% 0; } }
 
+  #voiceRow { display: none; margin-top: 22px; gap: 10px; align-items: center; flex-wrap: wrap; justify-content: center;
+    background: rgba(255,255,255,.8); padding: 10px 16px; border-radius: 18px; color: #8a3d78; font-size: 17px; }
+  #voiceRow select, #voiceRow button { font-family: inherit; font-size: 16px; padding: 6px 10px; border-radius: 12px; border: 2px solid #ffb3d9; background: #fff; color: #8a3d78; }
+  #voiceInfo { display: none; margin-top: 18px; max-width: 560px; font-size: 15px; color: #8a3d78; background: rgba(255,255,255,.8); padding: 10px 16px; border-radius: 16px; }
+
   /* ---- Intro-Untertitel ---- */
   #caption { position: absolute; left: 50%; bottom: 7%; transform: translateX(-50%); width: min(820px, 90vw); box-sizing: border-box;
     padding: 16px 24px; font-size: clamp(18px, 2.6vw, 28px); color: var(--pink-dark); text-align: center; display: none; opacity: 0; }
@@ -99,13 +104,17 @@
 
 <div id="title">
   <h1>🦄 Rosi rettet<br>Prinzessin Alma 👑</h1>
-  <p>Die frechen Trolle haben Prinzessin Alma mitgenommen!<br>Hilf dem Einhorn Rosi, Sterne zu sammeln, Rätsel zu lösen und seine beste Freundin zu finden.</p>
+  <p>Drei kleine Trolle haben Prinzessin Alma mitgenommen.<br>Hilf dem Einhorn Rosi, Sterne zu sammeln, Rätsel zu lösen und seine beste Freundin wiederzufinden.</p>
   <button id="start">▶ Los geht's!</button>
+  <div id="voiceRow"><span>🗣️ Vorlesestimme:</span><select id="voiceSel"></select><button id="voiceTest">▶ Probe hören</button></div>
+  <div id="voiceInfo">Auf diesem Computer ist keine deutsche Vorlesestimme installiert, darum bleibt die Erzählerin still.<br>
+    Tipp: Öffne das Spiel in <b>Microsoft Edge</b> oder <b>Google Chrome</b>, dort gibt es schöne deutsche Stimmen.</div>
 </div>
 
 <div id="end">
   <h1>🎉 Alma ist gerettet! 🎉</h1>
-  <p>Rosi, Alma und die Trolle sind jetzt alle Freunde. 💖<br><span id="endStars"></span></p>
+  <p>Und so feierten Rosi, Prinzessin Alma und die Trolle ein großes Fest.<br>Von nun an waren sie die besten Freunde. 💖<br>
+    <i>Und wenn sie nicht müde geworden sind, dann spielen sie noch heute.</i><br><span id="endStars"></span></p>
   <button id="again">Nochmal spielen 🌈</button>
 </div>
 

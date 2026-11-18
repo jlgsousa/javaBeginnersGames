@@ -5,40 +5,94 @@
 
 const STARS_NEEDED = 5;
 
-// ---------------- Vorlesen auf Deutsch (eingebaute Sprachausgabe des Browsers) ----------------
+// ---------------- Märchenstimme: liest alles auf Deutsch vor ----------------
+// Nutzt nur echte deutsche Stimmen, die auf dem Computer installiert sind (kein Akzent).
+// Bevorzugt: Mädchen-/Frauenstimmen und natürlich klingende Stimmen.
 const Voice = (() => {
   const synth = window.speechSynthesis;
-  let voice = null, muted = false;
-  function pickVoice() {
+  let voice = null, muted = false, list = [];
+  const GIRL = /gisela|kinder|child|mädchen/i;
+  const NATURAL = /natural|online|neural|premium|enhanced|verbessert/i;
+  const FEMALE = /katja|amala|seraphina|louisa|elke|tanja|maja|ingrid|ilse|anna|petra|helena|hedda|marlene|vicki|yvonne|sandy|shelley|grandma|google deutsch|female|weiblich/i;
+  const MALE = /stefan|conrad|killian|kasper|bernd|christoph|ralf|klaus|florian|jonas|markus|martin|yannick|hans|male|männlich|reed|rocko|grandpa|eddy/i;
+  function score(v) {
+    let s = 0;
+    if (v.lang.toLowerCase().replace("_", "-") === "de-de") s += 40;   // Hochdeutsch ohne Akzent
+    if (GIRL.test(v.name)) s += 100;
+    if (NATURAL.test(v.name)) s += 50;
+    if (FEMALE.test(v.name)) s += 30;
+    if (MALE.test(v.name) && !FEMALE.test(v.name)) s -= 100;
+    if (v.localService === false) s += 5;
+    return s;
+  }
+  function load() {
     if (!synth) return;
-    const voices = synth.getVoices().filter(v => v.lang && v.lang.toLowerCase().startsWith("de"));
-    // möglichst eine freundliche, natürliche Stimme nehmen
-    voice = voices.find(v => /anna|petra|helena|katja|hedda|marlene|female|weiblich/i.test(v.name))
-         || voices.find(v => /google/i.test(v.name)) || voices[0] || null;
+    list = synth.getVoices().filter(v => v.lang && /^de([-_]|$)/i.test(v.lang)).sort((a, b) => score(b) - score(a));
+    let saved = null;
+    try { saved = localStorage.getItem("rosiVoice"); } catch (e) {}
+    voice = list.find(v => v.name === saved) || list[0] || null;
+    fillSelect();
   }
-  if (synth) { pickVoice(); synth.onvoiceschanged = pickVoice; }
-  function clean(text) {
-    return text.replace(/<br\s*\/?>/gi, " ").replace(/<[^>]+>/g, "")
-      .replace(/[\u{1F000}-\u{1FFFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE0F}\u{200D}]/gu, "")
-      .replace(/[„“"]/g, "").replace(/…/g, ",").replace(/\s+/g, " ").trim();
+  function fillSelect() {
+    const sel = document.getElementById("voiceSel"), info = document.getElementById("voiceInfo");
+    if (!sel) return;
+    sel.innerHTML = "";
+    list.forEach(v => {
+      const o = document.createElement("option");
+      o.value = v.name; o.textContent = v.name.replace(/Microsoft |Google |\(.*?\)| - .*$/g, "").trim() || v.name;
+      if (voice && v.name === voice.name) o.selected = true;
+      sel.appendChild(o);
+    });
+    document.getElementById("voiceRow").style.display = list.length ? "flex" : "none";
+    info.style.display = list.length ? "none" : "block";
   }
+  // Sätze einzeln sprechen → natürliche kleine Pausen wie beim Vorlesen
   function speak(text) {
-    if (!synth || muted) return;
+    if (!synth || muted || !voice) return;
     synth.cancel();
     const t = clean(text);
     if (!t) return;
-    const u = new SpeechSynthesisUtterance(t);
-    u.lang = "de-DE"; if (voice) u.voice = voice;
-    u.rate = 0.95; u.pitch = 1.15;            // etwas langsamer und fröhlich für Kinder
-    synth.speak(u);
+    (t.match(/[^.!?:]+[.!?:]*/g) || [t]).forEach(sentence => {
+      const u = new SpeechSynthesisUtterance(sentence.trim());
+      u.voice = voice; u.lang = voice.lang;
+      u.rate = 0.88;                                   // ruhig, wie in einer Märchenstunde
+      u.pitch = GIRL.test(voice.name) ? 1.05 : 1.25;   // hell und freundlich wie ein Mädchen
+      synth.speak(u);
+    });
   }
+  function clean(text) {
+    return text.replace(/<br\s*\/?>/gi, " ").replace(/<[^>]+>/g, "")
+      .replace(/[\u{1F000}-\u{1FFFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE0F}\u{200D}]/gu, "")
+      .replace(/[„“"«»]/g, "").replace(/–/g, ",").replace(/\s+/g, " ").trim();
+  }
+  if (synth) { load(); synth.onvoiceschanged = load; }
+  window.addEventListener("DOMContentLoaded", fillSelect);
   return {
     speak,
     stop() { synth && synth.cancel(); },
     get speaking() { return !!synth && (synth.speaking || synth.pending); },
     setMuted(m) { muted = m; if (m && synth) synth.cancel(); },
+    choose(name) { voice = list.find(v => v.name === name) || voice; try { localStorage.setItem("rosiVoice", voice.name); } catch (e) {} },
+    fillSelect,
   };
 })();
+document.getElementById("voiceSel").addEventListener("change", e => { Voice.choose(e.target.value); Voice.speak("Es war einmal ein kleines rosa Einhorn."); });
+document.getElementById("voiceTest").addEventListener("click", () => Voice.speak("Es war einmal ein kleines rosa Einhorn. Es hieß Rosi."));
+Voice.fillSelect();
+
+// Die Erzählerin kündigt an, wer spricht (nur gesprochen, nicht angezeigt)
+const NARRATOR = {
+  "Hoppel": "Da sprach der kleine Hase Hoppel:",
+  "Funki": "Da sprach der kleine Drache Funki:",
+  "Quaki": "Da sprach der Froschkönig Quaki:",
+  "Fee Funkel": "Da sprach die Fee Funkel:",
+  "Trollo": "Da sprach Trollo, der König der Trolle:",
+  "Prinzessin Alma": "Da sagte Prinzessin Alma:",
+  "Rosi": "Und Rosi sagte:",
+};
+// "Der Mond" → "der Mond", damit die Frage beim Vorlesen natürlich klingt
+const lowerArticle = o => o.replace(/^(\S*\s)?(Der|Die|Das|Ein|Eine) /, (m, e, a) => (e || "") + a.toLowerCase() + " ");
+
 const game = { state: "title", t: 0 };   // title → intro → play ⇄ dialog → ending
 
 const ROSI = { name: "Rosi", emoji: "🦄" };
@@ -64,67 +118,67 @@ function npc(def) {
 
 const NPCS = [
   npc({ name: "Hoppel", emoji: "🐰", zone: 0, dx: 2, z: -50, char: makeBunny(),
-    intro: ["Hallo Rosi! Ich bin Hoppel, der Hase.",
-            "Ich habe die Trolle gesehen! Sie hatten Prinzessin Alma dabei.",
-            "Bring mir 5 Sterne von der Blumenwiese. Dann stelle ich dir ein Rätsel – und wenn du es löst, verrate ich dir, wohin sie gelaufen sind!"],
-    riddle: { q: "Ich bin gelb und rund und strahle am Himmel. Wenn ich scheine, wird es schön warm. Wer bin ich?",
+    intro: ["Guten Tag, liebes Einhorn. Ich bin Hoppel, der kleine Hase.",
+            "Ich habe gesehen, wie die Trolle mit Prinzessin Alma hier vorbeigelaufen sind.",
+            "Bitte bring mir fünf Sterne von der Blumenwiese. Dann stelle ich dir ein Rätsel. Wenn du es löst, verrate ich dir, wohin die Trolle gegangen sind."],
+    riddle: { q: "Ich bin gelb und rund und leuchte hoch am Himmel. Wenn ich scheine, wird es schön warm. Wer bin ich?",
               options: ["🌙 Der Mond", "☀️ Die Sonne", "☁️ Eine Wolke"], answer: 1 },
-    solved: ["Richtig! Die Sonne! Super gemacht!",
-             "Die Trolle sind hoch in die Regenbogen-Berge gelaufen.",
-             "Ich öffne dir das Regenbogentor. Hoppel-hoppel – viel Glück, Rosi!"],
-    done: ["Die Trolle sind in die Regenbogen-Berge gelaufen! Lauf durch das Regenbogentor!"],
+    solved: ["Das ist richtig, die Sonne! Das hast du wunderbar gemacht.",
+             "Die Trolle sind hinauf in die Regenbogen-Berge gegangen.",
+             "Ich öffne dir das Regenbogentor. Ich wünsche dir viel Glück, liebe Rosi!"],
+    done: ["Die Trolle sind in die Regenbogen-Berge gegangen. Geh nur durch das Regenbogentor."],
     onSolved: () => openGate(gateWiese) }),
 
   npc({ name: "Funki", emoji: "🐲", zone: 1, dx: -3, z: -110, char: makeDragon(),
-    intro: ["Hui! Hallo! Ich bin Funki, der kleine Drache.",
-            "Ich fliege hier oben herum und sehe alles!",
-            "Sammle 5 Sterne in den Bergen. Dann bekommst du mein Rätsel!"],
+    intro: ["Hallo, Rosi! Ich bin Funki, der kleine Drache.",
+            "Ich fliege jeden Tag über die Berge und sehe alles, was hier geschieht.",
+            "Sammle fünf Sterne in den Bergen. Dann bekommst du mein Rätsel."],
     riddle: { q: "Ich habe vier Beine, eine bunte Mähne und ein Horn auf der Stirn. Wer bin ich?",
               options: ["🐴 Ein Pferd", "🦄 Ein Einhorn", "🐲 Ein Drache"], answer: 1 },
-    solved: ["Jaaa! Ein Einhorn – das bist ja du!",
-             "Von hier oben habe ich die Trolle gesehen: Sie sind zum Süßigkeiten-Fluss hinuntergelaufen.",
-             "Das Regenbogentor ist offen. Flieg… äh, lauf los!"],
-    done: ["Die Trolle sind zum Süßigkeiten-Fluss gelaufen! Durch das Regenbogentor!"],
+    solved: ["Ganz genau, ein Einhorn! So wie du.",
+             "Von hier oben habe ich die Trolle gesehen. Sie sind hinunter zum Süßigkeiten-Fluss gegangen.",
+             "Das Regenbogentor ist nun offen. Gute Reise, liebe Rosi!"],
+    done: ["Die Trolle sind zum Süßigkeiten-Fluss gegangen. Geh durch das Regenbogentor."],
     onSolved: () => openGate(gateBerge) }),
 
   npc({ name: "Quaki", emoji: "🐸", zone: 2, dx: 5, z: -143, char: makeFrog(),
-    intro: ["Quak! Hallo! Ich bin Quaki, der Froschkönig vom Erdbeermilch-Fluss.",
-            "Die Trolle sind über den Fluss gehüpft – auf meinen Zauber-Macarons!",
-            "Bring mir 5 Sterne und löse mein Rätsel. Dann lasse ich die Macarons auftauchen."],
-    riddle: { q: "Welche Farbe bekommst du, wenn du Rot und Weiß mischst?",
+    intro: ["Quak, quak! Sei gegrüßt, Rosi. Ich bin Quaki, der Froschkönig vom Erdbeermilch-Fluss.",
+            "Die Trolle sind auf meinen Zauber-Macarons über den Fluss gehüpft.",
+            "Bring mir fünf Sterne und löse mein Rätsel. Dann lasse ich die Macarons wieder auftauchen."],
+    riddle: { q: "Welche Farbe bekommst du, wenn du Rot und Weiß zusammen mischst?",
               options: ["💚 Grün", "🩷 Rosa", "💙 Blau"], answer: 1 },
-    solved: ["Quak-tastisch! Rosa – so wie du!",
-             "Schau, die Macarons tauchen auf! Hüpf von einem zum nächsten über den Fluss.",
-             "Dahinter liegt das Schlösser-Tal. Dorthin sind die Trolle gelaufen!"],
-    done: ["Hüpf über die Macarons! Dahinter liegt das Schlösser-Tal."],
+    solved: ["Richtig, Rosa! Genau wie dein schönes Fell.",
+             "Sieh nur, die Macarons tauchen auf. Hüpf von einem zum anderen über den Fluss.",
+             "Dahinter liegt das Schlösser-Tal. Dorthin sind die Trolle gegangen."],
+    done: ["Hüpf über die Macarons. Dahinter liegt das Schlösser-Tal."],
     onSolved: () => raiseMacarons() }),
 
   npc({ name: "Fee Funkel", emoji: "🧚", zone: 3, dx: -3, z: -228, char: makeFairy(),
-    intro: ["Hallo, liebes Einhorn! Ich bin Fee Funkel.",
-            "Die Trolle sind durch das große Schlosstor geschlichen. Aber jetzt ist es verschlossen.",
-            "Bring mir 5 Sterne. Wenn du dann mein Rätsel löst, zaubere ich das Tor auf!"],
-    riddle: { q: "Ein Schloss hat 2 Türme. Ein anderes Schloss hat 3 Türme. Wie viele Türme sind das zusammen?",
-              options: ["4", "5", "6"], answer: 1 },
-    solved: ["Wunderbar! Fünf Türme!",
-             "Simsalabim – das Schlosstor ist offen!",
-             "Dahinter liegt das Trolldorf. Dort ist Prinzessin Alma!"],
-    done: ["Das Tor ist offen! Im Trolldorf wartet Prinzessin Alma auf dich."],
+    intro: ["Sei willkommen, liebes Einhorn. Ich bin die Fee Funkel.",
+            "Die Trolle sind durch das große Schlosstor gegangen. Doch nun ist das Tor fest verschlossen.",
+            "Bring mir fünf Sterne. Wenn du dann mein Rätsel löst, zaubere ich das Tor für dich auf."],
+    riddle: { q: "Ein Schloss hat zwei Türme. Ein anderes Schloss hat drei Türme. Wie viele Türme sind das zusammen?",
+              options: ["vier Türme", "fünf Türme", "sechs Türme"], answer: 1, ask: "Sind es vier, fünf oder sechs Türme?" },
+    solved: ["Wunderbar, es sind fünf Türme!",
+             "Simsalabim! Das Schlosstor ist nun offen.",
+             "Hinter dem Tor liegt das Trolldorf. Dort wartet Prinzessin Alma auf dich."],
+    done: ["Das Tor ist offen. Im Trolldorf wartet Prinzessin Alma auf dich."],
     onSolved: () => openGate(portcullis) }),
 
   npc({ name: "Trollo", emoji: "😜", zone: 4, dx: 0, z: -275, char: trollo,
-    intro: ["Hohoho! Ich bin Trollo, der Chef der Trolle!",
-            "Du willst Prinzessin Alma zurückhaben? Hihihi!",
-            "Wir Trolle LIEBEN Sterne! Bring uns 5 Sterne und löse unser Rätsel!"],
+    intro: ["Ho, ho! Ich bin Trollo, der König der Trolle.",
+            "Du möchtest Prinzessin Alma wieder nach Hause bringen?",
+            "Wir Trolle haben Sterne ganz besonders gern. Bring uns fünf Sterne und löse unser Rätsel."],
     riddle: { q: "Wer ist die allerbeste Freundin von Prinzessin Alma?",
               options: ["😜 Trollo", "🦄 Rosi, das Einhorn", "🎃 Ein Kürbis"], answer: 1 },
-    solved: ["Oh… ja. Das stimmt. Du bist ihre allerbeste Freundin.",
-             "Weißt du… wir haben Alma nur mitgenommen, weil wir so allein waren.",
-             "Wir wollten auch einmal mit jemandem spielen…",
-             { ...ALMA, text: "Aber Trollo! Ihr müsst doch niemanden mitnehmen." },
-             { ...ALMA, text: "Fragt einfach – dann spielen wir ALLE zusammen!" },
-             { ...ROSI, text: "Genau! Je mehr Freunde, desto lustiger! 💖" },
-             "Wirklich?! Juhuuu! Wir sind jetzt alle Freunde!"],
-    done: ["Juhuu! Wir sind Freunde!"],
+    solved: ["Ja, das stimmt. Du bist ihre allerbeste Freundin.",
+             "Weißt du, wir haben Alma nur mitgenommen, weil wir so allein waren.",
+             "Wir wollten auch einmal mit jemandem spielen.",
+             { ...ALMA, text: "Aber lieber Trollo, dafür musst du doch niemanden mitnehmen." },
+             { ...ALMA, text: "Frag einfach, ob wir zusammen spielen. Dann spielen wir alle miteinander!" },
+             { ...ROSI, text: "Ja! Mit vielen Freunden macht das Spielen am meisten Freude." },
+             "Wirklich? Oh, wie schön! Dann sind wir jetzt alle Freunde."],
+    done: ["Wie schön, dass wir jetzt alle Freunde sind!"],
     onSolved: () => startEnding() }),
 ];
 trollo.root.rotation.y = 0;
@@ -151,6 +205,7 @@ const dlg = { queue: [], current: null };
 
 function say(steps) {
   dlg.queue = steps.slice();
+  dlg.lastSpeaker = null;
   game.state = "dialog";
   dlgEl.style.display = "flex";
   showNext();
@@ -176,8 +231,13 @@ function showNext() {
     dlgNext.style.display = "inline-block";
   }
   Sound.talk();
-  if (step.riddle) Voice.speak(`${step.name} fragt: ${step.riddle.q} ` + step.riddle.options.map((o, i) => `${i + 1}: ${o}.`).join(" "));
-  else Voice.speak(step.text);
+  // Erzählerin nennt den Sprecher, wenn ein neuer anfängt
+  const intro = step.name !== dlg.lastSpeaker ? (NARRATOR[step.name] || "") + " " : "";
+  dlg.lastSpeaker = step.name;
+  if (step.riddle) {
+    const o = step.riddle.options.map(lowerArticle);
+    Voice.speak(`${intro}Hör gut zu: ${step.riddle.q} ` + (step.riddle.ask || `Ist es ${o[0]}, ${o[1]} oder ${o[2]}?`));
+  } else Voice.speak(intro + step.text);
 }
 function answer(i) {
   const step = dlg.current;
@@ -190,8 +250,8 @@ function answer(i) {
     showNext();
   } else {
     Sound.wrong();
-    dlgText.innerHTML = "🤔 Hmm, das stimmt nicht ganz. Versuch es nochmal!<br><br>🧩 " + step.riddle.q;
-    Voice.speak("Hmm, das stimmt nicht ganz. Versuch es nochmal!");
+    dlgText.innerHTML = "🤔 Hmm, das stimmt noch nicht ganz. Versuch es einfach noch einmal.<br><br>🧩 " + step.riddle.q;
+    Voice.speak("Hmm, das stimmt noch nicht ganz. Versuch es einfach noch einmal.");
     [...dlgOpts.children][i].disabled = true;
   }
 }
@@ -219,10 +279,10 @@ function talkTo(n) {
   if (wasNew) { steps.push(...lines(n.intro)); n.state = "collect"; }
   const have = zoneStars[n.zone];
   if (have >= STARS_NEEDED) {
-    steps.push({ ...sp, text: `Oh, du hast ${have} Sterne! Dann hör gut zu – hier ist mein Rätsel:` });
+    steps.push({ ...sp, text: `Oh, du hast schon ${have} Sterne gefunden! Wie schön. Dann stelle ich dir jetzt mein Rätsel.` });
     steps.push({ ...sp, riddle: n.riddle, onCorrect: [...lines(n.solved), { fn: () => { n.state = "done"; n.onSolved(); } }] });
   } else if (!wasNew) {
-    steps.push({ ...sp, text: `Du hast schon ${have} von ${STARS_NEEDED} Sternen. Such weiter – manche liegen ganz hoch, da musst du springen!` });
+    steps.push({ ...sp, text: `Du hast schon ${have} von ${STARS_NEEDED} Sternen gefunden. Schau dich gut um. Manche Sterne liegen ganz hoch, dorthin musst du springen.` });
   }
   say(steps);
 }
@@ -256,13 +316,13 @@ function firework(center) {
 // =====================================================================
 const captionEl = document.getElementById("caption");
 const CAPTIONS = [
-  [0,  "Es war einmal ein kleines Einhorn namens Rosi …"],
-  [3,  "… und seine allerbeste Freundin: Prinzessin Alma! 👑"],
-  [7.5, "Jeden Tag spielten die beiden zusammen Fangen auf der Blumenwiese."],
-  [12, "Sie hüpften, lachten und hatten sich ganz doll lieb. 💖"],
-  [17, "Doch plötzlich kamen drei freche Trolle aus dem Wald gehüpft! Hihihi!"],
-  [21, "Sie schnappten sich Alma und liefen mit ihr davon! „Rosi, hilf mir!“"],
-  [26, "Rosi muss Alma retten! Sammle Sterne, löse Rätsel und folge den Troll-Spuren! 🌈"],
+  [0,  "Es war einmal ein kleines rosa Einhorn, das hieß Rosi."],
+  [3,  "Rosi hatte eine allerbeste Freundin: die liebe Prinzessin Alma."],
+  [7.5, "Jeden Tag spielten die beiden zusammen auf der großen Blumenwiese."],
+  [12, "Sie hüpften und lachten, und sie hatten einander von Herzen lieb."],
+  [17, "Doch eines Tages kamen drei kleine Trolle aus dem Wald gelaufen."],
+  [21, "Sie nahmen Prinzessin Alma mit und liefen mit ihr davon. „Rosi, hilf mir!“, rief Alma."],
+  [26, "Da wusste Rosi, was zu tun war: Sie wollte ihre Freundin wiederfinden. Und so begann ihre große Reise."],
 ];
 const INTRO_END = 31;
 const smooth = x => x <= 0 ? 0 : x >= 1 ? 1 : x * x * (3 - 2 * x);
@@ -287,7 +347,7 @@ function jumpArc(T, t0, dur, h) { const f = (T - t0) / dur; return f > 0 && f < 
 function introUpdate(dt) {
   // Damit die Stimme jeden Satz zu Ende lesen kann, wartet der Film kurz am Übergang
   const nextCap = CAPTIONS[lastCaption + 1];
-  if (nextCap && game.t >= nextCap[0] && Voice.speaking && voiceWait < 4) { game.t = nextCap[0] - 0.001; voiceWait += dt; }
+  if (nextCap && game.t >= nextCap[0] && Voice.speaking && voiceWait < 15) { game.t = nextCap[0] - 0.001; voiceWait += dt; }
   else if (!Voice.speaking) voiceWait = 0;
   const T = game.t;
   // Untertitel
@@ -416,6 +476,7 @@ function endingUpdate(dt, t) {
   if (endT > 1 && Math.random() < dt * 2.5) firework(uni.pos);
   if (endT > 7 && document.getElementById("end").style.display !== "flex") {
     document.getElementById("endStars").textContent = `Du hast ${starCount} von ${stars.length} Sternen gesammelt! ⭐`;
+    Voice.speak("Und so feierten Rosi, Prinzessin Alma und die Trolle ein großes Fest. Von nun an waren sie die besten Freunde. Und wenn sie nicht müde geworden sind, dann spielen sie noch heute.");
     document.getElementById("end").style.display = "flex";
   }
 }
