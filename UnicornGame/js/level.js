@@ -216,7 +216,7 @@ function donut(x, z) {
 }
 // Streusel auf dem Boden
 (function sprinkles() {
-  const N = 2500, inst = new THREE.InstancedMesh(new THREE.CapsuleGeometry(0.03, 0.1, 2, 4), new THREE.MeshLambertMaterial({ color: 0xffffff }), N);
+  const N = Math.round(2500 * Math.max(0.5, DETAIL)), inst = new THREE.InstancedMesh(new THREE.CapsuleGeometry(0.03, 0.1, 2, 4), new THREE.MeshLambertMaterial({ color: 0xffffff }), N);
   const d = new THREE.Object3D(), c = new THREE.Color();
   for (let i = 0; i < N; i++) {
     const z = rand(-118, -182);

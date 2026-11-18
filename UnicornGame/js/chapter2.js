@@ -197,7 +197,7 @@ function makeTile(k) {
   const ground = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ map: snowTex, roughness: 0.9 }));
   ground.receiveShadow = true; g.add(ground);
   // verschneite Tannen (Instancing → wenig Rechenarbeit)
-  const N = 260;
+  const N = LOW_END ? 130 : 260;
   const parts = [[new THREE.CylinderGeometry(0.15, 0.22, 1, 6).translate(0, 0.5, 0), 0x6b4a32],
                  [new THREE.ConeGeometry(1.5, 2.2, 8).translate(0, 2.0, 0), 0x2f7a55],
                  [new THREE.ConeGeometry(1.1, 1.8, 8).translate(0, 3.0, 0), 0x358a60],

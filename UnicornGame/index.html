@@ -162,6 +162,35 @@
   #end3 h1 { font-size: clamp(34px, 6vw, 64px); color: #ff5fa2; margin: 0; text-shadow: 3px 3px 0 #fff; animation: bob 2s ease-in-out infinite; }
   #end3 p { max-width: 640px; font-size: 20px; color: #5a2a50; background: rgba(255,255,255,.9); border-radius: 16px; padding: 12px 18px; text-align: center; }
 
+  /* ---- Handy: Querformat-Hinweis, Vollbild, kleine Bildschirme ---- */
+  #rotate { display: none; position: absolute; left: 50%; bottom: 12px; transform: translateX(-50%); z-index: 50; background: rgba(255,255,255,.95);
+    color: #8a3d78; padding: 10px 16px; border-radius: 16px; font-size: 16px; box-shadow: 0 4px 14px rgba(0,0,0,.2); align-items: center; gap: 10px; }
+  #rotate button { border: none; background: #ff5fa2; color: #fff; border-radius: 10px; padding: 4px 10px; font-size: 16px; }
+  @media (orientation: portrait) and (pointer: coarse) { #rotate.show { display: flex; } }
+  #fs { position: absolute; top: 12px; right: 70px; width: 50px; height: 50px; border: none; font-size: 22px; padding: 0; display: none; z-index: 5; }
+  @media (pointer: coarse) { #fs { display: block; } #score { right: 130px; } #skip { right: 130px; } }
+  @media (max-height: 520px) {
+    #title h1 { font-size: 34px; } #title p { font-size: 14px; margin: 6px 0; } #start { font-size: 22px; padding: 10px 30px; }
+    .titleBtns button { font-size: 15px; padding: 7px 14px; }
+    #dialog { padding: 8px 12px; bottom: 8px; } #dAvatar { width: 54px; height: 54px; min-width: 54px; font-size: 36px; }
+    #dText { font-size: 16px; margin: 2px 0 6px; } #dOpts button, #dNext { font-size: 16px; padding: 7px 12px; }
+    #caption { font-size: 16px; padding: 8px 14px; bottom: 4%; }
+    #help { display: none; } #quest { font-size: 15px; } #questBox { padding: 6px 10px; }
+    #paint h2 { display: none; } #pictures button, #tools button { width: 40px; height: 40px; font-size: 20px; } #colors button { width: 32px; height: 32px; }
+    #paint { flex-direction: row; gap: 10px; }
+    #paintCanvas { width: min(calc(100vw - 300px), calc((100vh - 24px) * 900 / 650)); }
+    #pictures { gap: 5px; } #paintBar { flex-direction: column; width: 220px; gap: 8px; }
+    #colors { gap: 5px; } #tools { flex-wrap: wrap; justify-content: center; } #pDone { font-size: 16px; padding: 8px 14px; }
+    #cross h2, #dance h2 { font-size: 18px; } #crossGrid { grid-template-columns: repeat(6, 36px); grid-auto-rows: 36px; } #crossGrid .cell { font-size: 20px; }
+    #crossClues .clue canvas, .bigEmoji { width: 46px; height: 46px; font-size: 32px; } #crossKeys button { width: 40px; height: 40px; font-size: 20px; }
+    #cross { flex-direction: row; flex-wrap: wrap; } #crossKeys { max-width: 300px; }
+    #feel .card3 { padding: 8px 12px; gap: 10px; } #feelFace canvas { width: 90px; height: 90px; } #feelPt { font-size: 26px; } #feelText { font-size: 14px; }
+    #moves { grid-template-columns: repeat(6, minmax(70px, 110px)); gap: 6px; } #moves .em { font-size: 24px; } #moves .pt { font-size: 12px; } #moves .de { display: none; }
+    #danceCall { font-size: 22px; } #danceCall small { font-size: 13px; }
+    #dress .row3 button { font-size: 13px; padding: 6px 8px; }
+    #sentence span { width: 18px; height: 26px; font-size: 16px; } #ch2Help, #ch3Hint { display: none; }
+  }
+
   /* ---- Touch ---- */
   #touch { position: absolute; right: 16px; bottom: 60px; display: none; gap: 12px; }
   #touch button { width: 76px; height: 76px; border-radius: 50%; border: 3px solid #fff;
@@ -181,6 +210,8 @@
   <div id="touch"><button id="bLook">👀</button><button id="bRun">⚡</button><button id="bJump">⤒</button></div>
 </div>
 <button id="mute" class="panel">🔊</button>
+<button id="fs" class="panel" title="Vollbild">⛶</button>
+<div id="rotate" class="show">📱↻ Bitte das Handy quer halten – dann ist mehr Platz zum Spielen! <button onclick="this.parentNode.classList.remove('show')">OK</button></div>
 <div id="stick"><div></div></div>
 
 <div id="caption" class="panel"></div>
@@ -299,6 +330,16 @@
 <script src="js/feelings.js"></script>    <!-- Gefühle: Wörter & Gesichter -->
 <script src="js/chapter3.js"></script>    <!-- Kapitel 3: Portugal, Avó & Avô -->
 <script src="js/chapter3ui.js"></script>  <!-- Kapitel 3: Kreuzworträtsel, Verkleiden, Tanz -->
-<script src="js/game.js"></script>        <!-- Steuerung, Physik, Kamera -->
+<script src="js/game.js"></script>
+<script>
+  // Vollbild-Knopf (praktisch auf dem Handy)
+  document.getElementById("fs").addEventListener("click", () => {
+    const d = document.documentElement;
+    if (document.fullscreenElement || document.webkitFullscreenElement) (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+    else { try { const r = (d.requestFullscreen || d.webkitRequestFullscreen || (() => {})).call(d); if (r && r.catch) r.catch(() => {}); } catch (e) {} }
+  });
+  // In einer eingebetteten Ansicht (z. B. als Webseite auf claude.ai) sind Datei-Downloads gesperrt
+  if (window.top !== window) document.getElementById("pSave").style.display = "none";
+</script>        <!-- Steuerung, Physik, Kamera -->
 </body>
 </html>

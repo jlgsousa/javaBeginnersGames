@@ -6,7 +6,10 @@
 THREE.ColorManagement.legacyMode = false;
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+// Handys & Tablets: etwas weniger Details, damit es flüssig läuft
+const LOW_END = (window.matchMedia && matchMedia("(pointer: coarse)").matches) || Math.min(innerWidth, innerHeight) < 600;
+const DETAIL = LOW_END ? 0.35 : 1;
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, LOW_END ? 1.5 : 2));
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.outputEncoding = THREE.sRGBEncoding;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -65,7 +68,7 @@ const SUN_DIR = new THREE.Vector3(0.55, 0.62, 0.35).normalize();
 scene.add(new THREE.HemisphereLight(0xcfe6ff, 0x5d7a3a, 0.75));
 const sun = new THREE.DirectionalLight(0xfff0d8, 2.4);
 sun.castShadow = true;
-sun.shadow.mapSize.set(2048, 2048);
+sun.shadow.mapSize.set(LOW_END ? 1024 : 2048, LOW_END ? 1024 : 2048);
 sun.shadow.bias = -0.0004;
 sun.shadow.normalBias = 0.03;
 Object.assign(sun.shadow.camera, { left: -16, right: 16, top: 16, bottom: -16, near: 1, far: 80 });
@@ -158,6 +161,7 @@ function windy(material, strength) {
 const dummy = new THREE.Object3D();
 // Gras in einem Rechteck verteilen: x um die Wegmitte, z von z0 bis z1
 function scatterGrass(count, z0, z1, halfW, minH, maxH, hueShift = 0) {
+  count = Math.round(count * DETAIL);
   const inst = new THREE.InstancedMesh(bladeGeometry(),
     windy(new THREE.MeshLambertMaterial({ vertexColors: true, side: THREE.DoubleSide }), 0.18), count);
   const c = new THREE.Color();
@@ -177,6 +181,7 @@ function scatterGrass(count, z0, z1, halfW, minH, maxH, hueShift = 0) {
 
 // Wildblumen
 function scatterFlowers(N, z0, z1, halfW, palette) {
+  N = Math.round(N * Math.max(0.5, DETAIL));
   const stem = new THREE.InstancedMesh(new THREE.CylinderGeometry(0.008, 0.012, 1, 4).translate(0, 0.5, 0),
     windy(new THREE.MeshLambertMaterial({ color: 0x3f6b25 }), 0.1), N);
   const blossomGeo = new THREE.SphereGeometry(0.06, 8, 4); blossomGeo.scale(1, 0.45, 1);

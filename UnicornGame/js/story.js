@@ -53,7 +53,8 @@ const Voice = (() => {
   }
   // Fertig aufgenommene Märchenstimme: Dateien in audio/voice/, die Liste steht in js/voice-clips.js.
   // Jeder Satz-Teil wird nacheinander abgespielt. Fehlt eine Datei, liest notfalls die Computerstimme.
-  let queue = [], current = null;
+  let queue = [], current = null, token = 0;
+  const player = new Audio(); player.preload = "auto";
   function playNext() {
     current = null;
     const part = queue.shift();
@@ -61,11 +62,13 @@ const Voice = (() => {
     Sound.duck(true);                                    // Musik leiser, solange erzählt wird
     const file = CLIPS[part.key];
     if (file) {
-      const a = new Audio(file);
-      current = a;
-      a.onended = () => { if (current === a) setTimeout(playNext, 250); };
-      a.onerror = () => { if (current === a) playNext(); };
-      a.play().catch(() => { if (current === a) playNext(); });
+      // ein einziges Audio-Element für alles: so funktioniert es auch auf iPhone & iPad
+      const my = ++token;
+      current = player; player.muted = false;
+      player.onended = () => { if (token === my) setTimeout(playNext, 250); };
+      player.onerror = () => { if (token === my) playNext(); };
+      player.src = file;
+      player.play().catch(() => { if (token === my) playNext(); });
     } else if (synth && voice && part.voice === "de") {
       const u = new SpeechSynthesisUtterance(part.text);
       u.voice = voice; u.lang = voice.lang; u.rate = 0.88; u.pitch = GIRL.test(voice.name) ? 1.05 : 1.25;
@@ -84,7 +87,17 @@ const Voice = (() => {
     }).filter(Boolean);
     playNext();
   }
+  // Handys erlauben Ton erst nach einer Berührung → beim ersten Antippen still „freischalten“
+  function unlock() {
+    const first = Object.values(CLIPS)[0];
+    if (!first) return;
+    const t0 = ++token;
+    player.muted = true; player.src = first;
+    player.play().then(() => { if (token === t0) player.pause(); player.muted = false; }).catch(() => { player.muted = false; });
+  }
+  window.addEventListener("pointerdown", unlock, { once: true, capture: true });
   function stop() {
+    token++; player.pause();
     queue = [];
     if (current && current.pause) current.pause();
     current = null;
