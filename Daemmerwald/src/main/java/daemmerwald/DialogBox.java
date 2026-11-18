@@ -20,6 +20,8 @@ public class DialogBox {
         String text;
         /** Originalzeile (für die Sprachaufnahme). */
         String key;
+        /** Erzähltext (mit * markiert). */
+        boolean narr;
     }
 
     /** Name, mit dem die Figuren die Spielerin oder den Spieler ansprechen. */
@@ -35,6 +37,7 @@ public class DialogBox {
             s = L.t(s);
             Line l = new Line();
             l.key = s.startsWith(">") || s.startsWith("*") ? s.substring(1) : s;
+            l.narr = s.startsWith("*");
             if (s.startsWith(">") || s.startsWith("> ")) {
                 l.speaker = playerName.isBlank() ? hero.name : playerName;
                 l.look = hero.look;
@@ -61,6 +64,7 @@ public class DialogBox {
         Line l = lines.get(idx);
         String who = l.speaker, text = l.text;
         boolean female = l.look != null && l.look.female;
+        if (l.narr) { Voice.narrate(l.key); return; }
         if (who == null) {
             // „Aschfell: …“ – Name vor dem Doppelpunkt
             int c = text.indexOf(": ");

@@ -46,6 +46,7 @@ public final class Voice {
         if (!ready()) return;
         List<String> paths = new ArrayList<>();
         for (String k : keys) paths.addAll(resolve(k, "n"));
+        if (Boolean.getBoolean("dw.voicelog")) System.out.println("Buch: " + paths.size() + " Absätze");
         if (paths.isEmpty()) stop(); else player.play(paths, 0.97f);
     }
 

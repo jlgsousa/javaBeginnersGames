@@ -417,6 +417,19 @@ public class Shot {
                 p.setFloat(ws, -0.2f);
             } catch (Exception e) { }
         });
+        step("voice_mix", 4f, () -> {
+            WorldScene ws = (WorldScene) app.core.scene();
+            ws.say(null, null, new String[]{"*Neuer Zauber gelernt: Ignis (Feuerzauber)", "*Kapitel 3 abgeschlossen! Belohnung: 200 Glimmertaler."}, null);
+        });
+        step("voice_book", 3f, () -> {
+            ((WorldScene) app.core.scene()).dialog = null;
+            BookReader br = new BookReader();
+            try {
+                java.lang.reflect.Method m = BookReader.class.getDeclaredMethod("open", int.class);
+                m.setAccessible(true);
+                m.invoke(br, 0);
+            } catch (Exception e) { e.printStackTrace(); }
+        });
         step("players", 2f, () -> app.core.setScene(new PlayersScene(app.core)));
         step("two_players", 6f, () -> {
             GameState gs = app.core.state;
