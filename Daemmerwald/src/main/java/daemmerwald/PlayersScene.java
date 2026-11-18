@@ -14,6 +14,7 @@ public class PlayersScene implements Scene {
     public PlayersScene(GamePanel game) {
         this.game = game;
         this.in = game.input;
+        game.state.lang = L.lang;
     }
 
     static final String[][] LANGS = {{"de", "Deutsch"}, {"pt", "Português (Portugal)"}, {"en", "English"}};
@@ -30,8 +31,10 @@ public class PlayersScene implements Scene {
         if (in.wasPressed(KeyEvent.VK_LEFT, KeyEvent.VK_A, KeyEvent.VK_1, KeyEvent.VK_NUMPAD1)) sel = 0;
         if (in.wasPressed(KeyEvent.VK_RIGHT, KeyEvent.VK_D, KeyEvent.VK_2, KeyEvent.VK_NUMPAD2)) sel = 1;
         for (int i = 0; i < LANGS.length; i++) {
-            if (in.mouseClicked && langBtn(i).contains(in.mouseX, in.mouseY)) {
-                if (i == 0) { game.state.lang = "de"; Voice.lang = "de"; Voice.say("Willkommen in Sternenhall!", true, "Ysmira"); }
+            if (in.mouseClicked && langBtn(i).contains(in.mouseX, in.mouseY) && (i == 0 || L.hasTranslations())) {
+                game.state.lang = LANGS[i][0];
+                L.set(game.state.lang);
+                Voice.say(L.t("Willkommen in Sternenhall!"), true, "Ysmira");
                 return;
             }
         }
@@ -105,7 +108,7 @@ public class PlayersScene implements Scene {
         Art.shadowText(g, "Sprache:", 200, 596, Art.PARCH);
         for (int i = 0; i < LANGS.length; i++) {
             RoundRectangle2D b = langBtn(i);
-            boolean on = LANGS[i][0].equals(game.state.lang), avail = i == 0;
+            boolean on = LANGS[i][0].equals(game.state.lang), avail = i == 0 || L.hasTranslations();
             g.setColor(on ? new Color(110, 60, 120, 230) : new Color(20, 22, 36, 200));
             g.fill(b);
             g.setColor(avail ? Art.GOLD : new Color(110, 105, 120));

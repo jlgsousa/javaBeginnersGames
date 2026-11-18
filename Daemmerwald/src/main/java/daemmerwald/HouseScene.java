@@ -490,7 +490,7 @@ public class HouseScene implements Scene, Main.CameraDirector {
             }
             g.setFont(Art.SMALL);
             g.setColor(new Color(200, 195, 215));
-            g.drawString("Klick oder Zahl wählen · A/D umsehen · Esc gehen", 770, (float) (300 + labels.size() * 52 + 10));
+            Art.str(g, "Klick oder Zahl wählen · A/D umsehen · Esc gehen", 770, (float) (300 + labels.size() * 52 + 10));
         }
     }
 }

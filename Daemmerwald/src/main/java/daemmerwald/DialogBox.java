@@ -30,8 +30,9 @@ public class DialogBox {
 
     public DialogBox(String npcName, Look npcLook, String[] raw, CharacterDef hero) {
         for (String s : raw) {
+            s = L.t(s);
             Line l = new Line();
-            if (s.startsWith(">")) {
+            if (s.startsWith(">") || s.startsWith("> ")) {
                 l.speaker = playerName.isBlank() ? hero.name : playerName;
                 l.look = hero.look;
                 s = s.substring(1);
@@ -139,6 +140,6 @@ public class DialogBox {
         }
         g.setFont(Art.SMALL);
         g.setColor(new Color(170, 170, 190));
-        g.drawString((idx + 1) + "/" + lines.size(), (float) (x + w - 70), (float) (y + 26));
+        Art.str(g, (idx + 1) + "/" + lines.size(), (float) (x + w - 70), (float) (y + 26));
     }
 }

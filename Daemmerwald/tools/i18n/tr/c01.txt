@@ -1,0 +1,229 @@
+1§     [Enter] continue     [Esc] skip§     [Enter] continuar     [Esc] saltar
+2§   (in your pack: §   (na mochila: 
+3§   Mistakes: §   Erros: 
+4§   Sparks: §   Faíscas: 
+5§   ·   Shadow creatures banished: §   ·   Criaturas das sombras banidas: 
+6§   · selected§   · escolhido
+7§  (your computer's voices)§  (vozes do teu computador)
+8§  Cosiness: §  Aconchego: 
+9§  Glimmer coins§  moedas de brilho
+10§  ·  REWARD §  ·  RECOMPENSA 
+11§  ·  Level §  ·  Nível 
+12§  – Rarity§  – Raridade
+13§  – he's stuck, quick!§  – está preso, depressa!
+14§ (Q to cast)§ (Q para lançar)
+15§ (learn)§ (aprender)
+16§ (select with R)§ (escolher com R)
+17§ The ground in the middle trembles – something is rising!§ O chão no meio treme – algo está a erguer-se!
+18§ XP§ XP
+19§ XP  +§ XP  +
+20§ XP)§ XP)
+21§ XP, +§ XP, +
+22§ experience (cosiness § experiência (aconchego 
+23§ mistakes allowed.§ erros permitidos.
+24§ friendship!§ amizade!
+25§ secret(s) known from friends – cast!§ segredo(s) conhecido(s) por amigos – lança um feitiço!
+26§ glimmer coins§ moedas de brilho
+27§ glimmer coins  ·  cosiness § moedas de brilho  ·  aconchego 
+28§ glimmer coins as a keepsake. Come back when you have more.§ moedas de brilho como lembrança. Volta quando tiveres mais.
+29§ glimmer coins as a prize.§ moedas de brilho como prémio.
+30§ glimmer coins and § moedas de brilho e 
+31§ glimmer coins and a potion.§ moedas de brilho e uma poção.
+32§ glimmer coins.§ moedas de brilho.
+33§ glimmer coins.   ↑↓ choose · Enter buy/wear · Esc§ moedas de brilho.   ↑↓ escolher · Enter comprar/vestir · Esc
+34§ heart§ coração
+35§ hearts§ corações
+36§ cards exist § cartas existem 
+37§ layers. If a stone falls into the void, the trial is over.§ camadas. Se uma pedra cair no vazio, a prova acaba.
+38§ layers. Grumhild knocks twice on the tower – troll language for respect.§ camadas. A Grumhild bate duas vezes na torre – linguagem de troll para respeito.
+39§ lights before time runs out.§ luzes antes que o tempo acabe.
+40§ Mana§ Mana
+41§ missions)§ missões)
+42§ arrow combinations – and you win!§ combinações de setas – e ganhas!
+43§ trials · § provas · 
+44§ rarities collected.§ raridades recolhidas.
+45§ races · § corridas · 
+46§ runes before the candle burns down.§ runas antes que a vela se apague.
+47§ runes, neatly drawn. Velmara nods – that's praise, coming from her.§ runas, bem traçadas. A Velmara acena – vindo dela, é um elogio.
+48§ riddles. Choose with the mouse or keys 1–4.§ enigmas. Escolhe com o rato ou as teclas 1–4.
+49§ seconds to think.§ segundos para pensar.
+50§ seconds through.§ segundos.
+51§ pieces. I found them in the garden. I think.§ peças. Encontrei-as no jardim. Acho eu.
+52§ coins§ moedas
+53§ coins at Pimpernell's (courtyard)§ moedas na Pimpernell (pátio)
+54§ coins to save§ moedas para poupar
+55§ coins, and stop grinning.§ moedas, e para de sorrir.
+56§ Potions§ Poções
+57§ OF § DE 
+58§ ingredients.§ ingredientes.
+59§ off. (Drink with key § . (Beber com a tecla 
+60§ enter§ entrar
+61§ a tiny bit friendlier to you.§ um pouquinho mais simpático contigo.
+62§ received!§ recebido!
+63§ built – it now stands in your house.§ construído – agora está na tua casa.
+64§ is yours now. Select it with R, cast with Q or a click.§ agora é teu. Escolhe-o com R, lança com Q ou um clique.
+65§ mastered. The next one will be harder. Come back whenever you like.§ dominado. O próximo será mais difícil. Volta sempre que quiseres.
+66§ likes (see Menu → Friends).§ gosta (vê Menu → Amigos).
+67§ drunk§ bebida
+68§ reveals a secret passage!§ revela uma passagem secreta!
+69§ in your pack§ na mochila
+70§ in your collection§ na tua coleção
+71§ is now level § está agora no nível 
+72§ is already at the highest level.§ já está no nível mais alto.
+73§ teaches the § ensina o 
+74§ m to the § m para 
+75§ m from the Heart Tree – far out in the wilderness.§ m da Árvore-Coração – longe, na natureza selvagem.
+76§ min   ·   Level § min   ·   Nível 
+77§ min · shadow creatures banished § min · criaturas das sombras banidas 
+78§ s  (W forward · mouse steers · Space up · Shift down)§ s  (W em frente · rato dirige · Espaço sobe · Shift desce)
+79§ gives you § dá-te 
+80§ and you: now § e tu: agora 
+81§ of § de 
+82§ of 6 shards with you.§ de 6 fragmentos contigo.
+83§ · B cast · X talk§ · B lançar · X falar
+84§ · E talk · I bag · Tab menu§ · E falar · I mochila · Tab menu
+85§ · E talk · Tab menu§ · E falar · Tab menu
+86§ · Mage cards: § · Cartas de magos: 
+87§ · R-Shift cast · Enter talk§ · Shift-D lançar · Enter falar
+88§ · Shift to run§ · Shift para correr
+89§ · [Esc] give up§ · [Esc] desistir
+90§ · riddles solved § · enigmas resolvidos 
+91§ · ingredients gathered § · ingredientes recolhidos 
+92§ – soon§ – em breve
+93§ – switch with R§ – muda com R
+94§ – beautiful! It now stands in your house. Cosiness: § – lindo! Agora está na tua casa. Aconchego: 
+95§! Sit down, rest a while. You can also record your journey here – I have a thick guestbook.§! Senta-te, descansa. Aqui também podes registar a tua viagem – tenho um livro de visitas bem grosso.
+96§!” – The §!” – O 
+98§(Task in progress: §(Tarefa em curso: 
+99§)! It's now in your bag.§)! Agora está na tua mochila.
+100§*You can take on every trial, race, riddle and task again and again – one level harder each time.§*Podes repetir todas as provas, corridas, enigmas e tarefas – cada vez um nível mais difícil.
+101§*All six shards are yours. They pull you towards the Heart Tree, in the middle of the forest.§*Os seis fragmentos são teus. Puxam-te para a Árvore-Coração, no meio da floresta.
+102§*All four lanterns are burning! Little lights whirl closer – the fairies can find their way home again. (+30 coins)§*As quatro lanternas estão acesas! Pequenas luzes aproximam-se – as fadas voltam a encontrar o caminho de casa. (+30 moedas)
+103§*On the floor: soot-blackened nozzles. On the wall: small holes. Whoever came down here was not meant to go any further.§*No chão: bocais enegrecidos de fuligem. Na parede: pequenos buracos. Quem desceu até aqui não devia ir mais longe.
+104§*Three seals glow on the frame – red, violet and white. Fire, levitation, light.§*Três selos brilham na moldura – vermelho, violeta e branco. Fogo, levitação, luz.
+105§*Take a breath – and try again. (Protego blocks every hit!)§*Respira fundo – e tenta outra vez. (O Protego bloqueia todos os golpes!)
+106§*A book with a silver cover appears on the lectern by the north wall.§*Um livro com capa prateada aparece no púlpito junto à parede norte.
+107§*On the golden pedestal lies: §*No pedestal dourado está: 
+108§*On the other side: four pillars with runes. And two floating eyes, slowly making their rounds.§*Do outro lado: quatro colunas com runas. E dois olhos flutuantes que fazem lentamente a sua ronda.
+109§*Also: a §*Além disso: um 
+110§*Break the seals with Ignis, Levitaris and Lumen.§*Quebra os selos com Ignis, Levitaris e Lumen.
+111§*Bring light – but with fire, not with Lumen. The candelabras want to burn. (Ignis)§*Traz luz – mas com fogo, não com Lumen. Os candelabros querem arder. (Ignis)
+112§*Books fall from shelves that no longer exist. Then: silence.§*Livros caem de estantes que já não existem. Depois: silêncio.
+113§*There it is: your little wooden hut. Crooked, draughty – but yours.§*Ali está ela: a tua pequena cabana de madeira. Torta, com correntes de ar – mas tua.
+114§*With them you extend your home step by step – all the way to the tree villa. You can also buy furniture. Press E at the door.§*Com eles amplias a tua casa passo a passo – até à vivenda na árvore. Também podes comprar móveis. Carrega em E na porta.
+115§*Thank you for playing! The world stays open: collect every card and rarity, meet your friends, practise your spells.§*Obrigado por jogares! O mundo continua aberto: colecciona todas as cartas e raridades, encontra os teus amigos, pratica os teus feitiços.
+116§*The eye has seen you! A blinding flash – and you are back at the end of the book bridge.§*O olho viu-te! Um clarão ofuscante – e estás de volta ao fim da ponte de livros.
+117§*The Book of the Five. The pages are made of thin silver, the writing wanders as you read:§*O Livro dos Cinco. As páginas são de prata fina, a escrita move-se enquanto lês:
+118§*The echo sinks back into the roots – for today.§*O eco volta a afundar-se nas raízes – por hoje.
+119§*The light eats the shadows out of his fur. Beneath, it is silver, like moonlight on snow.§*A luz arranca as sombras do seu pelo. Por baixo, é prateado, como luar sobre a neve.
+120§*The light eats through the shadow. The veil tears like morning mist.§*A luz atravessa a sombra. O véu rasga-se como nevoeiro de manhã.
+121§*The shelf swings aside. A spiral staircase leads down, deeper and deeper …§*A estante abre-se para o lado. Uma escada em caracol desce, cada vez mais fundo …
+122§*The rune heart shatters. The Stone Guardian sinks to his knees – and speaks, with a voice like millstones:§*O coração rúnico estilhaça-se. O Guardião de Pedra cai de joelhos – e fala, com uma voz como mós:
+123§*The starlight strikes Malrik right in the heart. He doesn't scream. He just looks surprised – and very, very old.§*A luz das estrelas atinge Malrik em cheio no coração. Ele não grita. Parece apenas surpreendido – e muito, muito velho.
+124§*The symbol goes out. Somewhere far below, in the potion cellar, something whispers from the darkness.§*O símbolo apaga-se. Algures lá em baixo, na cave das poções, algo sussurra na escuridão.
+125§*The symbol fades … and reappears in the west wing. It wanders.§*O símbolo desvanece … e reaparece na ala oeste. Ele anda.
+126§*This is Sternenhall, the magic palace of the academy. The library to the left, the potion cellar to the right, the great fireplace ahead.§*Isto é Sternenhall, o palácio mágico da academia. À esquerda a biblioteca, à direita a cave das poções, em frente a grande lareira.
+127§*The last seal shatters. The painting swings open like a door – behind it, a room full of portraits.§*O último selo estilhaça-se. O quadro abre-se como uma porta – por trás, uma sala cheia de retratos.
+128§*Your home is now: §*A tua casa agora é: 
+129§*Your bag is empty. Collect ingredients or rarities to give as gifts.§*A tua mochila está vazia. Recolhe ingredientes ou raridades para oferecer.
+130§*Your goals are always shown on the right. Go to the gate and step inside.§*Os teus objetivos aparecem sempre à direita. Vai até ao portão e entra.
+131§*The boulder trembles, lifts off the ground and floats high above your head.§*O pedregulho estremece, solta-se do chão e flutua bem acima da tua cabeça.
+132§*The Heart Tree puts out young leaves. Between its roots a remnant of the old blight still flickers – an echo that won't leave.§*A Árvore-Coração lança folhas novas. Entre as raízes ainda tremeluz um resto da velha praga – um eco que não quer partir.
+133§*The Heart Tree groans. Violet veins pulse beneath the bark. A voice, barely more than a rustle: »… six … bring them … all …«§*A Árvore-Coração geme. Veias violeta pulsam sob a casca. Uma voz, pouco mais que um sussurro: »… seis … trá-los … todos …«
+134§*The cauldron hisses and changes colour. You fill a §*O caldeirão sibila e muda de cor. Enches um 
+135§*The headmaster smiles. His hands are trembling.§*O diretor sorri. As mãos tremem-lhe.
+136§*The tea tastes of honey, smoke and a hint of adventure. Your mana is full again.§*O chá sabe a mel, fumo e um toque de aventura. A tua mana está cheia outra vez.
+137§*The potion fails. Some of the ingredients can still be saved.§*A poção falha. Parte dos ingredientes ainda se pode salvar.
+138§*The violet beam breaks. The figure sinks into the roots, and for a moment you see a face: tired, old, very human.§*O raio violeta quebra-se. A figura afunda-se nas raízes e, por um instante, vês um rosto: cansado, velho, muito humano.
+139§*The trees stand so close together here that no light gets through. A circle of ancient stones glows violet.§*Aqui as árvores estão tão juntas que nenhuma luz passa. Um círculo de pedras antigas brilha violeta.
+140§*The thorny vines catch fire, crackle – and crumble to ash.§*As silvas pegam fogo, crepitam – e desfazem-se em cinzas.
+141§*The fire bowl blazes up. (§*A taça de fogo inflama-se. (
+142§*The flames leap from candelabra to candelabra, the hall grows bright – and you stop dead in your tracks.§*As chamas saltam de candelabro em candelabro, o salão ilumina-se – e ficas pregado ao chão.
+143§*The double doors swing open. Above you, hundreds of candles float beneath a sky full of stars – an enchanted ceiling.§*As portas duplas abrem-se. Por cima de ti flutuam centenas de velas sob um céu de estrelas – um teto encantado.
+144§*The Gallery of the Founders. On a lectern in the middle lies a plaque.§*A Galeria dos Fundadores. Num púlpito ao centro está uma placa.
+145§*The tale of the pact has been told – but the Dämmerwald never sleeps, and the world reaches further than any eye can see.§*A história do pacto foi contada – mas o Dämmerwald nunca dorme, e o mundo vai mais longe do que qualquer olhar alcança.
+146§*The ruins of Ur-Sternenhall – the first academy, long before the castle was built on top of it.§*As ruínas de Ur-Sternenhall – a primeira academia, muito antes de o castelo ter sido construído por cima.
+147§*The runes on the pillars have gone dark. Blind the eyes with Lumen before they catch you.§*As runas das colunas apagaram-se. Cega os olhos com Lumen antes que te apanhem.
+148§*The shards in your bag begin to sing. The ground beneath the Heart Tree breaks open, and something rises from the roots.§*Os fragmentos na tua mochila começam a cantar. O chão sob a Árvore-Coração abre-se e algo se ergue das raízes.
+149§*The statue by the wayside opens its eyes. Small pebbles crumble from its lids.§*A estátua à beira do caminho abre os olhos. Pequenas pedras caem-lhe das pálpebras.
+150§*The door creaks. Inside it smells of cold smoke and old anger. Two eyes glitter in the half-light.§*A porta range. Lá dentro cheira a fumo frio e a raiva antiga. Dois olhos brilham na penumbra.
+151§*The door closes behind you. It smells of cinnamon, wood fire and rain that hasn't fallen yet.§*A porta fecha-se atrás de ti. Cheira a canela, a lenha e a chuva que ainda não caiu.
+152§*The three stacks close the gap. A bridge made of books – it holds!§*As três pilhas fecham o vão. Uma ponte de livros – aguenta!
+153§*The round door swings open. Inside it's warm, there's crackling, and somewhere a kettle is bubbling.§*A porta redonda abre-se. Lá dentro está quente, ouve-se um crepitar e algures borbulha uma chaleira.
+154§*The four runes glow golden. The guardian eyes close and sink to the floor.§*As quatro runas brilham douradas. Os olhos guardiões fecham-se e afundam até ao chão.
+155§*You go cold. The letter without a sender. The wandering symbol. The seals on the painting. Did you break them … for him?§*Ficas gelado. A carta sem remetente. O símbolo errante. Os selos do quadro. Quebraste-os … por ele?
+156§*Everything goes black … When you come round, you are a little way back.§*Tudo fica negro … Quando voltas a ti, estás um pouco mais atrás.
+157§*But then the ground shakes. Between the stones something huge rises – a fox as big as a house, its fur grey as ash.§*Mas então o chão treme. Entre as pedras ergue-se algo enorme – uma raposa do tamanho de uma casa, com o pelo cinzento como cinza.
+158§*Three black crystals circle above its back. Its eyes glow red. It doesn't recognise you.§*Três cristais negros giram sobre o seu dorso. Os olhos brilham vermelhos. Não te reconhece.
+159§*You reach level §*Chegas ao nível 
+160§*You have Hedda's star lantern back! (+40 coins)§*Recuperaste a lanterna estelar da Hedda! (+40 moedas)
+161§*You received your first spellbook! Open it with B and choose your spells.§*Recebeste o teu primeiro livro de feitiços! Abre-o com B e escolhe os teus feitiços.
+162§*You raise your wand. Behind you, five extinguished fire bowls flicker – the fires of the founders.§*Ergues a tua varinha. Atrás de ti tremeluzem cinco taças de fogo apagadas – os fogos dos fundadores.
+163§*You lean back. It can't get any bigger – but it can always get more beautiful.§*Recostas-te. Maior não pode ficar – mas mais bonita sempre.
+164§*You make yourself comfortable. Your mana is full again.§*Pões-te à vontade. A tua mana está cheia outra vez.
+165§*You write your name in the thick guestbook. Your game has been saved.§*Escreves o teu nome no grosso livro de visitas. O teu jogo foi guardado.
+166§*You write a few lines in your diary. Your game has been saved.§*Escreves algumas linhas no teu diário. O teu jogo foi guardado.
+167§*You sit down by the window. Below you the cliff drops into the sea, and the horizon is so wide that you almost forget to breathe. (Your game has been saved.)§*Sentas-te à janela. Por baixo de ti a falésia cai no mar, e o horizonte é tão largo que quase te esqueces de respirar. (O teu jogo foi guardado.)
+168§*You see a chamber beneath the castle. Something huge sleeps in it – and it breathes.§*Vês uma câmara por baixo do castelo. Algo enorme dorme lá dentro – e respira.
+169§*You are carrying §*Levas contigo 
+170§*You now know what §*Agora sabes o que 
+171§*A letter without a sender, your name in golden ink: “Sternenhall awaits you.” No one has set foot in this academy for centuries.§*Uma carta sem remetente, o teu nome em tinta dourada: “Sternenhall espera por ti.” Ninguém entra nesta academia há séculos.
+172§*A painting that wasn't hanging here yesterday: five figures in front of Sternenhall. One has been painted over in black.§*Um quadro que ontem ainda não estava aqui: cinco figuras diante de Sternenhall. Uma foi pintada de preto.
+173§*A little bell rings above the door. It smells of fresh pastries, herbal tea and wood fire.§*Um sininho toca por cima da porta. Cheira a pastelaria fresca, chá de ervas e lenha.
+174§*A rune heart glows in its chest. The Stone Guardian of Ur-Sternenhall. For a thousand years it has let no one pass.§*Um coração rúnico brilha no seu peito. O Guardião de Pedra de Ur-Sternenhall. Há mil anos que não deixa ninguém passar.
+175§*A mural on the north wall can barely be made out. Perhaps light would show more …§*Mal se distingue um mural na parede norte. Talvez a luz mostre mais …
+176§*A steaming mug of herbal tea with honey. Your mana is full again, and your feet thank you for it.§*Uma caneca fumegante de chá de ervas com mel. A tua mana está cheia outra vez, e os teus pés agradecem.
+177§*A cold breath drifts through the corridors. A violet glow is coming from the great hall …§*Um sopro frio percorre os corredores. Do grande salão vem um brilho violeta …
+178§*A woman's voice, very close: “If you are seeing this, it is too late to leave. Find the painting. Find us.”§*Uma voz de mulher, muito perto: “Se estás a ver isto, é tarde demais para partir. Encontra o quadro. Encontra-nos.”
+179§*A huge hall. In the middle stands a statue of rock – and it moves.§*Um salão enorme. No meio está uma estátua de rocha – e mexe-se.
+180§*He got away … but Fenn always comes back to the eastern edge. Try again!§*Ele fugiu … mas o Fenn volta sempre à orla leste. Tenta outra vez!
+181§*Hammering, sawing and knocking – fairies carry boards, a troll heaves stones. Hours later …§*Martela-se, serra-se e bate-se – fadas carregam tábuas, um troll levanta pedras. Horas depois …
+182§*Creaking and rumbling – §*Ouve-se ranger e retumbar – 
+183§*Something rustles in the treetops. Then something else. The shadows have noticed you!§*Algo restolha nas copas. Depois outra coisa. As sombras deram por ti!
+184§*The flames come in rhythm – wait for the pause. Protego helps against arrows.§*As chamas vêm em ritmo – espera pela pausa. O Protego ajuda contra as setas.
+185§*Five figures appear in the founders' fires: the Five, transparent as glass. The woman with Hedda's eyes smiles at you.§*Cinco figuras aparecem nos fogos dos fundadores: os Cinco, transparentes como vidro. A mulher com os olhos da Hedda sorri-te.
+186§*Five of them stand by the fireplace, arguing. One points downwards, into the depths. Then everything is quiet again.§*Cinco deles estão junto à lareira a discutir. Um aponta para baixo, para as profundezas. Depois tudo volta a ficar em silêncio.
+187§*Secret passages discovered: §*Passagens secretas descobertas: 
+188§*Well practised! §*Bem praticado! 
+189§*Hold on! Shadow flutterers: Arcanum · Thorn stranglers: only Ignis · Will-o'-ghosts: reveal them with Lumen first. And Protego (switch with R, cast with Q) blocks every hit.§*Aguenta! Esvoaçantes das sombras: Arcanum · Estranguladores de espinhos: só Ignis · Fantasmas-fátuos: primeiro revela-os com Lumen. E o Protego (muda com R, lança com Q) bloqueia todos os golpes.
+190§*You've already rested today. Tomorrow there'll be another cosiness bonus.§*Hoje já descansaste. Amanhã há outra vez um bónus de aconchego.
+191§*Behind him an archway opens. A blue light rises from below – and a heartbeat so deep that the ground trembles.§*Atrás dele abre-se um arco. Uma luz azul sobe lá de baixo – e um batimento cardíaco tão profundo que o chão treme.
+192§*In the book lies a wand of star-wood and a page with a drawing: fire that floats.§*No livro está uma varinha de madeira estelar e uma página com um desenho: fogo que flutua.
+193§*In the light of Lumen the symbol glows so brightly that you have to close your eyes.§*À luz de Lumen o símbolo brilha tanto que tens de fechar os olhos.
+194§*Something glitters in the victor's wreath: §*Algo brilha na coroa de vencedor: 
+195§*A violet archway opens in the north-east corner. It leads further down.§*No canto nordeste abre-se um arco violeta. Leva ainda mais para baixo.
+196§*Chapter 1 complete! Reward: 120 glimmer coins and a rarity.§*Capítulo 1 concluído! Recompensa: 120 moedas de brilho e uma raridade.
+197§*Chapter 2 complete! Reward: 150 glimmer coins and a mage card.§*Capítulo 2 concluído! Recompensa: 150 moedas de brilho e uma carta de mago.
+198§*Chapter 3 complete! Reward: 200 glimmer coins.§*Capítulo 3 concluído! Recompensa: 200 moedas de brilho.
+199§*Chapter 4 complete! Reward: 180 glimmer coins.§*Capítulo 4 concluído! Recompensa: 180 moedas de brilho.
+200§*Chapter 5 complete! Reward: 220 glimmer coins.§*Capítulo 5 concluído! Recompensa: 220 moedas de brilho.
+201§*Chapter 6 complete! Reward: 260 glimmer coins.§*Capítulo 6 concluído! Recompensa: 260 moedas de brilho.
+202§*The moment your fingers touch the symbol, it turns ice-cold. For a breath you see the hall full of people – in clothes from five hundred years ago.§*Mal os teus dedos tocam no símbolo, ele fica gelado. Por um instante vês o salão cheio de gente – com roupas de há quinhentos anos.
+203§*Click! The lock springs open. In the chest: §*Clique! A fechadura abre-se. No baú: 
+204§*Crackling, ice spreads across the Moon Lake – a path to the island!§*Estalando, o gelo espalha-se pelo Lago da Lua – um caminho até à ilha!
+205§*Don't let the eyes see you! Lumen blinds them for a few seconds.§*Não deixes que os olhos te vejam! O Lumen cega-os durante alguns segundos.
+206§*They say there are four secret passages. Where something shimmers strangely, a spell often helps (Q). And friends give away secrets …§*Diz-se que há quatro passagens secretas. Onde algo brilha de forma estranha, um feitiço costuma ajudar (Q). E os amigos revelam segredos …
+207§*Switch your spell with R, cast with Q or a click.§*Muda de feitiço com R, lança com Q ou um clique.
+208§*A chasm gapes right through the library. Violet mist swirls below. No floor to be seen.§*Um abismo atravessa a biblioteca. Lá em baixo agita-se um nevoeiro violeta. Não se vê o fundo.
+209§*Next to you: three heavy stacks of books. Maybe you could build a bridge with them … (Levitaris)§*Ao teu lado: três pesadas pilhas de livros. Talvez se possa construir uma ponte com elas … (Levitaris)
+210§*New ability: §*Nova habilidade: 
+211§*New spell learned: §*Novo feitiço aprendido: 
+212§*Up in the castle, every candle lights at once. In the forest the lanterns wake. In Laternhain the fairies dance.§*No castelo, todas as velas se acendem ao mesmo tempo. Na floresta despertam as lanternas. Em Laternhain as fadas dançam.
+213§*Protego shimmers around your hands. Professor Funkelstein nods to you:§*O Protego cintila à volta das tuas mãos. A professora Funkelstein acena-te:
+214§*Collect wood, stone and clay in the world. At the workbench inside you combine them into boards, bricks and crystal glass.§*Recolhe madeira, pedra e barro pelo mundo. Na bancada lá dentro combinas tudo em tábuas, tijolos e vidro de cristal.
+215§*Collector's luck! For §*Sorte de coleccionador! Por 
+216§*She hands you a heavy, leather-bound book. On the cover: the sign of the academy.§*Ela entrega-te um livro pesado, encadernado em couro. Na capa: o símbolo da academia.
+217§*Jump over his shockwaves. Lift one of the rubble stones with Levitaris – it hurls itself at him.§*Salta por cima das ondas de choque. Ergue uma das pedras de entulho com Levitaris – ela lança-se sozinha contra ele.
+218§*Controls: WASD walk · mouse look · Q or click cast · R switch spell · Space jump · E use · I bag · B spellbook · Tab menu.§*Controlos: WASD andar · rato olhar · Q ou clique lançar · R mudar feitiço · Espaço saltar · E usar · I mochila · B livro de feitiços · Tab menu.
+219§*Silence. The last shadows crumble to ash.§*Silêncio. As últimas sombras desfazem-se em cinzas.
+220§*Tip: Levitaris or Arcanum (Q) hold him in place for a few seconds.§*Dica: Levitaris ou Arcanum (Q) prendem-no durante alguns segundos.
+221§*And beneath it, wrapped in velvet: §*E por baixo, embrulhado em veludo: 
+222§*And yet here you stand before its gate. The crystal tip of the highest tower glows as if it had been waiting for you.§*E, no entanto, aqui estás diante do seu portão. A ponta de cristal da torre mais alta brilha, como se estivesse à tua espera.
+223§*And when you need some peace: Café Wolkenrand on the cliff in the south always has a window seat free.§*E quando precisares de sossego: o Café Wolkenrand na falésia a sul tem sempre um lugar à janela livre.
+224§*Down below: darkness. It smells of dust and parchment. Somewhere ahead of you stand three cold candelabras.§*Lá em baixo: escuridão. Cheira a pó e a pergaminho. Algures à tua frente estão três candelabros frios.
+225§*Beneath the bark something breathes calmly and heavily. An echo of Corvina stirs in the roots – half dream, half memory.§*Sob a casca algo respira calma e pesadamente. Um eco de Corvina agita-se nas raízes – meio sonho, meio memória.
+226§*Beneath the plaque a name has been carved, very small and fresh: the symbol from the hall. Someone was here recently.§*Sob a placa foi gravado um nome, muito pequeno e recente: o símbolo do salão. Alguém esteve aqui há pouco.
+227§*From now on §*A partir de agora 
+228§*The cold again. This time you hear a voice: “We locked it away. We did not defeat it.”§*Outra vez o frio. Desta vez ouves uma voz: “Fechámo-lo. Não o vencemos.”
+229§*Spell puzzle solved: §*Enigma de feitiço resolvido: 
+230§*Time:§*Tempo:

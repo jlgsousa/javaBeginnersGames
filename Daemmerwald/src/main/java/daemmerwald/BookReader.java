@@ -74,7 +74,7 @@ public class BookReader {
                 Art.shadowText(g, Stories.BOOKS[i][0], 360, y - 6, Art.PARCH);
                 g.setFont(new Font("Serif", Font.ITALIC, 17));
                 g.setColor(new Color(210, 195, 170));
-                g.drawString(Stories.BOOKS[i][1], 380, (float) y + 18);
+                Art.str(g, Stories.BOOKS[i][1], 380, (float) y + 18);
             }
             g.setFont(Art.SMALL);
             g.setColor(new Color(210, 210, 220));
@@ -108,13 +108,13 @@ public class BookReader {
                 if (l.startsWith("\u0001")) {
                     g.setFont(new Font("Serif", Font.ITALIC, 18));
                     g.setColor(new Color(110, 80, 60));
-                    g.drawString(l.substring(1), (float) x, (float) y);
+                    Art.str(g, l.substring(1), (float) x, (float) y);
                     y += 26;
                     continue;
                 }
                 g.setFont(TEXT);
                 g.setColor(new Color(50, 35, 25));
-                g.drawString(l, (float) x, (float) y);
+                Art.str(g, l, (float) x, (float) y);
                 y += 27;
             }
             g.setFont(new Font("Serif", Font.ITALIC, 15));

@@ -181,7 +181,7 @@ public class GameState {
             s.twoPlayers = Boolean.parseBoolean(p.getProperty("two", "false"));
             s.lang = p.getProperty("lang", "de");
             s.voices = Boolean.parseBoolean(p.getProperty("voices", "true"));
-            Voice.lang = s.lang;
+            L.set(s.lang);
             Voice.enabled = s.voices;
             s.hero2 = CharacterDef.ALL.get(Integer.parseInt(p.getProperty("hero2", "5")));
             s.player2Name = p.getProperty("name2", "");

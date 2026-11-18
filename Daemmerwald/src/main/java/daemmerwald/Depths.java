@@ -281,12 +281,12 @@ public final class Depths {
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g.setColor(new Color(255, 230, 160));
         g.setFont(new java.awt.Font("Serif", java.awt.Font.ITALIC, 30));
-        g.drawString("Erst der Mond im Osten, dann der Stern, der Westen träumt,", 60, 40);
+        Art.str(g, "Erst der Mond im Osten, dann der Stern, der Westen träumt,", 60, 40);
         for (int k = 0; k < 4; k++) {
             BufferedImage r = runeImg(ORDER[k]);
             g.drawImage(r, 70 + k * 235, 80, 150, 150, null);
             g.setFont(new java.awt.Font("Serif", java.awt.Font.BOLD, 40));
-            g.drawString(String.valueOf(k + 1), 135 + k * 235, 300);
+            Art.str(g, String.valueOf(k + 1), 135 + k * 235, 300);
         }
         g.dispose();
         Material m = new Material(G3.am, "Common/MatDefs/Misc/Unshaded.j3md");

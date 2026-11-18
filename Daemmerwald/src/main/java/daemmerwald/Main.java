@@ -118,6 +118,7 @@ public class Main extends SimpleApplication implements RawInputListener {
         world.chunks.preload(0, -40);
         overlay = new Overlay(this);
         core = new GamePanel(this);
+        L.loadSetting();
         music = new Music(this);
         inputManager.addRawInputListener(this);
         String tour = System.getProperty("dw.tour");

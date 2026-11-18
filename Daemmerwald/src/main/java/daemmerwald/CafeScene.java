@@ -182,7 +182,7 @@ public class CafeScene implements Scene, Main.CameraDirector {
                     Art.shadowText(g, (i + 1) + "   " + DRINKS[i][0], 350, y - 8, Art.PARCH);
                     g.setFont(Art.SMALL);
                     g.setColor(new Color(200, 190, 175));
-                    g.drawString(DRINKS[i][1], 375, (float) y + 11);
+                    Art.str(g, DRINKS[i][1], 375, (float) y + 11);
                 }
                 g.setFont(Art.SMALL);
                 g.setColor(new Color(200, 200, 210));

@@ -94,7 +94,7 @@ public class CharacterSelectScene implements Scene {
             Art.bar(g, 140, y - 12, 160, 12, vals[i] / 5.0, cols[i]);
             g.setFont(Art.SMALL);
             g.setColor(new Color(200, 200, 215));
-            g.drawString(hint[i], 312, (float) y);
+            Art.str(g, hint[i], 312, (float) y);
         }
         g.setFont(Art.SMALL);
         g.setColor(new Color(200, 200, 215));

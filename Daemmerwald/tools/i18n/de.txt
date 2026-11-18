@@ -1,0 +1,1772 @@
+     [Enter] weiter     [Esc] überspringen
+   (im Gepäck: 
+   Fehler: 
+   Funken: 
+   ·   Schattenwesen vertrieben: 
+   · gewählt
+  (Stimmen deines Computers)
+  Gemütlichkeit: 
+  Glimmertaler
+  ·  BELOHNUNG 
+  ·  Stufe 
+  – Rarität
+  – er hängt fest, schnell!
+ (Q zaubern)
+ (lernen)
+ (mit R wählen)
+ Der Boden in der Mitte bebt – etwas steigt empor!
+ EP
+ EP  +
+ EP)
+ EP, +
+ Erfahrung (Gemütlichkeit 
+ Fehler erlauben.
+ Freundschaft!
+ Geheimnis(se) von Freunden bekannt – zaubern!
+ Glimmertaler
+ Glimmertaler  ·  Gemütlichkeit 
+ Glimmertaler als Andenken. Komm wieder, wenn du mehr hast.
+ Glimmertaler als Preis.
+ Glimmertaler und 
+ Glimmertaler und einen Trank.
+ Glimmertaler.
+ Glimmertaler.   ↑↓ wählen · Enter kaufen/anziehen · Esc
+ Herz
+ Herzen
+ Karten gibt es 
+ Lagen. Fällt ein Stein ins Leere, ist die Prüfung vorbei.
+ Lagen. Grumhild klopft zweimal auf den Turm – Trollsprache für Respekt.
+ Lichter, bevor die Zeit abläuft.
+ Mana
+ Missionen)
+ Pfeil-Kombinationen – dann hast du gewonnen!
+ Prüfungen · 
+ Raritäten gesammelt.
+ Rennen · 
+ Runen, bevor die Kerze heruntergebrannt ist.
+ Runen, sauber gezogen. Velmara nickt – das ist bei ihr ein Lob.
+ Rätsel. Wähle mit der Maus oder den Tasten 1–4.
+ Sekunden Bedenkzeit.
+ Sekunden durch.
+ Stück. Ich hab sie im Garten gefunden. Glaube ich.
+ Taler
+ Taler bei Pimpernell (Hof)
+ Taler sparen
+ Taler und hör auf zu grinsen.
+ Tränke
+ VON 
+ Zutaten.
+ ab. (Trinken mit Taste 
+ betreten
+ ein kleines bisschen freundlicher zu dir.
+ erhalten!
+ gebaut – es steht jetzt in deinem Haus.
+ gehört jetzt dir. Mit R wählst du ihn, mit Q oder Klick zauberst du.
+ gemeistert. Die nächste wird härter. Komm wieder, wann immer du willst.
+ gern mag (siehe Menü → Freunde).
+ getrunken
+ gibt einen geheimen Gang frei!
+ im Gepäck
+ in deiner Sammlung
+ ist jetzt Stufe 
+ ist schon auf der höchsten Stufe.
+ lehrt den 
+ m Richtung 
+ m vom Herzbaum entfernt – weit draußen in der Wildnis.
+ min   ·   Stufe 
+ min · vertriebene Schattenwesen 
+ s  (W vor · Maus lenkt · Leertaste hoch · Umschalt runter)
+ schenkt dir 
+ und du: jetzt 
+ von 
+ von 6 Splittern bei dir.
+ · B zaubern · X sprechen
+ · E sprechen · I Tasche · Tab Menü
+ · E sprechen · Tab Menü
+ · Magierkarten: 
+ · R-Umschalt zaubern · Enter sprechen
+ · Umschalt rennen
+ · [Esc] aufgeben
+ · gelöste Rätsel 
+ · gesammelte Zutaten 
+ – bald
+ – wechsle mit R
+ – wunderschön! Es steht jetzt in deinem Haus. Gemütlichkeit: 
+! Setz dich, ruh dich aus. Hier kannst du auch deine Reise festhalten – ich hab ein dickes Gästebuch.
+!“ – Der 
+' -> b.append('
+(Auftrag läuft: 
+)! Es liegt jetzt in deiner Tasche.
+*Alle Prüfungen, Rennen, Rätsel und Aufträge kannst du immer wieder angehen – jedes Mal eine Stufe schwerer.
+*Alle sechs Splitter sind dein. Sie ziehen dich zum Herzbaum, in die Mitte des Waldes.
+*Alle vier Laternen brennen! Kleine Lichter schwirren heran – die Feen finden wieder heim. (+30 Taler)
+*Am Boden: rußgeschwärzte Düsen. An der Wand: kleine Löcher. Wer hier herunterkam, sollte nicht weiterkommen.
+*Am Rahmen leuchten drei Siegel – rot, violett und weiß. Feuer, Schweben, Licht.
+*Atme durch – und versuch es noch einmal. (Protego hält jeden Treffer ab!)
+*Auf dem Pult an der Nordwand erscheint ein Buch mit silbernem Einband.
+*Auf dem goldenen Sockel liegt: 
+*Auf der anderen Seite: vier Säulen mit Runen. Und zwei schwebende Augen, die langsam ihre Runden ziehen.
+*Außerdem: ein 
+*Brich die Siegel mit Ignis, Levitaris und Lumen.
+*Bring Licht – aber mit Feuer, nicht mit Lumen. Die Leuchter wollen brennen. (Ignis)
+*Bücher fallen aus den Regalen, die es gar nicht mehr gibt. Dann: Stille.
+*Da steht sie: deine kleine Holzhütte. Schief, zugig – aber deine.
+*Damit baust du dein Zuhause Stufe um Stufe aus – bis zur Baumvilla. Möbel kannst du dir auch kaufen. Drück E an der Tür.
+*Danke fürs Spielen! Die Welt bleibt offen: Sammle alle Karten und Raritäten, triff deine Freunde, übe deine Zauber.
+*Das Auge hat dich gesehen! Ein greller Blitz – und du stehst wieder am Ende der Bücherbrücke.
+*Das Buch der Fünf. Die Seiten sind aus dünnem Silber, die Schrift wandert, während du liest:
+*Das Echo sinkt zurück in die Wurzeln – für heute.
+*Das Licht frisst die Schatten aus seinem Fell. Darunter ist es silbern, wie Mondlicht auf Schnee.
+*Das Licht frisst sich durch den Schatten. Der Schleier zerreißt wie Nebel im Morgen.
+*Das Regal schwingt zur Seite. Eine Wendeltreppe führt hinab, tiefer und tiefer …
+*Das Runenherz zerspringt. Der Steinwächter sinkt auf die Knie – und spricht, mit einer Stimme wie Mahlsteine:
+*Das Sternenlicht trifft Malrik mitten ins Herz. Er schreit nicht. Er sieht nur überrascht aus – und sehr, sehr alt.
+*Das Symbol erlischt. Irgendwo tief unten, im Trankkeller, flüstert etwas aus der Dunkelheit.
+*Das Symbol verblasst … und taucht im Westflügel wieder auf. Es wandert.
+*Das ist Sternenhall, der Zauberpalast der Akademie. Links die Bibliothek, rechts der Trankkeller, vorn der große Kamin.
+*Das letzte Siegel zerspringt. Das Gemälde schwingt auf wie eine Tür – dahinter ein Raum voller Porträts.
+*Dein Zuhause ist jetzt: 
+*Deine Tasche ist leer. Sammle Zutaten oder Raritäten, um sie zu verschenken.
+*Deine Ziele stehen immer rechts. Geh zum Tor und tritt ein.
+*Der Felsbrocken erzittert, löst sich vom Boden und schwebt hoch über deinen Kopf.
+*Der Herzbaum treibt junge Blätter. Zwischen den Wurzeln flackert noch ein Rest der alten Welke – ein Echo, das nicht gehen will.
+*Der Herzbaum ächzt. Violette Adern pulsieren unter der Rinde. Eine Stimme, kaum mehr als ein Rascheln: »… sechs … bring sie … alle …«
+*Der Kessel zischt und färbt sich. Du füllst einen 
+*Der Rektor lächelt. Seine Hände zittern.
+*Der Tee schmeckt nach Honig, Rauch und einem Hauch Abenteuer. Dein Mana ist wieder voll.
+*Der Trank misslingt. Ein Teil der Zutaten lässt sich noch retten.
+*Der violette Strahl bricht. Die Gestalt sinkt in die Wurzeln, und für einen Moment siehst du ein Gesicht: müde, alt, sehr menschlich.
+*Die Bäume stehen hier so dicht, dass kein Licht durchdringt. Ein Kreis aus alten Steinen glimmt violett.
+*Die Dornenranken fangen Feuer, knistern – und zerfallen zu Asche.
+*Die Feuerschale lodert auf. (
+*Die Flammen springen von Leuchter zu Leuchter, die Halle wird hell – und du bleibst wie angewurzelt stehen.
+*Die Flügeltüren schwingen auf. Über dir schweben hunderte Kerzen unter einem Himmel aus Sternen – eine verzauberte Decke.
+*Die Galerie der Gründer. Auf einem Pult in der Mitte liegt eine Tafel.
+*Die Geschichte des Paktes ist erzählt – aber der Dämmerwald schläft nie, und die Welt reicht weiter, als irgendein Auge sieht.
+*Die Ruinen von Ur-Sternenhall – die erste Akademie, lange bevor das Schloss darüber gebaut wurde.
+*Die Runen der Säulen sind erloschen. Blende die Augen mit Lumen, bevor sie dich erfassen.
+*Die Splitter in deiner Tasche beginnen zu singen. Der Boden unter dem Herzbaum bricht auf, und etwas erhebt sich aus den Wurzeln.
+*Die Statue am Wegrand öffnet die Augen. Kleine Steine bröckeln von ihren Lidern.
+*Die Tür knarrt. Drinnen riecht es nach kaltem Rauch und altem Zorn. Im Halbdunkel funkeln zwei Augen.
+*Die Tür schließt sich hinter dir. Es riecht nach Zimt, Holzfeuer und Regen, der noch nicht gefallen ist.
+*Die drei Stapel schließen die Lücke. Eine Brücke aus Büchern – sie hält!
+*Die runde Tür schwingt auf. Drinnen ist es warm, es knistert, und irgendwo blubbert ein Teekessel.
+*Die vier Runen leuchten golden. Die Wächteraugen schließen sich und sinken zu Boden.
+*Dir wird kalt. Der Brief ohne Absender. Das wandernde Symbol. Die Siegel am Gemälde. Hast du sie … für ihn gebrochen?
+*Dir wird schwarz vor Augen … Als du wieder zu dir kommst, bist du ein Stück zurück.
+*Doch dann bebt der Boden. Zwischen den Steinen erhebt sich etwas Riesiges – ein Fuchs, so groß wie ein Haus, das Fell grau wie Asche.
+*Drei schwarze Kristalle kreisen über seinem Rücken. Seine Augen glühen rot. Er erkennt dich nicht.
+*Du erreichst Stufe 
+*Du hast Heddas Sternlaterne zurück! (+40 Taler)
+*Du hast dein erstes Zauberbuch erhalten! Mit B öffnest du es und wählst deine Zauber.
+*Du hebst deinen Stab. Hinter dir flackern fünf erloschene Feuerschalen – die Feuer der Gründer.
+*Du lehnst dich zurück. Größer geht es nicht mehr – aber schöner immer.
+*Du machst es dir gemütlich. Dein Mana ist wieder voll.
+*Du schreibst deinen Namen in das dicke Gästebuch. Dein Spiel ist gespeichert.
+*Du schreibst ein paar Zeilen in dein Tagebuch. Dein Spiel ist gespeichert.
+*Du setzt dich ans Fenster. Unter dir fällt die Klippe ins Meer, und der Horizont ist so weit, dass man das Atmen fast vergisst. (Dein Spiel wurde gespeichert.)
+*Du siehst eine Kammer unter dem Schloss. Etwas Großes schläft darin – und es atmet.
+*Du trägst 
+*Du weißt jetzt, was 
+*Ein Brief ohne Absender, dein Name in Goldtinte: „Sternenhall erwartet dich.“ Niemand hat diese Akademie seit Jahrhunderten betreten.
+*Ein Gemälde, das gestern noch nicht hier hing: fünf Gestalten vor Sternenhall. Eine ist schwarz übermalt.
+*Ein Glöckchen klingelt über der Tür. Es duftet nach frischem Gebäck, Kräutertee und Holzfeuer.
+*Ein Runenherz glimmt in ihrer Brust. Der Steinwächter von Ur-Sternenhall. Er hat seit tausend Jahren niemanden durchgelassen.
+*Ein Wandbild an der Nordwand ist kaum zu erkennen. Vielleicht zeigt Licht mehr …
+*Ein dampfender Becher Kräutertee mit Honig. Dein Mana ist wieder voll, und deine Füße danken es dir.
+*Ein kalter Hauch zieht durch die Gänge. Aus dem großen Saal dringt ein violettes Leuchten …
+*Eine Frauenstimme, ganz nah: „Wenn du das siehst, ist es zu spät, um zu gehen. Finde das Gemälde. Finde uns.“
+*Eine riesige Halle. In der Mitte steht eine Statue aus Fels – und bewegt sich.
+*Er ist entwischt … aber Fenn kommt immer wieder an den Ostrand zurück. Versuch es noch einmal!
+*Es hämmert, sägt und klopft – Feen tragen Bretter, ein Troll stemmt Steine. Stunden später …
+*Es knirscht und rumpelt – 
+*Etwas raschelt in den Wipfeln. Dann noch etwas. Die Schatten haben dich bemerkt!
+*Flammen kommen im Takt – warte die Pause ab. Gegen Pfeile hilft Protego.
+*Fünf Gestalten erscheinen in den Gründerfeuern: die Fünf, durchsichtig wie Glas. Die Frau mit Heddas Augen lächelt dir zu.
+*Fünf von ihnen stehen am Kamin und streiten. Einer zeigt nach unten, in die Tiefe. Dann ist alles wieder still.
+*Geheimgänge entdeckt: 
+*Gut geübt! 
+*Halte durch! Schattenflatterer: Arcanum · Dornenwürger: nur Ignis · Irrgeister: erst mit Lumen sichtbar machen. Und Protego (R wechseln, Q zaubern) hält jeden Treffer ab.
+*Heute hast du dich schon ausgeruht. Morgen gibt es wieder einen Gemütlichkeits-Bonus.
+*Hinter ihm öffnet sich ein Torbogen. Von unten dringt ein blaues Licht herauf – und ein Herzschlag, so tief, dass der Boden zittert.
+*Im Buch liegt ein Stab aus Sternholz und eine Seite mit einer Zeichnung: Feuer, das schwebt.
+*Im Licht von Lumen glüht das Symbol so hell, dass du die Augen schließen musst.
+*Im Siegerkranz glitzert etwas: 
+*In der Nordostecke öffnet sich ein violetter Torbogen. Er führt tiefer hinab.
+*Kapitel 1 abgeschlossen! Belohnung: 120 Glimmertaler und eine Rarität.
+*Kapitel 2 abgeschlossen! Belohnung: 150 Glimmertaler und eine Magierkarte.
+*Kapitel 3 abgeschlossen! Belohnung: 200 Glimmertaler.
+*Kapitel 4 abgeschlossen! Belohnung: 180 Glimmertaler.
+*Kapitel 5 abgeschlossen! Belohnung: 220 Glimmertaler.
+*Kapitel 6 abgeschlossen! Belohnung: 260 Glimmertaler.
+*Kaum berühren deine Finger das Symbol, wird es eiskalt. Für einen Atemzug siehst du den Saal voller Menschen – in Kleidern von vor fünfhundert Jahren.
+*Klick! Das Schloss springt auf. In der Truhe: 
+*Knisternd breitet sich Eis über den Mondsee aus – ein Weg bis zur Insel!
+*Lass dich nicht von den Augen sehen! Lumen blendet sie für ein paar Sekunden.
+*Man erzählt sich von vier Geheimgängen. Wo etwas seltsam schimmert, hilft oft ein Zauber (Q). Und Freunde verraten Geheimnisse …
+*Mit R wechselst du deinen Zauber, mit Q oder Klick zauberst du.
+*Mitten durch die Bibliothek klafft eine Schlucht. Unten wabert violetter Nebel. Kein Boden zu sehen.
+*Neben dir: drei schwere Bücherstapel. Vielleicht kann man mit ihnen eine Brücke bauen … (Levitaris)
+*Neue Fähigkeit: 
+*Neuer Zauber gelernt: 
+*Oben im Schloss gehen alle Kerzen gleichzeitig an. Im Wald erwachen die Laternen. In Laternhain tanzen die Feen.
+*Protego schimmert um deine Hände. Professorin Funkelstein nickt dir zu:
+*Sammle in der Welt Holz, Stein und Lehm. An der Werkbank drinnen kombinierst du sie zu Brettern, Ziegeln und Kristallglas.
+*Sammlerglück! Für 
+*Sie reicht dir ein schweres, in Leder gebundenes Buch. Auf dem Deckel: das Zeichen der Akademie.
+*Spring über seine Schockwellen. Heb mit Levitaris einen der Trümmersteine – er schleudert sich von selbst auf ihn.
+*Steuerung: WASD laufen · Maus umsehen · Q oder Klick zaubern · R Zauber wechseln · Leertaste springen · E benutzen · I Tasche · B Zauberbuch · Tab Menü.
+*Stille. Die letzten Schatten zerfallen zu Asche.
+*Tipp: Levitaris oder Arcanum (Q) halten ihn ein paar Sekunden fest.
+*Und darunter, in Samt gewickelt: 
+*Und doch stehst du jetzt vor ihrem Tor. Die Kristallspitze des höchsten Turms glimmt, als hätte sie auf dich gewartet.
+*Und wenn du Ruhe brauchst: Das Café Wolkenrand auf der Klippe im Süden hat immer einen Fensterplatz frei.
+*Unten: Dunkelheit. Es riecht nach Staub und Pergament. Irgendwo vor dir stehen drei kalte Leuchter.
+*Unter der Rinde atmet es ruhig und schwer. Ein Echo von Corvina regt sich in den Wurzeln – halb Traum, halb Erinnerung.
+*Unter der Tafel ist ein Name eingeritzt, ganz klein und frisch: das Symbol aus dem Saal. Jemand war vor kurzem hier.
+*Von nun an ist 
+*Wieder die Kälte. Diesmal hörst du eine Stimme: „Wir haben es eingeschlossen. Wir haben es nicht besiegt.“
+*Zauberrätsel gelöst: 
+*Zeit: 
+*Zuhause ist es am schönsten: +
+*Zuhause: 
+*Zwischen den toten Bäumen steht eine Gestalt, die keinen Schatten wirft – weil sie selbst einer ist.
+*Über dir springen die Ketten des Sternenherzens. Es erwacht – und es ist kein Ungeheuer. Es singt.
+*„Die Tafel der Gründer spricht vom Wald. Hinter dem Schattenhain, im Nordwesten, liegt der Hain der Alten. Dorthin geht niemand mehr.“
+*„Doch einer von uns wollte ihn wecken. Wir haben seinen Namen getilgt, sein Bild zerkratzt und die Akademie versiegelt.“
+*„Erlischt Sternenhall, erwacht Malrik. Wird Sternenhall wieder lebendig, erwacht er ebenfalls – und sucht jemanden, der ihm die Siegel bricht.“
+*„Malrik wollte es aufbrechen, um nie zu altern. Wir versiegelten ihn in den Schatten. Doch die Siegel hängen an der Akademie.“
+*„Nimm Protego mit. Und vergiss nicht: Jeder Zauber hat seine Stärke. Arcanum, Ignis, Lumen – du wirst alle brauchen.“
+*„Unter Sternenhall schläft das Sternenherz – das Licht, das den Wald nährt. Wir haben es nicht gefangen. Wir haben es versteckt.“
+*„Wer dies liest: Die Akademie ist erwacht. Also ist auch er erwacht. Suche den Wald. Die alte Kreatur dort erinnert sich an alles.“
+*„Wir, die Fünf, erbauten Sternenhall über dem Schlafenden. Unsere Magie hält ihn im Schlaf – solange die Akademie lebt.“
+*✦ Ausrüstung: Eulenamulett (Herzen heilen schneller) · Neue Kombination: Spiegelstoß (Protego → Arcanum) ✦
+*✦ Ausrüstung: Sternenstab (größere Reichweite) · Neue Kombination: Feuerkomet (Ignis → Levitaris) ✦
+*✦ Ausrüstung: Wächterumhang (+1 Herz) · Schlüssel: Runenschlüssel ✦
+*✦ Kapitel 7 abgeschlossen – Das Erwachen! Belohnung: 500 Glimmertaler und der Samen des Herzbaums ✦
+*✦ Magierkarte gefunden: 
+*✦ Neue Zauber-Kombination: Sternenblitz (Lumen → Arcanum innerhalb von 2 Sekunden) ✦
++15 % Zeit in allen zeitbegrenzten Prüfungen.
++20 % Erfahrung für alles, was du tust.
++20 % Zeit in allen zeitbegrenzten Prüfungen.
+, selbst gebraut! Trink ihn, wenn du ihn brauchst – nicht vorher, sonst wirkt er nicht.
+-1 Herz
+-½ Herz
+. Dahinter wartet etwas Seltenes …
+. Findest du an Orten wie: 
+. Ich hab mehr, als in meine Gläser passt.
+. Ich zahle 
+/4 · Schätze 
+/8 · Fehler 
+1 Spieler
+1–4  –  Tränke trinken. Zutaten sammelst du, indem du darüber läufst.
+2 Spieler
+3 Minuten lang können dir Schattenwesen nichts anhaben.
+3 Minuten lang läufst du 40 % schneller.
+5 Minuten lang zeigt die Karte alle Zutaten in deiner Nähe.
+: Du bist mein allerbester Freund. Das hier ist das Kostbarste, was ich habe: 
+: Hier, für dich. Ich will, dass du das hast: 
+: Ich verrate dir ein Geheimnis … 
+: „Noch nicht ganz. Übung macht den Zauberer – komm einfach wieder.“
+>Niemand hat mich geschickt. Ich will verstehen, was hier passiert ist.
+>Und manche Häuser sollte man vielleicht nicht zusammenhalten.
+>Und warum sind die Splitter des Paktsteins dann über den ganzen Wald verstreut?
+>Und was glaubst du?
+>Weil ich dich nicht besiegen will. Ich will, dass das aufhört.
+???  (noch nicht gelernt)
+??? (Geheimrezept)
+Abenddämmerung
+Aber Abmachungen altern schlecht. Wie Pergament. Wie die Leute, die sie unterschreiben.
+Aber ich gebe ihn nicht irgendwem. Zeig mir, dass du Laternhain helfen kannst:
+Aber im Frühjahr treibt der Herzbaum neue Blätter aus.
+Ach, Pech! Aber Pech ist nur Glück, das sich verlaufen hat. Gleich noch mal?
+Ach, wie schön! Weißt du, hier draußen kommt selten jemand vorbei. Erzähl, wie geht es dir?
+Ah! Du musst die Neue sein – oder der Neue. Der Brief kam also wirklich an. Ich bin Ysmira Funkelstein und, nun ja, die einzige Lehrerin hier.
+Ah, da bist du ja! Heute lernen wir 
+Ah, du schon wieder! Ich habe frisch gebügelt.
+Ah. {name}. Ich habe von deinem … Engagement gehört.
+Akademie
+Akademiehof, rechts vom Weg
+Alle Erinnerungen gefunden. Unter deinen Füßen rauscht es, als würde die Erde ausatmen.
+Alle Prüfungen, Rennen und Rätsel sind endlos wiederholbar.
+Allein durch den Wald
+Als der Pakt zerbricht, erlöschen die Lichter von Wurzelhain eines nach dem anderen. 
+Als ich Rektor wurde, war die Akademie am Sterben. Die Mauern bröckelten, die Bibliothek war feucht, und jedes Jahr kamen weniger Studierende. Trolle schickten ihre Kinder lieber in die Minen, Feen lieber an den Hof. Ein Ort, an dem beide Völker miteinander lernten, schien niemandem mehr wichtig zu sein. Außer mir.\n\n
+Als ihr Flügel verheilt war, stand sie eines Morgens am Höhleneingang und sah auf das Tal hinunter. »Ich werde meinem Bruder schreiben«, sagte sie. »Ich weiß nur nicht, was.«\n\n
+Also blieb er oben. Er wanderte jede Nacht über den Himmel, so hoch und so weit weg vom Wasser, wie er konnte, und er war sehr einsam dabei. Die Sterne waren zu weit entfernt, um mit ihm zu reden, und die Wolken hatten es immer eilig.\n\n
+Am Braukessel
+Am Feuer ausruhen
+Am Ostufer des Mondsees steht ein Frostkristall. Draußen auf der Insel glänzt seit Jahren eine Truhe.
+Am Palast wuchern Dornenranken um eine Truhe. Auf der Sonnenwiese warten drei kalte Feuerschalen. Und unser Kamin im Saal ist seltsam kalt …
+Am Rand des Akademiehofs
+Am Ufer des Mondsees, nur nachts.
+Am Wasser – nach einem Regenbogen.
+Am Westufer des Mondsees
+Am dritten Abend fragte Orrin, ob sie seine Sammlung sehen wolle.\n\n
+Amalind drehte sich nicht einmal um. »Komm her, Junge. Setz dich. Und sei leise, sonst verpasst du das Beste.«\n\n
+Amalind schwieg eine Weile. »Sie ist vor vier Jahren nicht mehr gekommen. Wale werden alt, genau wie Feen.« Sie stand auf, mühsam, und legte die Hand an die Laterne. »Aber ihre Familie kommt noch. Und solange sie kommt, zünde ich das Licht an.«\n\n
+Amalthea Brombeerweis
+Amara Okafor
+An der Klippe über dem Meer
+An der Nordwand, rechts neben dem Kamin
+An der Südküste, unter der Klippe.
+An dunklen Orten der Welke.
+Anklopfen bei 
+Ansur – Rune der Bindung
+Arcanum
+Arcanum, den Energieblitz, kannst du schon. Dazu lernst du Lumen, Ignis, Levitaris und Protego – und später zwei fortgeschrittene Zauber.
+Arvid Sternenhall
+Aschfell
+Aschfell liegt erschöpft am Boden. Befreie ihn mit Lumen!
+Aschfell, der Uralte
+Aschfell: „Die Fünf haben ihn verbannt und seinen Namen ausgelöscht. Doch Schatten vergessen nicht. Er war es, der mich verdorben hat.“
+Aschfell: „Es waren nicht fünf Gründer. Es waren sechs. Der sechste hieß Malrik. Er wollte die Kraft unter dem Schloss für sich.“
+Aschfell: „Geh nach Laternhain, ins Feendorf. Dort lebt Hedda Wendelin – die letzte Nachfahrin der Fünf. Sie hütet einen Schlüssel.“
+Aschfell: „Mensch … Du hast mich zurückgeholt. Ich war Wächter dieses Waldes, als Sternenhall noch ein Hügel war.“
+Aschfell: „Und nimm dies: Wenn du Lumen und gleich danach Arcanum sprichst, verbinden sie sich zum Sternenblitz.“
+Aschwurz
+Auf Wiedersehen
+Auf dem Pult an der Nordwand
+Auf dem zweiten Baumhaus in Laternhain
+Auf den hellsten Wiesen, bei Sonnenaufgang.
+Auf der Mondsee-Insel
+Auf einem Baumhaus in Laternhain
+Auf hellen Wiesen, nur nachts.
+Aufgeladener Zauber
+Aufsitzen! W fliegt vorwärts, die Maus lenkt, Leertaste steigt, Umschalt sinkt.
+Auftrag
+Auftrag abgeben: 
+Aufzeichnungen, gefunden in der Bibliothek von Wurzelhain
+Auge
+Ausbau: 
+Ausrüstung: 
+Ausweichen · Kristalle zerschlagen · Protego wirft Kugeln zurück · Lumen
+Autsch. Die Dornen merken sich Gesichter. Ruh dich aus und versuch's noch mal.
+B:BRETTER
+B:HOLZ
+B:KRISTALLGLAS
+B:LEHM
+B:STEIN
+B:ZIEGEL
+BAUSTOFFE FÜRS HAUS
+Balduin Kieselklang
+Baue 
+Baue eine Brücke über die Schlucht
+Baumhaus
+Baumhaus am Wiesenrand
+Baumvilla im Dämmerwald
+Baustoffe fürs Haus
+Baute den ersten Uhrwerk-Käfer aus einer alten Taschenuhr.
+Baute die singenden Treppen von Sternenhall.
+Beantworte 
+Beantworte meine Rätsel, Wanderer. Jedes Mal, wenn du gewinnst, denke ich mir schwierigere aus. Ich habe Zeit.
+Beard
+Beenden
+Befreie Aschfell, den Uralten
+Bei Professorin Funkelstein in der Zauberklasse (rechts vom großen Saal)
+Beim Café auf der Klippe
+Bemerkenswert. Ich werde der Königin sagen, es sei meine Idee gewesen.
+Benommen! Zerschlag die Kristalle!
+Bernsteinharz
+Berühmte Hexen und Zauberer – versteckt an schwer erreichbaren Orten, in Geheimräumen und weit draußen. Alle 8 Karten eine Belohnung.
+Berührst du einen falschen Knoten, beginnt die Rune von vorn und du verlierst 3 Sekunden.
+Besiege den Steinwächter
+Bestanden
+Besuch bei 
+Betritt die Akademie Sternenhall
+Bevor es das Café gab, stand auf der Klippe von Wolkenrand nur ein Pfahl, und an dem Pfahl hing eine Laterne. Niemand wusste, wer sie aufgehängt hatte. Aber jeden Abend, wenn die Sonne ins Meer sank, kam eine alte Fee den Pfad herauf und zündete sie an.\n\n
+Bewirtet von 
+Bewölkt
+Bezahlt wird in Glimmertalern. Die verdienst du mit Prüfungen, Rennen, Aufträgen und beim Sammeln. Schau dich um!
+Bibliothek
+Bibliothek (Westflügel) und Trankkeller (Ostflügel)
+Bibliothek der Akademie (Norden)
+Bitte schön. Lass dir Zeit – hier oben hat es niemand eilig. Wenn du magst, nimm dir ein Buch aus dem Regal.
+Blatt
+Bleib in der Nähe von 
+Blockhaus mit Veranda
+Bodo Wurzelfuß
+Borga
+Brachte Bäumen das Wandern bei. Einige wandern noch.
+Brakk
+Brakka Felsenherz
+Bramwen
+Braute dreihundert Tränke an einem einzigen Tag.
+Breite: 
+Brenne die Welke vor der Dornenschlucht weg
+Bretter
+Bretter, Ziegel und Kristallglas entstehen an der Werkbank · Esc zurück
+Brich die drei Siegel des Gemäldes
+Bring Hedda die gute Nachricht
+Bring Licht in die dunkle Ecke: Lumen!
+Bring mir 
+Bringe die Splitter zum Herzbaum
+Brumli Moosbart
+Brumm der Läufer
+Bunter Flickenteppich
+Bäume
+Bücherregal
+Café Am Stillen Weiher
+Café Morgenrot
+Café Wolkenrand
+Café Wurzelwerk
+Café Zum Grünen Kessel
+Clanälteste Grumhild
+Clanälteste Grumhild verschränkt die Arme.
+Corvina
+Corvina die Erste
+Corvina hat einmal zu mir gesagt: »Ein Haus, das man nur durch eine Lüge zusammenhalten kann, ist kein Haus, Aldric. Es ist ein Versteck.« Damals habe ich gelacht. Heute höre ich den Satz jedes Mal, wenn ich durch die Gänge gehe und die Lampen brennen sehe, die mit dem Leben eines Baumes leuchten.\n\n
+Corvina tritt aus den Wurzeln, alt und müde und frei, und spricht vor dem Rat. 
+Corvina wartet. Seit vierzig Jahren. Sie ist nicht deine Feindin. Aber sie wird dich nicht erkennen.
+Corvinas Echo
+Da bist du ja. Pünktlich, wie es in meinem Brief stand.
+Dafür brauchst du einen neuen Zauber (Unterricht im Palast)
+Dafür fehlen dir Zutaten.
+Danke, Professorin!
+Dann entscheide. Die Splitter können den Pakt erneuern. Ich schlafe wieder, der Baum lebt weiter, die Akademie behält ihr Licht. Niemand erfährt etwas.
+Dann hörte er es. Ein tiefes, langes Singen, das aus dem Wasser kam, so tief, dass er es mehr im Bauch spürte als in den Ohren. Weit draußen, wo das Meer schwarz wurde, hob sich ein Rücken aus den Wellen, glänzend im letzten Licht, und noch einer, und noch einer. Wale. Eine ganze Familie, die langsam an der Küste entlangzog.\n\n
+Dann kam die Welke. Zuerst verloren die Birken am Mondsee ihre Farbe. Dann wurden die Quellen im Steinbruch bitter. 
+Daraus könnte ein neuer Herzbaum wachsen.
+Darius Mensah
+Das Auge ist geblendet!
+Das Auge lässt sich nicht verletzen – blende es mit Lumen!
+Das Brot
+Das Bücherregal des Cafés
+Das Dorf
+Das Echo
+Das Eis
+Das Feendorf am Laternbach, westlich deines Hauses
+Das Feuer
+Das Fluestern im Daemmerwald - Spielstand
+Das Gedächtnis der Wurzeln
+Das Licht
+Das Pilzorakel
+Das Pilzorakel teilt, was die Erde nie vergisst.
+Das Prachtstück: Flug, Schutz und Lichtschein in einem.
+Das Regal mit dem blauen Buch
+Das Runenherz bebt!  (
+Das Schloss mit der Kristallspitze, nördlich hinter dem Akademiebaum
+Das Symbol erscheint im Licht!
+Das Symbol ist in die Bibliothek gewandert
+Das Wort »Ton«
+Das allererste Pilzorakel. Seine Sporen träumen noch.
+Das erste Geheimnis
+Das klingt seltsam, denn jede Nacht sah er sich selbst im Meer, in den Seen und in jeder Pfütze, die nach einem Regen auf den Wegen stand. Aber der Mond war sich nicht sicher, ob das wirklich er war, da unten im Wasser. Das Spiegelbild zitterte und zerfloss, sobald ein Wind kam, und der Mond dachte: Wenn ich jemals dort hineinfalle, werde ich genauso zerfließen.\n\n
+Das letzte Kapitel des Rektors
+Dein Atem
+Dein Haus ist fertig – eine echte Baumvilla!
+Dein Kleiderschrank – klicke zum Anziehen
+Dein Lichtzauber reicht viel weiter.
+Dein Name
+Dein Name …
+Dein Schatten
+Dein Weg
+Deine Entscheidung
+Deine Reihenfolge: 
+Deine Tasche
+Deine Vorräte
+Deine Zauber im Duell sind deutlich stärker.
+Deine Zaubersprüche  ·  
+Deine alte Kleidung. Bequem, geflickt, ehrlich.
+Den Pakt brechen
+Den Pakt erneuern
+Denke nach. Ich warte. Ich bin gut im Warten.
+Der Alchemist
+Der Atem
+Der Baum
+Der Buchstabe M
+Der Donner
+Der Flüsternde
+Der Frosch lachte so sehr, dass er beinahe ins Wasser gefallen wäre. »Du musst doch nicht schwimmen! Du musst nur liegen. Schau dir dein Spiegelbild an – es liegt ganz ruhig da. Es zittert ein bisschen, wenn der Wind weht, aber dann wird es wieder ganz.«\n\n
+Der Fünfte
+Der Gegenstrahl bricht. Niemand ist verletzt – nur ein Wille hat nachgegeben.
+Der Herzbaum
+Der Herzbaum hatte so viel Kraft. Sie lag einfach da, ungenutzt, tief in seinen Wurzeln. Ich dachte: Ein wenig davon wird ihm nicht schaden. Ein wenig, um die Mauern zu halten, die Lampen zu nähren und die Bibliothek trocken zu machen. Ein Baum, der dreitausend Jahre alt ist, wird ein paar Jahrzehnte verkraften.\n\n
+Der Hof empfängt keine Bittsteller ohne Termin. Aber gut – die Königin ist in Trauer, und ich bin gelangweilt.
+Der Horizont
+Der Kamin im Thronsaal ist kalt – aber dahinter zieht es. Ein Feuerzauber würde ihn öffnen.
+Der Kamin ist kalt, aber es zieht …
+Der Kartograf
+Der Kessel kocht über. Es riecht genau so schlimm, wie Ysolde versprochen hat.
+Der Kreis
+Der Laternendieb
+Der Lichtfuchs schmiegt sich an dich: +
+Der Magier ohne Schatten. Niemand weiß, wo er ihn verlor.
+Der Mensch
+Der Mond
+Der Mond dachte die ganze Nacht darüber nach. Und in der nächsten Nacht, als der See besonders still war, ließ er sich ein kleines bisschen tiefer sinken als sonst. Nur ein bisschen. Sein Licht berührte das Wasser, und das Wasser war kühl und freundlich und trug ihn.\n\n
+Der Mond sah hinunter. Und wirklich: Ein Windstoß strich über den See, das Spiegelbild zersprang in tausend helle Stücke – und als der Wind vorbei war, setzte es sich langsam wieder zusammen. Rund und ganz, als wäre nichts geschehen.\n\n
+Der Paktstein, der die Völker einst band, wurde vor vierzig Jahren in sechs Splitter zerschlagen 
+Der Pechvogel
+Der Regen
+Der Rektor lobt dich vor dem Rat, und du nimmst den Applaus an, weil man ihn eben annimmt. 
+Der Rektor tritt zurück, bevor man ihn dazu zwingt.\n\n
+Der Sand rieselt nach oben.
+Der Schattenpanzer hält – warte, bis er benommen ist!
+Der Schattenschutz hält!
+Der Schild hält länger.
+Der Schimmel
+Der See leuchtet still. Für einen Augenblick wirken selbst die Toten zufrieden.
+Der Splitter des Wassers gehört dir. Und weil du nett warst: Die Welke ist kein Gift. Sie ist ein Gefühl. Trauer, die zu lange eingesperrt war. Auch Bäume können trauern.
+Der Splitter des Windes liegt auf der anderen Seite der Schlucht. Der einzige Weg führt durch die Dornen.
+Der Stein fällt ins Leere. Unten lacht jemand. Nicht böse – aber laut.
+Der Steinwächter
+Der Steinwächter neigt den Kopf. Staub rieselt von seinen Schultern. Das ist bei ihm ein Lächeln.
+Der Steinwächter wird wütend – und schneller!
+Der Sternenblitz trifft!  (
+Der Sternenkundler
+Der Tau
+Der Torbogen hinter dem Steinwächter
+Der Trank gegen die Welke
+Der Trank schimmert grün wie junges Laub. Das Moor atmet ein wenig leichter.
+Der Troll
+Der Troll, der die Stille sammelte
+Der Turm der Clans
+Der Uhrmacher
+Der Vogel
+Der Wandteppich bewegt sich, als ob dahinter Wind weht …
+Der Wind
+Der Winter wird hart. Clans und Hof müssen zum ersten Mal seit dreihundert Jahren miteinander reden, 
+Der Zauber geht durch ihn hindurch – erst Lumen!
+Der Zauber reicht weiter und wirkt stärker.
+Der atmende Wandteppich
+Der erneuerte Pakt
+Der erste Troll, der fliegen lernte – mit Flügeln aus Birkenrinde.
+Der gebrochene Pakt
+Der kalte Kamin
+Der verbotene Wald
+Der violette Torbogen in der Nordostecke der vergessenen Bibliothek
+Deutsch
+Dichte Dornenranken umschlingen eine Truhe.
+Dick, süß und mit einer Haube aus Schaum, die aussieht wie ein Sturm in Zeitlupe.
+Die 
+Die Akademie schweigt. Und in Wurzelhain hat Schweigen immer einen Preis. 
+Die Akademie war fünfhundert Jahre verschlossen. Seit einem Monat öffnen sich ihre Türen wieder von selbst. Niemand weiß, warum.
+Die Ankunft
+Die Archivarin
+Die Bibliothek hat ein Regal, das nur so tut, als wäre es ein Regal. Ein Lichtzauber verrät es.
+Die Clans beschuldigen den Feenhof. Der Hof beschuldigt die Clans.
+Die Dornen erwischen dich. Du landest unsanft im Moos.
+Die Dornen schützen ihn – nur Feuer hilft: Ignis!
+Die Duellantin
+Die Erinnerungen versinken wieder im Boden.
+Die Fee
+Die Fee hieß Amalind. Ihre Flügel waren grau geworden wie Asche, und sie flog nicht mehr, sondern ging zu Fuß, mit einem Stock aus Treibholz. Die Kinder im Dorf unten am Strand nannten sie die Laternenträgerin und erzählten sich, sie leuchte für die Schiffe. Aber es gab keine Schiffe auf diesem Meer. Die Fischer fuhren nur bei Tag hinaus, und die Handelsboote nahmen die Route weiter im Süden.\n\n
+Die Feen sagen, in Sternenhall brennt wieder Licht. Das ist dein Werk, nicht wahr?
+Die Freude
+Die Fünf
+Die Fünf: „Du hast getan, was wir nicht konnten. Du hast ihn nicht eingesperrt. Du hast ihn erlöst.“
+Die Fünf: „Sternenhall gehört jetzt dir – und allen, die nach dir kommen. Öffne die Tore. Lass die Kinder zurückkehren.“
+Die Glocke
+Die Gruft unter dem Palast … dort schlafe ich manchmal. Die Platte mit dem Mond, du weißt schon.
+Die Irrlichter des Mondsees
+Die Irrlichter des Mondsees sind die Erinnerungen derer, die hier gestorben sind. Seit die Welke kommt, mischen sich Schatten darunter.
+Die Kammer von Cabeceiras
+Die Karte wird gezeichnet …
+Die Katze
+Die Kerze ist abgebrannt. Lande erst mal … und dann gleich noch einmal!
+Die Kerze ist heruntergebrannt.
+Die Laternenträgerin von Wolkenrand
+Die Lichter zerstreuen sich über dem Wasser.
+Die Lichtfüchse sind eigentlich sehr schüchtern. Sie kommen nur zu Leuten, die leise lachen.
+Die Lichtweberin
+Die Luft
+Die Nase
+Die Platte mit dem Mondzeichen
+Die Reihenfolge wird kurz gezeigt. Bei der ersten Rune bleiben die Zahlen sichtbar – danach musst du sie dir merken.
+Die Reihenfolge wird nur kurz gezeigt. Ab dieser Stufe musst du sie dir immer merken.
+Die Runen verzeihen keine Hast. Komm wieder, wenn dein Kopf klarer ist.
+Die Runenleserin
+Die Rätsel des Steinwächters
+Die Sterne
+Die Stille
+Die Strahlen prallen aufeinander. Tippe die angezeigten Pfeile (Pfeiltasten oder WASD), um deinen Strahl vorzuschieben.
+Die Sturmseglerin
+Die Toten sind wählerisch. Versuch es noch einmal, wenn du ruhiger atmest.
+Die Truhe auf der kleinen Insel.
+Die Träume
+Die Wale kamen. Und der größte von ihnen blieb länger als sonst, hob den Kopf aus dem Wasser und sang ein Lied, das anders klang als alle anderen. Tiefer. Langsamer. Teo verstand es nicht, aber er weinte trotzdem, und es war in Ordnung.\n\n
+Die Wale vor der Klippe singen nur bei Sonnenuntergang. Dann summt das ganze Café mit.
+Die Welke
+Die Welke hat meinen Enkeln ihr Zuhause genommen, {name}. Sie leben jetzt in der Stadt, zwischen Leuten, die sie Steinköpfe nennen. Manchmal weiß ich nicht, was schlimmer ist.
+Die Welke ist eine natürliche Erscheinung. Zyklen, verstehst du? Wälder sterben, Wälder wachsen. Die Akademie hat alles im Griff.
+Die Welke zerbricht!
+Die Welke zieht sich zurück wie ein Atemzug, den jemand anhält. Die Akademie leuchtet weiter. 
+Die Welt endet nie: Hinter der Karte warten Wälder, Berge, Seen und Steinkreise.
+Die Wendeltreppe hinab
+Die Wendeltreppe hinauf
+Die Werkbank ist leer.
+Die Wolke
+Die Wurzeln flüstern einen Namen, den oben niemand mehr ausspricht: Corvina.
+Die Zeit
+Die Zukunft
+Die alten Ruinen
+Die alten Runen
+Die anderen Trolle verstanden ihn nicht. Trolle mögen Lärm. Sie mögen das Krachen von Steinen, das Grollen von Gewittern und das Lachen, das so tief aus dem Bauch kommt, dass die Erde mitlacht. »Was willst du mit Gläsern voller Nichts?«, fragten sie ihn. Orrin zuckte nur mit den Schultern. Er wusste es selbst nicht genau. Er wusste nur, dass manche Stillen zu kostbar waren, um sie einfach vorbeiziehen zu lassen.\n\n
+Die erste Hüterin des Herzbaums.
+Die namenlose Fee
+Die vergessene Bibliothek
+Doch nicht
+Doppelte Mana-Regeneration.
+Dornenpanzer
+Dornenranken am Palast
+Dornenschlucht
+Dornenschlucht (Südosten, hinter der Welke)
+Dornenwürger
+Dornfratz
+Dort oben schwebt das Sternenherz. Wer es bricht, lebt ewig. Der Wald? Der stirbt. Die Akademie? Die stirbt. Ich nicht.
+Drachenschuppe
+Drei Fehler, und der Kessel kocht über.
+Drei Fehler, und der Kessel kocht über. Dann riecht hier alles eine Woche lang nach verbrannten Zehennägeln.
+Drei Fehler, und die Stunde ist vorbei. Du kannst jederzeit wiederkommen.
+Dreihundert Jahre lang hat der Pakt gehalten: Die Trolle hüten die Steine, die Feen das Licht, 
+Drittens: Wer in die Tiefe will, muss fliegen können. Nimm meinen Besen – zehn Ringe, bevor die Kerze abbrennt.
+Drücke [Leertaste] oder klicke, um ihn fallen zu lassen. Was übersteht, bricht ab – der Turm wird schmaler.
+Du bist 
+Du bist aus dem Hain geflohen …
+Du bist hier (rot).
+Du bist im letzten Jahr deines Studiums. Niemand hat dich gebeten, das zu tun.\n\nGenau deshalb wirst du es tun.
+Du bist zurück. Gut. Ich habe nachgedacht. Das tue ich meistens.
+Du brauchst:
+Du darfst dir 
+Du fliegst wie jemand, der etwas zu verlieren hat. Gut so.
+Du hast 
+Du hast den Frieden bewahrt. Du bist nicht sicher, ob er es wert war.
+Du hast dich also wirklich gemeldet. Mutig. Oder dumm. In Wurzelhain ist das selten ein Unterschied.
+Du hast dich durch die Welke gebrannt. Nicht schlecht. Die meisten drehen vorher um.
+Du hast gesehen. Nun höre: Corvina lehrte an der Akademie. Sie fand heraus, dass der Rektor das Leben des Herzbaums in die Mauern der Akademie leitet.
+Du hast mir heute schon etwas geschenkt. Morgen freue ich mich wieder!
+Du hast nicht mehr 
+Du hast noch kein Zauberbuch – Professorin Funkelstein im Palast
+Du kannst durch tiefes Wasser waten und schwimmen.
+Du kennst alle Zauber dieses Jahres! Jede Übungsstunde verbessert einen Zauber (bis Stufe 3).
+Du landest auf der anderen Seite. Deine Flügel zittern noch lange nach.
+Du läufst 30 % schneller, auch ohne Trank.
+Du riechst nach Sonnenlicht. Wie ekelhaft. Lass uns sehen, ob du so mutig bist, wie du stinkst.
+Du schon wieder. Bleib nur. Die Nacht ist lang, und ich habe gelernt, mit dir zu ringen, statt dich zu hassen.
+Du schon wieder. Na gut … setz dich. Aber fass nichts an. Und erzähl niemandem, dass ich nett war.
+Du springst dreimal so hoch.
+Du suchst den Splitter des Wissens. Ich habe ihn seit vierzig Jahren in einer Schublade, die niemand öffnet. Das war die Abmachung.
+Du verdienst 30 % mehr Glimmertaler.
+Du warst fleißig, wie ich höre.
+Du willst den Splitter des Steins? Dann zeig, dass du etwas bauen kannst, statt nur zu reden.
+Du willst mich aufhalten? Mit den fünf Kinderzaubern, die ich dir habe beibringen lassen? Gut. Zeig sie mir.
+Du wirst zurückgedrängt und gehst in die Knie. Erschöpft, aber unversehrt.
+Du … hältst stand. Warum?
+Duell: 
+Dunkelheit
+Dunkle Erdhöhle
+Dunkle Erdhöhle im Moor
+Dunkle Schattenlichter kosten dich 2 Punkte. Je länger die Prüfung dauert, desto mehr mischen sich darunter.
+Ein 
+Ein Akademiekind im Steinbruch. Die letzten von euch kamen mit Verträgen. Und gingen mit unseren Quellen.
+Ein Anker
+Ein Baum
+Ein Berg
+Ein Bett
+Ein Bienenstock
+Ein Blatt
+Ein Brief
+Ein Buch
+Ein Buch aus dem Regal lesen
+Ein Duell! (Tastenkombos, Stufe 
+Ein Ei
+Ein Fluss
+Ein Frostkristall am Ufer. Draußen auf der Insel glänzt eine Truhe.
+Ein Funke
+Ein Fächer
+Ein Gedanke
+Ein Geheimnis
+Ein Geist
+Ein Gemälde
+Ein Gerücht
+Ein Geschenk unter echten Freunden.
+Ein Geschenk überreichen (
+Ein Glas voller winziger Sterne, die summen.
+Ein Gründerfeuer brennt!
+Ein Handtuch
+Ein Hauch davon, und du schwebst einen Atemzug lang.
+Ein Haus voller Essen, aber ohne Tür.
+Ein Hemd
+Ein Herz
+Ein Herzschlag
+Ein Irrlicht folgt dir und vertreibt Schattenwesen von selbst.
+Ein Junge namens Teo wollte es genau wissen. An einem Herbstabend versteckte er sich hinter einem Felsen und wartete. Amalind kam wie immer, zündete die Laterne an, setzte sich auf einen flachen Stein und sah aufs Meer hinaus. Sie saß so lange dort, dass Teo beinahe einschlief.\n\n
+Ein Kamm
+Ein Kind aus Sternenhall? Hier? … Du riechst nach Wald. Und nach altem Licht. Du warst bei Aschfell.
+Ein Kristall
+Ein Kristall, geschmolzen im Holzfeuer auf Stein
+Ein Kürbis
+Ein Lichtkind im Schattenhain. Wie erfrischend. Die meisten trauen sich nur bis zum Waldrand.
+Ein Loch
+Ein Mantel aus Nachtfaltergewebe. Halte [Leertaste], um zu fliegen – solange dein Mana reicht.
+Ein Ochse
+Ein Rad
+Ein Rat unter uns: Der Hof weiß, dass die Trolle die Quellen nicht vergiftet haben. Aber ein Feind ist so viel bequemer als eine Frage.
+Ein Ring
+Ein Runenstein gleitet über dem Turm hin und her.
+Ein Salat
+Ein Sarg
+Ein Schatten
+Ein Schattenkristall zerbricht!  (
+Ein Schild
+Ein Schloss
+Ein Schlüssel
+Ein Spiegel
+Ein Stein
+Ein Sturm
+Ein Symbol leuchtet im großen Saal …
+Ein Traum
+Ein Troll
+Ein Turm
+Ein Versprechen
+Ein Weg
+Ein Wind
+Ein Würfel
+Ein Zauber mit Kraft: Arcanum oder Ignis!
+Ein andermal
+Ein blaues Buch steht verkehrt herum im Regal …
+Ein falscher Pfeil wirft dich zurück, und die Folge beginnt neu.
+Ein fester Sockel aus Stein und ein gemauerter Schornstein.
+Ein heller Tee, der nach Nachtluft und Honig duftet.
+Ein kleiner Käfer aus Messing. Er tickt, wenn man ihn streichelt.
+Ein magischer Energieblitz: vertreibt Gegner und stößt sie zurück.
+Ein neues Gemälde im großen Saal …
+Ein paar Glimmertaler – 
+Ein riesiger Felsbrocken. Unter ihm glitzert etwas.
+Ein runder Turm mit Sternenfenster und Wetterfahne aus Greifenfedern.
+Ein schimmernder Schild umgibt dich einige Sekunden und hält jeden Angriff ab.
+Ein silbernes Haar, das nie zerreißt.
+Ein uralter Baum wächst durch dein Haus, im Garten leuchten Mondblumen.
+Ein wabernder Schattenschleier versperrt einen Steinbogen.
+Eine Bodenplatte trägt ein silbernes Mondzeichen …
+Eine Erzählung aus den Steinbrüchen
+Eine Fabel für lange Abende
+Eine Flasche
+Eine Geschichte von der Klippe
+Eine Harfe
+Eine Kartoffel
+Eine Kerze
+Eine Landkarte
+Eine Nadel
+Eine Nuss
+Eine Perle, in der ein kleiner Mond schwimmt.
+Eine Rätselwette
+Eine Schuld
+Eine Säge
+Eine Tasse Tee trinken
+Eine Uhr
+Eine Wolke
+Eine echte Rarität? Für mich? Das bewahre ich gut auf.
+Eine eingenähte Glühlaterne – dein Licht reicht doppelt so weit.
+Eine kalte, steinerne Feuerschale.
+Eine vergessene Akademie. Ein Brief ohne Absender. Und tief unter dem Schloss: die Kammer von Cabeceiras.
+Eine verschlossene Truhe mit Messingschloss.
+Eines Nachts hörte er eine Stimme von unten. Ein kleiner Frosch saß am Rand des Mondsees und rief zu ihm hinauf: »He, du da oben! Warum kommst du nie herunter? Das Wasser ist herrlich heute!«\n\n
+Eines Winters kam eine Fee in den Steinbruch. Sie hieß Liss und hatte einen gebrochenen Flügel, den sie in einem Tuch um die Schulter trug. Sie war auf der Flucht vor einem Sturm, der sie drei Tage lang über die Berge gejagt hatte, und sie war so müde, dass sie sich in den erstbesten Unterschlupf fallen ließ. Der erstbeste Unterschlupf war Orrins Höhle.\n\n
+Eingestürzt. Passiert. Mein Großvater hat drei Häuser gebaut, bevor eins stand.
+Einhornhaar
+Einhornhaar findest du nur bei Sonnenaufgang auf den hellsten Wiesen. Steh früh auf!
+Einrichten
+Einrichten: Möbel kaufen
+Eisenhaut-Wams
+Eisenkraut
+Eldrun – Rune der Wurzel
+Elena Wurzelherz
+Elfenharfe
+Elias Brandt
+Elowen
+Elsabet Nachtwind
+Elva Glimmerflügel
+Endlos
+Energieblitz
+English
+Enter kombiniert · Rücktaste leert
+Enter: anziehen
+Enter: kaufen & anziehen
+Entzünde die drei Leuchter
+Entzünde die fünf Gründerfeuer mit Ignis – dann bricht sein Schild!
+Entzünde die fünf Gründerfeuer mit Ignis!
+Entzünde die fünf Gründerfeuer!
+Epilog
+Epilog · Sternenhall erwacht
+Epilog · Sternenhall ist erwacht
+Er duckt sich zum Sprung – weich aus!
+Er glaubt, dass die Akademie selbst ein Uhrwerk ist – und dass sie gerade wieder anfängt zu ticken.
+Er hebt die Fäuste – spring über die Welle!
+Er hörte einfach zu.\n\n
+Er ist ihm bis hierher gefolgt.
+Er ist unverwundbar, solange seine Diener kämpfen!
+Er sagte, die Laterne der Wendelins dürfe nie wieder leuchten. Unheimlicher Kerl. Ich hab mich nicht getraut, Nein zu sagen.
+Er schleudert Schattenkugeln: Protego (Schild) wirft sie zurück! Irrgeister: erst Lumen.
+Er selbst am allerwenigsten.
+Er springt – weich aus! Ist er benommen: Arcanum oder Ignis auf die Schattenkristalle.
+Er tat es mit Einmachgläsern, die er auf dem Markt in Wurzelhain gegen Kieselsteine tauschte. Wenn er irgendwo eine besonders schöne Stille fand, öffnete er ein Glas, hielt es still in die Luft, zählte bis zehn und schraubte es dann sehr vorsichtig wieder zu. Danach schrieb er mit Kreide auf den Deckel, woher die Stille stammte.\n\n
+Er taumelt! Das Runenherz liegt offen – jetzt!
+Er wehrt sich nicht mehr. Befreie ihn mit Lumen!
+Erbaute den Zauberpalast in einer einzigen Mondnacht.
+Erfand den Funkenstoß, den jeder Schüler zuerst lernt.
+Erfand den Tee, der niemals kalt wird.
+Erhellt dunkle Räume, löst Schattenschleier auf und zeigt verborgene Geheimnisse.
+Erkunde den verborgenen Raum hinter dem Gemälde
+Erkunde die Akademie
+Erscheint »SCHILD!«, drücke sofort die [Leertaste], sonst trifft dich die Welle.
+Erst der Mond im Osten, dann der Stern, der Westen träumt,
+Erst muss der Weg frei sein …
+Erstens: Die vier Laternen am Platz sind erloschen. Ohne sie finden die Feen nachts nicht heim. Ignis!
+Erzeugt Feuer: verbrennt Dornenranken und Hindernisse, entzündet kalte Feuerschalen.
+Erzähl mir etwas
+Es ist stockdunkel: Ignis auf die kalten Leuchter
+Es leuchtet so lange, wie der Mond scheint.
+Es war einmal ein Mond, der hatte Angst vor dem Wasser.\n\n
+Etwas zu trinken bestellen
+F:mondlaterne
+F:seerosenschale
+F:windspiel
+Fachwerkhaus
+Falsch! Ysolde zeigt es dir noch einmal.
+Falsche Reihenfolge – die Runen erlöschen. (Lumen auf das Wandbild!)
+Familie Lamellis
+Fand die erste Mondperle – im Schnabel einer Ente.
+Fang den Dieb!  
+Fang die goldenen Lichter mit der Maus. Die dunklen lass in Ruhe – sie sind hungrig und nehmen dir, was du gesammelt hast.
+Fee Rosmarin
+Feenhof am Mondsee (Westen)
+Feenlicht-Kronleuchter
+Felsen, Hänge und Steinbruch
+Felsen, Steinbruch und Berge
+Fenja Sturmauge
+Fenn
+Fennick
+Fertig – zurück zu 
+Festgewand der Lichtwiese
+Feuerkomet
+Feuerzauber
+Figur für 
+Finde alle Paare, bevor die Zeit abläuft. Ab Stufe 3 tauschen nach jedem Fehlgriff zwei verdeckte Karten heimlich die Plätze.
+Finde den Hain der Alten im verbotenen Wald
+Finde die Paare in unseren Erinnerungen, und wir geben dir den Splitter der Erinnerung.
+Flamme
+Flammen: Takt abwarten · Pfeile: Protego · Gitter: Levitaris auf den Steinblock
+Flatterer: Arcanum · Dornen: Ignis · Irrgeister: erst Lumen · Q zaubern, R wechseln
+Flug durch die Dornenschlucht
+Flugstunde: Ring 
+Flügelmantel
+Flüsternde Muschel
+Flüsternde Muscheln liegen an der Südküste unter der Klippe. Ich trage eine als Hut!
+Flüsterte unruhige Bäume in den Schlaf.
+Fokus
+Folge dem Leuchten (Westflügel)
+Folge der Vorlage.
+Folge: 
+Footwear
+Fortgeschritten – später im Unterricht
+Fortgeschritten: lässt Wasser zu Eis gefrieren – so wird ein See zum Weg.
+Fortgeschritten: öffnet Schlösser, Truhen und versiegelte Platten.
+Fortsetzen
+Frag Borga, Ysolde, Grumhild, Oberion oder Aurin
+Frau Schnupper
+Frei spielen
+Freunde
+Freunde (3 ♥) verraten, wo man zaubern muss
+Freundliche Lichtfüchse folgen dir und schenken doppelt Mana.
+Freundschaften
+Frieden, Licht und Schweigen. Corvina schläft weiter.
+Frostkristall am Mondsee
+Frostzauber
+Früher habe ich Briefe an den Wind geschrieben. Manchmal kam eine Feder zurück. Das zählt als Antwort.
+Fundort: 
+Fähigkeiten
+Fähigkeiten – Stufe 
+Fährtenleserin Kestra
+Führe die Zauberbewegung mit den Pfeiltasten (oder W A S D) aus – genau in der gezeigten Reihenfolge.
+Füllt dein Mana auf und verdoppelt 2 Minuten lang die Regeneration.
+Fünfhundert Jahre war ich ein Schatten in den Mauern. Fünf Narren haben mich ausgelöscht, weil ich nicht sterben wollte.
+Für jede gesammelte Zutat gibt es manchmal eine zweite.
+Für jedes Rätsel hast du 
+GEWÄHLT
+Galerie der Gründer
+Ganz weit draußen im Südwesten …
+Garderobe
+Geh. Komm wieder, wenn du weißt, wofür du kämpfst.
+Geheim: Ein Stück Teich fürs Haus
+Geheim: Etwas, das im Wind singt
+Geheim: Licht einer Blume, eingefangen in Glas
+Geheime Sternwarte
+Geheimgänge in Sternenhall: 
+Gehärtetes Leder mit Silberfäden. Schattenwesen rauben dir 60 % weniger Mana.
+Geisterlaterne
+Gelehrtenrobe
+Gelingt es dir, gehört der Splitter des Lichts dir. Der Hof kann sich ein wenig Großzügigkeit leisten. Öffentlich zumindest.
+Gemauerter Kamin
+Gemälde vom Dämmerwald
+Gemütlichkeit 
+Gescheitert
+Geschenk für 
+Geschick
+Getragen: 
+Getroffen – er taumelt!
+Getroffen!  (
+Gewann jedes Duell ihrer alten Schule. Dann kam der Brief von Sternenhall – ohne Absender, mit ihrem Namen in Goldtinte. 
+Gewebt aus Mondlicht: doppelte Mana-Regeneration.
+Gib sie in derselben Reihenfolge in den Kessel: Klick auf die Zutat oder Tasten 1–6.
+Gierig Glimm
+Glacira
+Glücksweste mit Kleeblatt
+Glühwürmchen im Glas
+Goldene Eichel
+Goldene Funken heilen einen Treffer, wenn du fünf davon sammelst.
+Greifenfeder
+Grimmo
+Grimwald Schattenlos
+Großer Saal
+Grrr! Na schön, na schön! Du hast gewonnen. Nimm deine 
+Grubenwicht Schnarr
+Gruft unter dem Palast
+Grumhild: Die Akademie hat vor 40 Jahren die Quellen der Trolle zum Herzbaum umgeleitet.
+Größer, mit Veranda, Bank und Laternen vor der Tür.
+Gründete das Feendorf Laternhain.
+Gundram der Leise
+Gut! Noch eine Zutat mehr …
+Hah! Du hast ein Händchen. Und kein Gewissen, das dir dazwischenfunkt. Das mag ich.
+Hah. Du schmeckst nach Sonnenlicht und Trotz. Komm wieder. Ich werde mich vorbereiten.
+Hahaha! Verloren! Ich nehme 
+Halle des Steinwächters
+Halt sie ans Ohr: Sie verrät Geheimnisse.
+Halte 
+Halte Malrik auf!
+Halte die linke Maustaste gedrückt und ziehe die Rune in einem Zug nach.
+Hat die Bibliothek der Hauptstadt geordnet, Buch für Buch. Ein einziges Buch war nirgends verzeichnet: 
+Hat jede Landkarte des Reiches gezeichnet – nur eine nicht: die der Akademie. Auf allen alten Plänen ist an ihrer Stelle 
+Hauptquest
+Haus ausbauen: 
+Haus mit Turmzimmer
+Head
+Headwear
+Hebt Gegenstände an und bewegt sie: Felsbrocken, Wandteppiche, Steinplatten.
+Hedda
+Hedda Wendelin
+Hedda Wendelin: Du hast es geschafft. Laternhain leuchtet wieder – und meine Sternlaterne ist zurück.
+Hedda Wendelin: Hier ist der Runenschlüssel. In der Bibliothek von Sternenhall gibt es ein Regal ohne Bücher. Dort passt er hinein.
+Hedda Wendelin: Und nimm diesen Umhang. Er hat meiner Familie gehört. Er hält mehr aus, als man denkt.
+Heilte den Mondsee, als er schwarz geworden war.
+Heiter
+Herein, herein! Bei mir ist immer Platz für eine Tasse und ein Schwätzchen.
+Hervorragend! Du fliegst, als hättest du nie etwas anderes getan. (+40 Taler)
+Herz
+Herzbaum
+Heute frisst sie sich in violetten Adern durch den Dämmerwald, und mit jedem toten Baum werden die Stimmen im Rat lauter. 
+Heute: 
+Hexe
+Hier haust 
+Hier hilft ein Zauber, den du noch lernen musst …
+Hier hilft nur 
+Hier wirkt nur 
+Hier, der Splitter. Ich hab Leute gesehen, die bei dem Versuch alles verloren haben, was sie einmal waren. Pass auf dich auf.
+Hier, nimm diese zwei 
+Hihi! Frisches Mana, frisch gewaschen! Bleib doch, {name}. Für immer. Oder wenigstens für ein Spielchen.
+Hihi, du bist gut! Hier, 
+Hilde Steinkuchen
+Hilf Hedda: 
+Himmelbett
+Hinab in die Kammer von Cabeceiras
+Hinausgehen
+Hinter dem Bogen steht eine alte Truhe.
+Hinter dem Herzbaum
+Hinter dem Moor, im Südosten, liegt die Dornenschlucht. Die Welke hat den Eingang zugewuchert. Ohne Lichtzauber kommst du da nicht durch.
+Hinter den Bergen im Norden soll es einen Wald aus Glas geben. Ich war nie dort. Ich mag meinen Sessel.
+Hm. Gerade, ehrlich, ohne Schnörkel. Das gefällt mir.
+Hoch am Rand des Steinbruchs
+Hoho! Ein Akademiekind mit Beinen! Ich bin Brumm. Ich laufe. Das ist alles, was ich kann – aber das kann ich gut.
+Hoho! Erster! Wie immer! Aber du warst nah dran. Fast. Ein bisschen. Na gut, nicht wirklich.
+Holz
+Holz, das man glatt hobelt …
+Händlerrock
+Hügelhöhle
+Hügelhöhle beim Steinbruch
+Hütte im Moor (Süden)
+Hütte mit Steinsockel
+I:FEDER
+I:KROETENMOOS
+I:MONDBLUME
+I:SEEROSE
+I:STERNKRISTALL
+Ich bewache Steine. Auch die mit dem Mondzeichen im Palastkeller. Darunter: die Gruft.
+Ich bewache diesen Weg seit dreihundert Jahren. Niemand hat mich je gebeten, damit aufzuhören.
+Ich bin leichter als eine Feder, doch selbst der stärkste Troll kann mich nicht lange halten.
+Ich bin nicht lebendig, aber ich wachse. Ich habe keine Lunge, aber ich brauche Luft. Wasser tötet mich.
+Ich bin nur, was von ihrem Zorn übrig blieb. Zeig mir, dass er nicht mehr gebraucht wird.
+Ich bin, was übrig bleibt, wenn dunkle Magie zu lange in einem Ort wohnt. Kein Dämon. Eher … Restwärme.
+Ich brauche einen Trank, der die Welke zurückhält. Für die Moorleute, die noch nicht weggezogen sind.
+Ich fliege oft zur geheimen Sternwarte hinauf. Der Weg beginnt hinter dem Wandteppich im Saal!
+Ich fliege ohne Flügel und weine ohne Augen.
+Ich glaube, alle wissen mehr, als sie zugeben. Das ist das Einzige, worauf sich Trolle und Feen noch einigen können.
+Ich habe Blätter, bin aber kein Baum. Ich habe einen Rücken, aber keine Knochen.
+Ich habe Städte, aber keine Häuser, Wälder, aber keine Bäume, Wasser, aber keine Fische. Was bin ich?
+Ich habe einen Hals, aber keinen Kopf, zwei Arme, aber keine Hände.
+Ich habe einmal mit einem Troll um die Wette gegähnt. Unentschieden. Wir haben beide verloren – und geschlafen.
+Ich habe mich geirrt. Nicht beim ersten Jahr und nicht beim zehnten. Aber irgendwann fing die Rinde an, sich zu verfärben, und ich habe so getan, als sähe ich es nicht. Und als Corvina zu mir kam, mit ihren Messungen und ihren Zeichnungen und ihrer furchtbaren, unbestechlichen Ehrlichkeit, da habe ich eine Wahl getroffen.\n\n
+Ich hoffe, du weißt, was du da mit dir herumträgst. Manche Wahrheiten halten ein Haus zusammen – ganz gleich, wie morsch das Fundament ist.
+Ich komme nachts ohne Ruf und verschwinde am Tag, ohne gestohlen zu werden.
+Ich langweile mich, {name}. Duellier dich mit mir. Immer wieder, wenn du willst. Jedes Mal werde ich stärker – und du hoffentlich auch.
+Ich laufe, habe aber keine Beine. Ich habe ein Bett, schlafe aber nie. Ich habe einen Mund, esse aber nicht.
+Ich leih dir meine Flugform. Weich den Ranken aus – Pfeiltasten oder WASD. Drei Treffer, und du landest im Dreck.
+Ich sage nicht, dass es die falsche war. Ich sage nur, dass ich jede Nacht an sie denke.\n\n
+Ich sehe … Sterne hinter Stoff. Einen Wandteppich, der atmet.
+Ich spreche ohne Mund und höre ohne Ohren. Ich habe keinen Körper, doch der Wind erweckt mich.
+Ich weiß nicht, warum. Vielleicht, weil hier zu viel gelacht wird. Trauer mag kein Gelächter.
+Ich zeige dir die Zutaten. Merk dir die Reihenfolge und gib sie genauso in den Kessel – per Maus oder mit den Tasten 1 bis 6.
+Ignis
+Ignis, dann Levitaris: ein brennender Komet – verbrennt Dornenwesen ringsum.
+Ihr kaltes Licht zeigt Dinge, die sonst unsichtbar sind.
+Ilvy
+Im Café ins Gästebuch eintragen
+Im Feendorf Laternhain krabbeln Uhrwerk-Käfer. Ganz selten, aber es gibt sie!
+Im Feendorf Laternhain.
+Im Frühling kam ein Brief. Darin lag eine getrocknete Blume vom Feenhof und ein einziger Satz: »Wir haben es zusammen geöffnet.« Orrin klebte den Brief an die Wand über dem Regal, gleich neben die leere Stelle, an der das letzte Glas gestanden hatte.\n\n
+Im Garten hinter deinem Haus
+Im Geheimgang hinter dem Bücherregal des Palasts.
+Im Geheimgang hinter dem Kamin des Palasts.
+Im Mondsee – nur in klaren Nächten.
+Im Moor (dunkel!)
+Im Osten des Dämmerwaldes, dort, wo die Felsen so alt sind, dass sie sich an das Meer erinnern, das einst über ihnen lag, lebte ein Troll namens Orrin. Orrin war nicht groß für einen Troll und nicht stark für einen Troll, und er war auch nicht besonders laut, was für einen Troll das Seltsamste von allem war.\n\n
+Im Pilzkreis
+Im Schattenhain soll ein Schattenschleier einen alten Steinbogen versperren. Und in unserer Bibliothek … nun ja, schau dir die Regale genau an.
+Im Steinbruch liegen manchmal Drachenschuppen – nein, keine echten. Oder doch?
+Im Steinbruch liegt ein Felsbrocken, den kein Troll bewegen kann. Und manche Wandteppiche hängen nicht ohne Grund.
+Im Trankkeller flüstert es aus der Dunkelheit
+Im Trankkeller, hinter den Kesseln
+Im großen Saal, nahe dem Tor
+Im tiefsten Geheimgang unter dem Palast.
+In Laternhain, wenn die Lichterketten leuchten.
+In den folgenden Wochen öffneten sie jeden Abend ein Glas. Die Stille nach dem ersten Schnee machte sie beide ein wenig albern. Die Stille aus der Bärenhöhle ließ sie besser schlafen als alles andere. Und mit jedem Glas redete Liss ein bisschen weniger und hörte ein bisschen mehr zu.\n\n
+In der Bibliothek, hinter den Lesetischen
+In der Dornenschlucht
+In der Gruft unter dem Palast
+In der Kammer hinter dem Kamin
+In der Zauberklasse – rechts vom großen Saal, nahe dem Tor
+In der geheimen Sternwarte
+In der verborgenen Schreibstube
+In der verborgenen Sternwarte des Palasts.
+In die Gruft hinabsteigen
+In einem Frühling kam Amalind nicht mehr den Pfad herauf. Teo wartete bis zur Dunkelheit, dann nahm er die Streichhölzer aus seiner Tasche und zündete die Laterne selbst an. Seine Hände zitterten. Er setzte sich auf den flachen Stein und sah hinaus.\n\n
+In einer Ecke des großen Saals
+Ins Gästebuch eintragen (Spiel speichern)
+Ins Tagebuch schreiben (Spiel speichern)
+Irgendwo in der endlosen Wildnis – fast nie gesehen.
+Irrgeist
+Irrlichtbegleiter
+Isolde Wolkenreiterin
+Ist mit einem Boot voller Zauberbücher über das Nordmeer gekommen. Furchtlos, laut und immer die Erste, 
+Ithel – Rune des Sehens
+Ivy Sternfeld
+Ja – der Brief war von mir. Das Symbol, das dich führte, war meins. Die Siegel am Gemälde? Du hast sie für mich gebrochen. Danke.
+Ja, ich bin eine Wendelin. Meine Urururgroßmutter war eine der Fünf. Und ja – ich habe den Runenschlüssel.
+Je länger ich stehe, desto kürzer werde ich.
+Je mehr du davon wegnimmst, desto größer werde ich.
+Je mehr es gibt, desto weniger siehst du.
+Jede Runde kommt eine Zutat dazu. Schaffe eine Folge von 
+Jetzt aus dem Gedächtnis!
+Jetzt ausbauen!  ⏎
+Jetzt kannst du all die verschlossenen Truhen öffnen. Und im Trankkeller gibt es eine Platte mit einem Mondzeichen …
+JoLu und die
+JoLu und die Kammer von Cabeceiras
+Juhu! Siehst du, die Wiese freut sich mit dir. Die Blumen leuchten sogar heller.
+Juna
+Kaffeestube Kieselgrund
+Kalt, klar und ehrlich. Mehr braucht es manchmal nicht.
+Kalte Feuerschale
+Kammer hinter dem Kamin
+Kammer von Cabeceiras
+Kanzler Oberion
+Kanzler Oberion sieht dir gelangweilt zu.
+Kapitel
+Kapitel 
+Kapitel abgeschlossen
+Karte
+Karte des Café Wolkenrand
+Karten
+Karten, Raritäten, Freunde, Duelle – und die Akademie öffnet wieder ihre Tore
+Kartierte jeden Stern über dem Dämmerwald.
+Kasimir Dämmerglut
+Kein 
+Kein Kampf auf Leben und Tod – ein Ringen der Willen.
+Kenji Arai
+Kessel der Akademie
+Kessel: 
+Kestra: Am Herzbaum wartet etwas, das einen Menschen verschlucken kann.
+Kestras Flugform trägt dich – solange du nicht zögerst.
+Klack! Das Fallgitter hebt sich.
+Klar
+Kleine Holzhütte
+Klick kauft · Esc zurück
+Klick legt eine Zutat auf die Werkbank
+Klick oder Enter: aufschlagen · Esc: Buch zurückstellen
+Klick oder Taste 1–5 · Esc: doch wieder gehen
+Klick oder Zahl wählen · A/D umsehen · Esc gehen
+Klick wählt einen Zauber · R wechselt auch ohne Buch · Kombination: zwei Zauber kurz nacheinander · B oder Esc schließt
+Klicke goldene Irrlichter an: +1.
+Klicke zwei Karten an. Passen sie zusammen, bleiben sie offen.
+Klippenkaffee
+Klug. Nimm diese Taler – ich habe sie von Wanderern, die nicht so klug waren.
+Kombinationen
+Kombinationen 
+Kombinationen (zwei Zauber kurz nacheinander)
+Kombiniere zuerst etwas, dann kannst du es wiederholen.
+Kombinieren
+Komm wieder, wenn das alles vorbei ist. Ich mach dir einen Tee, der dich vergessen lässt. Oder erinnern. Je nachdem, was du brauchst.
+Konnte mit Pilzen sprechen – und sie antworteten.
+Kristallglas
+Kristalllampe
+Kristallrose
+Krötenmoos
+Kuschelsofa mit Kissen
+LOS!
+Laden
+Lagen: 
+Laterne entzündet (
+Laternen mit Ignis anzünden · den Dieb am Ostrand fangen (Levitaris oder Arcanum halten ihn auf) · Flugstunde am Besen neben mir.
+Laternen: Ignis · Dieb: fangen oder Levitaris · Flugstunde: Besen bei Hedda
+Laternenmantel
+Laternhain
+Laufen mit WASD oder den Pfeiltasten. [E] zum Sprechen. [Leertaste] wirkt deinen Lichtzauber – der brennt die Welke weg, kostet aber Mana.
+Leaves
+Leben: 
+Leeren
+Leertaste  –  springen / flattern / fliegen (mit Flügelmantel)
+Leg Zutaten auf die Werkbank und kombiniere sie!
+Lehm
+Lehm, gebrannt auf heißem Stein
+Lehrte die Dornenranken, Fremde zu erkennen.
+Leise. Hier drin hören selbst die Bücher mit.
+Lerne Lumen im Unterricht
+Lerne Protego (Schutzschild)
+Leuchter entzündet (
+Leuchtfisch-Aquarium
+Levitaris
+Levitaris auf die drei Bücherstapel
+Levitaris hebt den Felsen!
+Levitaris hebt ihn in die Luft!
+Lichter: 
+Lichtfee Aurin
+Lichtlanze
+Lichtwiese
+Lichtzauber
+Lieber schnell wieder gehen
+Lies das Buch der Fünf
+Lies die Tafel auf dem Pult
+Liest Runen wie andere Leute Briefe. Seit Wochen träumt sie von einem Symbol, das sie noch nie gesehen hat – 
+Linksklick / Q  –  Lichtzauber (verbrennt die Welke, vertreibt Schattenwesen)
+Liora
+Liselotte Spiegelgrund
+Liss Holunder
+Liss flog davon, das Glas fest an die Brust gedrückt. Orrin sah ihr nach, bis sie nur noch ein heller Punkt über den Bergen war. Dann setzte er sich vor seine Höhle, und zum ersten Mal seit vielen Jahren öffnete er kein Glas.\n\n
+Liss lachte. »Gläser voller Nichts? Das habe ich schon gehört. Die Trolle unten im Dorf erzählen es sich.«\n\n
+Liss redete. Sie redete, während Orrin ihren Flügel schiente, sie redete, während er Suppe kochte, und sie redete noch, als er längst schlafen wollte. Sie erzählte vom Feenhof, von Bällen und Intrigen und von einem Bruder, mit dem sie seit sieben Jahren kein Wort gewechselt hatte. Sie redete, als hätte sie Angst davor, was passieren würde, wenn sie damit aufhörte.\n\n
+Liss zögerte lange. Dann drehte sie den Deckel.\n\n
+Liv Sandberg
+Losgehen  [Enter]
+Lumen
+Lumen auf das Wandbild zeigt die Reihenfolge · Arcanum auf die Säulen · Meide die Wächteraugen (Lumen blendet sie)
+Lumen enthüllt den Irrgeist!
+Lumen zeigt die Reihenfolge der Runen!
+Lumen · Ignis · Levitaris · Protego
+Lumen, dann Arcanum: ein Blitz aus Sternenlicht – trifft alles in der Nähe und enthüllt Unsichtbares.
+Lumi
+Lust auf ein Rennen? Folge den leuchtenden Ringen quer durch den Wald. Wer zuerst durch den letzten Ring läuft, gewinnt.
+Lust auf ein Spiel? Ich such eins aus – du weißt vorher nie, welches! Dafür gibt's bei mir anderthalbmal so viel Erfahrung.
+Löse das Rätsel der Runensäulen
+Macht
+Maelis
+Magierkarten  
+Magistra Velmara
+Magistra Velmara prüft deine Handschrift.
+Malik Haddad
+Malrik
+Malrik ruft seine Diener! Besiege sie – Lumen gegen Irrgeister, Ignis gegen Dornen.
+Malrik, der Namenlose
+Malrik: „Fünf Kinderzauber …“ – dann zerfällt er zu Staub, und der Staub zu Licht.
+Malriks Diener!
+Man sagt, dass er bis heute Stillen sammelt. Aber er behält sie nicht mehr. Wenn ein Wanderer zu ihm kommt, der zu viel redet oder zu wenig schläft, gibt er ihm ein Glas mit auf den Weg. Und manchmal, ganz selten, bekommt er eines zurück – gefüllt mit einer Stille, die er noch nicht kannte.
+Mana 
+Mana & Duellkraft
+Manatrank
+Manchmal bewegt es sich ein kleines bisschen.
+Manchmal, in stillen Nächten, hörst du unter der Erde jemanden atmen.\n\n
+Maus über eine Karte halten.
+Maus über eine Rarität halten. Manche zeigen sich nur nachts, bei Sonnenaufgang oder nach Regen.
+Meer
+Mehr Kraft: Arcanum oder Ignis!
+Mei Lin
+Mein Großvater hat einmal einen Stern im Mondsee gefangen. Er hat ihn wieder freigelassen – Sterne werden traurig in Eimern.
+Mein Lieblingsding! Du hast dir gemerkt, was ich mag.
+Meine Mutter sitzt im Hofrat. Sie sagt, die Trolle hätten die Quellen vergiftet.
+Meine Urururgroßmutter schrieb: „Das Herz unter dem Schloss ist kein Ungeheuer. Es ist das Licht, das den Wald am Leben hält.“
+Meister Pilzhut
+Melde dich bei Professorin Funkelstein
+Merke dir die Reihenfolge!
+Mimi Nusskern
+Mira Tausendlicht
+Mirabel Tautropfen
+Mirella Glanzfeder
+Missionen
+Mitte des Waldes
+Models/Ninja/Ninja.mesh.xml
+Models/Sinbad/Sinbad.mesh.xml
+Models/Tree/Tree.mesh.j3o
+Moder-Mähre
+Mond
+Mondblume
+Mondblütentee
+Mondlaterne
+Mondperle
+Mondrobe
+Mondsee
+Mondsegen
+Mondtau
+Moor
+Moorhexe Ysolde
+Morgendämmerung
+Morgens auf vier Beinen, mittags auf zwei, abends auf drei. Wer ist es?
+Morvanh – Rune der Rückkehr
+Musik: Kevin MacLeod (incompetech.com), CC BY 4.0  ·  Texturen & Modelle: Poly Haven (CC0)
+Mäusehöhle am Akademiehof
+Mäusewirtin Pimpernell
+Na so was, {name}! Ich hab gerade Wasser aufgesetzt. Setz dich ans Feuer.
+Nach einem Auftrag fragen
+Nacht
+Nachtmahr Vex
+Nachtschatten
+Name ausgekratzt
+Nebel
+Nerea Perlmutt
+Neu an der verlassenen Akademie Sternenhall. Zauber lernst du im Unterricht – Arcanum kannst du schon.
+Neues Spiel
+Nicht schlecht für jemanden mit Puls. Ruh dich aus. Die Nacht läuft nicht weg.
+Nichts passiert … diese Mischung ergibt nichts. Die Zutaten bleiben dir.
+Niemand kennt ihren Namen. Vielleicht ist sie ganz in der Nähe.
+Nim Blütenstaub
+Nimm den Splitter. Und hör zu: Vor vierzig Jahren hat die Akademie unsere Quellen umgeleitet. Zum Herzbaum, hieß es. Zum Schutz. Seitdem ist das Wasser bitter.
+Nimm ihn. Und wenn du schon Fragen stellst: Frag dich, wohin das Licht des Herzbaums fließt. Achte beim Rektor auf seine Hände, nicht auf seine Worte.
+Noch 
+Noch eine Runde? Ich hab da so ein Gefühl … das wird diesmal ganz anders!
+Noch eine Runde? Ich hab mich warmgelaufen. Diesmal bin ich schneller, versprochen.
+Noch einmal üben: 
+Noch eins. Noch ein Kind, das der Rektor schickt, um mich wieder einzuschließen.
+Noch nicht gefunden. Gerücht: 
+Noch nicht gelernt – Unterricht im Palast
+Noch nicht genug
+Noch nichts. Sprich mit den Hüterinnen und Hütern der Splitter.
+Noch offen: 
+Noch: der Trankkeller im Ostflügel
+Noch: die Bibliothek im Westflügel
+Nochmal R
+Nora Kessler
+Norden
+Nordosten
+Nordwesten
+Nordwestlich, hinter dem Schattenhain – dem Pfad folgen
+Nuala
+Nur Sternenlicht: erst Lumen, dann sofort Arcanum!
+Nur von einem allerbesten Freund.
+Nächster: 
+Nächstes Café: 
+Nächstes Gewand: 
+Oberion: Der Feenhof weiß, dass die Trolle unschuldig sind – und schweigt aus Bequemlichkeit.
+Oder du brichst ihn. Ich bin frei. Der Baum heilt. Aber das Licht der Akademie erlischt – und jeder wird wissen, warum.
+Oh! Besuch! Willkommen auf der Lichtwiese – dem einzigen Ort im Wald, an dem die Welke noch nie war.
+Oh! Das ist ja … genau das habe ich mir immer gewünscht! Danke, danke, danke!
+Oh! Kundschaft! Nicht so stürmisch, meine Schnurrhaare sind frisch gekämmt.
+Oh, Besuch! Komm rein, komm rein – putz dir nur die Füße ab, das Moos ist frisch gekämmt.
+Oh, danke. Das ist … nett von dir.
+Oh, knapp daneben! Macht nichts – beim Spielen gewinnt man immer etwas: gute Laune.
+Oma Knorz
+Onkel Grummel
+Onkel Krümel
+Optional
+Orakel: Magistra Corvina entdeckte, dass der Rektor dem Herzbaum das Leben entzieht. Sie wurde an den Baum gebunden. Ihr Zorn ist die Welke.
+Orrik
+Orrin ging zum Regal und holte das Glas, das ganz hinten stand. Er hielt es lange in seinen großen, rauen Händen. Dann gab er es ihr. »Stille, nachdem Mutter gegangen war«, las sie. »Orrin, das kann ich nicht annehmen.«\n\n
+Orrin nahm trotzdem ein Glas aus dem Regal. »Stille über dem Mondsee, kurz vor Sonnenaufgang«, stand darauf. Er reichte es ihr und sagte: »Öffne es. Aber erst, wenn du bereit bist, nichts zu sagen.«\n\n
+Orrin sammelte Stille.\n\n
+Oskar Moorbart
+Osten
+Oswin Graufels
+PRÜFUNG  ·  STUFE 
+Paare 
+Palast
+Pass auf dich auf, Kind. Malrik war klug. Klüger als die Fünf zusammen.
+Perfekt!
+Pfeile laufen · R-Strg 
+Pfeiltasten / Maus  ·  Enter zum Bestätigen
+Phiole Sternenstaub
+Phönixfeder
+Pilzhaus am Pilzkreis
+Pilzkreis
+Pilzkreis (Südwesten)
+Pimpernells Fadenwerk
+Pip Dornwisper
+Pips Käserinde
+Politik, {name}, ist die Kunst, im richtigen Moment das Falsche zu glauben.
+Português (Portugal)
+Prickelt in der Nase. Manchmal steigt ein winziger Funke aus dem Glas.
+Professorin
+Professorin Funkelstein, Zauberklasse
+Professorin Funkelstein: 
+Professorin Ysmira Funkelstein
+Protego
+Protego hält Schattenwölfe und Motten auf Abstand. Ein Schild zur rechten Zeit ist mehr wert als zehn Blitze!
+Protego · Diener · Gründerfeuer (Ignis) · Sternenblitz (Lumen, dann Arcanum)
+Protego, dann Arcanum: der Schild zerspringt in eine Welle, die alle Gegner zurückwirft.
+Präg dir die Bewegung ein …
+Präge dir die Reihenfolge ein …
+Prüfung ablegen (Stufe 
+Prüfung bestanden.
+Prüfung nicht bestanden.
+Psst! In der Palastbibliothek gibt es ein blaues Buch, das nicht ins Regal passt. Zauber es an!
+Quellwasser mit Minze
+Rabenkralle
+Raritäten-Sammlung  
+Raritäten: 
+Rastplatz Honigtau
+Regen
+Regen und Nebel stören deine Sicht kaum noch.
+Regenbogen
+Regenbogenschuppe
+Rektor Aldric Venn
+Rennen gegen Brumm (Stufe 
+Rennen starten (Stufe 
+Rennen · Ring 
+Repariert Uhren, die rückwärts laufen, und Spieluhren, die Erinnerungen abspielen. 
+Reserra
+Rezept: 
+Rezeptbuch
+Rhona Tausendtau
+Richtig: 
+Riechst du das? Torf, Rauch und Lügen. Das Moor erzählt alles, wenn man lange genug still sitzt.
+Rot: du bist hier · Goldene Räume: besucht · Graue Räume: noch unbekannt · Draußen zeigt die Karte die Welt.
+Ruhe findest du im Café Wolkenrand auf der Klippe im Süden.
+Runde 
+Runde 1: mit Vorlage. Runde 2: aus dem Gedächtnis. Runde 3: doppelt und gegen die Zeit.
+Rune 
+Rune vollendet
+RÄTSEL 
+Rätsel bei Steinwächter Grol (Stufe 
+SCHILD!  [Leertaste]
+Sah sich selbst in hundert Jahren – und lächelte.
+Samen des Herzbaums
+Sammeln
+Sammle 
+Sammlerschürze
+Sanduhr voll Zeitsand
+Sanna Morgenrot
+Saphira Tau
+Sauber. Beinahe arrogant sauber.
+Schaffe 
+Schattenflatterer
+Schattenhain
+Schattenschleier
+Schattenschutz
+Schattentarnmantel
+Schattenwesen bemerken dich erst aus nächster Nähe.
+Schattenwesen rauben dir nur halb so viel Mana.
+Schattenwesen, die dich berühren, werden sofort vertrieben.
+Schaukelstuhl
+Schiebe den Strahl ganz bis zu deinem Gegenüber.
+Schlafendes Drachenei
+Schleichwurz
+Schockwelle: springen (Leertaste) · Levitaris auf einen Trümmerstein · dann Arcanum/Ignis aufs Runenherz
+Schockwelle: springen · Levitaris auf Trümmersteine · dann Arcanum aufs Runenherz
+Schon gut, schon gut! Hier ist die Laterne. Ein Mann im schwarzen Mantel hat mir Gold dafür versprochen …
+Schrieb das Rezeptbuch der Feen.
+Schutzschild
+Schwarz, stark, mit einer Prise Salz – wie der Wind hier oben.
+Schwarzer Stamm an der Welke
+Schwebezauber
+Schwerer Felsbrocken
+Sechs Splitter. Magistra Velmara in der Bibliothek hat einen. Der Rest liegt draußen: Mondsee im Westen, Steinbruch im Osten, das Moor im Süden.
+Seegras-Taucheranzug
+Seelenschild
+Seerose
+Seerosenschale
+Sein Schattenschild schluckt jeden Zauber. Wirf seine Kugeln mit Protego zurück!
+Sein Schild ist gebrochen! Sternenblitz: Lumen, dann sofort Arcanum (3×).
+Sein Schild schluckt jeden Zauber – wirf seine Schattenkugeln mit Protego zurück!
+Seine Familie braut seit sieben Generationen Tränke. Er ist der Erste, der die alten Rezepte 
+Seine eigene Magie trifft ihn!  (
+Seitdem schwimmt der Mond jede Nacht in den Seen. Manchmal zerbricht er dabei, wenn ein Fisch springt oder eine Ente landet, aber er hat keine Angst mehr. Er weiß jetzt, dass er wieder ganz wird.\n\n
+Sie blüht nur für die, die sie geschenkt bekommen.
+Sie glüht, ohne zu verbrennen.
+Sie sagt das sehr überzeugt – für jemanden, der noch nie im Steinbruch war.
+Sie will wissen, wer sie gerufen hat.
+Sie wollte es dem Rat sagen. Man band sie an den Baum – nicht tot, nicht lebendig. Ihr Zorn wurde zur Welke. Ihre Trauer auch.
+Sie zeigt Sterne, die es noch gar nicht gibt.
+Siegel gebrochen (
+Sieh an, sieh an. Ein Wanderer, der sich verlaufen hat. Wie … appetitlich für meine Langeweile.
+Silbernes Mondmoos
+Skin
+So ist das Café entstanden. Wenn du heute am Fenster sitzt und lange genug hinaussiehst, kannst du die Wale noch immer sehen. Und wenn die Sonne untergeht, zündet jemand draußen am alten Pfahl eine Laterne an. Frag ruhig, warum. Hier erzählt man die Geschichte gern.
+So klein wie ein Fingerhut – und doch eine echte Krone.
+So soll es sein  [Enter]
+Sofia Márquez
+Sola Morgentau
+Sonne
+Speichern
+Speichern geht jederzeit: hier, mit dem Siegel „Speichern“ unten auf der Schriftrolle oder mit S, solange sie offen ist.
+Spiegelscherbe der Wahrheit
+Spiegelstoß
+Spiel
+Spielen wir etwas? (Stufe 
+Spieler 1 · Tastatur & Maus
+Spieler 2 · Pfeiltasten oder Gamepad
+Spieler 2: Pfeiltasten oder Gamepad
+Spielstand: 
+Spielzeit 
+Spielzeit: 
+Splitter der Erinnerung
+Splitter des Lichts
+Splitter des Paktsteins: 
+Splitter des Steins
+Splitter des Wassers
+Splitter des Windes
+Splitter des Wissens
+Sprache:
+Sprich mit Hedda Wendelin in Laternhain
+Sprungfeder-Gamaschen
+Stapel die Runensteine. [Leertaste] oder Klick, wenn der Stein über dem Turm liegt. Was übersteht, bricht weg – wie bei jedem Bündnis.
+Steige hinab in die alten Ruinen
+Stein
+Stein ist zu hart. Heb einen Trümmerstein mit Levitaris!
+Steinbruch
+Steinwächter Grol
+Steinwächter: „Endlich … Ich sollte jeden aufhalten, der zum Herzen will. Auch die, die es retten wollen. Verzeih.“
+Steinwächter: „Er ist schon unten. Der Namenlose. Er wartet auf dich – weil du die Siegel für ihn gebrochen hast.“
+Steinwächter: „Nimm mein Amulett. Und denk daran: Ein Schild kann auch zuschlagen.“
+Stern
+Sterne
+Sternenblitz
+Sternengewand
+Sternenhall
+Sternenhall ist gerettet
+Sternenhall · 
+Sternenherz
+Sternenschorle
+Sternensicht
+Sternenteleskop
+Sternkristall
+Steuere die Motte mit den Pfeiltasten oder WASD.
+Steuerung
+Stimmen: an
+Stimmen: aus
+Stolpert über jede Schwelle und findet dabei jede Geheimtür. Niemand weiß, ob er Glück oder Pech hat. 
+Stufe 
+Sturmkappe
+Sêlis – Rune des Gleichgewichts
+Süden
+Südosten
+Südwesten
+TRÄNKE (Taste 1–4 trinkt)
+Tab / Esc  –  Menü mit Karte, Garderobe, Inventar, Missionen, Speichern
+Tag
+Tagebuch
+Tagebuch – Erkenntnisse
+Tante Kiesel
+Tasche
+Tastatur & Maus
+Taste I zeigt deine Tasche und Gerüchte
+Teehaus Sternschnuppe
+Teestube Mooskessel
+Tempo & Treffer
+Teo kam von da an jeden Abend. Er lernte, wie man den Docht kürzt, damit er nicht rußt, und wie man das Glas mit Zeitungspapier poliert. Er lernte, die Wale an ihren Rückenflossen zu unterscheiden, und gab ihnen Namen, die Amalind fürchterlich fand. Und er lernte, still zu sitzen, was ihm am schwersten fiel.\n\n
+Teo sah lange auf das Wasser. »Und was ist mit ihr? Der ersten?«\n\n
+Teo setzte sich neben sie. Der größte der Wale hob den Kopf aus dem Wasser, ganz kurz nur, und Teo hätte schwören können, dass er zur Laterne hinübersah.\n\n
+Teo vergaß, dass er sich versteckte, und sprang auf. »Sie leuchten für die Wale!«\n\n
+Teo wurde älter. Er baute neben dem Pfahl eine kleine Hütte, damit er bei Regen nicht nass wurde. Dann ein größeres Fenster, damit er die Wale besser sehen konnte. Dann einen Ofen, weil die Abende kalt waren, und einen zweiten Tisch, weil manchmal Wanderer vorbeikamen, die müde waren. Irgendwann fragte jemand, ob man hier auch einen Tee bekommen könne.\n\n
+Theodor Uhrwerk
+Thurak – Rune des Bruchs
+Tief im Schattenhain
+Tilda Moosmond
+Tipp
+Tipp: 
+Tippe deinen Namen · Rücktaste löscht · Esc zurück
+Tobias Lindqvist
+Topfpflanzen
+Torvin Eisenhaupt
+Totholz und Äste im Wald
+Trankkeller
+Trankregal mit Fläschchen
+Triffst du fast exakt, rastet der Stein perfekt ein.
+Troll-Steinbruch (Osten)
+Trolle und Feen beschuldigen einander leiser – aber sie tun es noch.\n\n
+Trollkönigin, die den Ersten Pakt unterschrieb.
+Truhe auf der Mondsee-Insel
+Truhe der drei Feuer
+Truhe hinter den Ranken
+Truhe im Steinbogen
+Truhe unter dem Felsen
+Tränke & Tinkturen
+Tränke (Taste 1–4 trinkt)
+Täglich plaudern, Lieblingsgeschenke, Aufträge und gemeinsame Spiele bringen Herzen.
+Ufer, Bäche und feuchte Senken
+Ufer, Moor und Tümpel
+Uhrmacher-Wams
+Uhrwerk-Käfer
+Ulrich Dornenfest
+Umrundete das Meer auf einer einzigen Wolke.
+Umschalt  –  rennen (ab Stufe 2)      E  –  sprechen, benutzen
+Und jetzt: deine erste Stunde.
+Und wenn du Corvina siehst – sag ihr nicht, dass es mir leidtut. Das weiß sie. Sag ihr, dass sie recht hatte. Das hat sie nie von mir gehört.\n\n
+Und wenn du nachts an einem stillen See sitzt und der Mond darin liegt, dann wirf keinen Stein hinein. Nicht, weil es ihm schaden würde. Sondern weil er so lange gebraucht hat, um sich hineinzutrauen.
+Unentdeckt. Gerücht: 
+Unter alten Bäumen im Wald – ganz selten glänzt eine.
+Unter dem Felsen schaut eine Truhenecke hervor.
+Unter dem Palast ist eine Gruft. Der Eingang ist eine Steinplatte mit einem Mondzeichen im Keller.
+Unter dem Schloss
+Unter dem Schloss liegt mehr, als man glaubt … Dieser Teil der Karte füllt sich, sobald du ihn betrittst.
+Unter den Pilzkappen liegen acht Paare von Erinnerungen.
+Unter diesem Namen wird man dich im Dämmerwald kennen.
+Unterricht
+Unterricht bei Professorin Funkelstein im Palast
+Uralte Sternkarte
+Velmara: Das Licht des Herzbaums fließt irgendwohin. Der Rektor weiß, wohin.
+Verborgene Schreibstube
+Verfluchter Hohlstamm
+Vergessen ist leicht. Erinnern ist Arbeit. Noch einmal.
+Verstehen? Dann versteh DAS.
+Vertrieben  +8 EP  +
+Viele hören mich, keiner sieht mich, und ich spreche nur, wenn man mich zuerst ruft.
+Vielleicht kommt eines Tages jemand, der mutiger ist als ich. Jemand, der die Splitter einsammelt und vor dem Herzbaum steht und die Wahl trifft, die ich nicht treffen konnte. Ich weiß nicht, welche Wahl das sein wird. Ich weiß nur, dass es nicht meine sein sollte.\n\n
+Vier Wände, ein Dach, ein Strohbett. Ein Anfang.
+Vierzig Jahre. Und am Ende hat es nur jemanden wie dich gebraucht. Und ein wenig Mut, den ich nicht hatte.
+Voll aufgeladen!
+Von einem Fisch, der den Regenbogen gefressen hat.
+Vorrat: 
+Vorwärts bin ich schwer, rückwärts bin ich nicht. Was bin ich?
+WASD  –  laufen      Maus  –  Kamera drehen      Mausrad  –  Zoom
+WASD laufen · Maus schauen · Klick/Q zaubern · Leertaste 
+WASD · Maus · Klick/Q zaubern · Leertaste 
+WERKBANK
+Wahrheit und Freiheit. Die Akademie verliert ihr Licht.
+Waist
+Wanderkluft
+Wandteppich mit Feenmuster
+Warm wie ein Ofenstein – und härter als Stahl.
+Was darf ich dir bringen, 
+Was gehört dir, wird aber von anderen viel häufiger benutzt als von dir?
+Was gehört zu einem Moment, zweimal zu einem Augenblick, aber nie zu hundert Jahren?
+Was hat Zähne, beißt aber nie?
+Was hat ein Auge, kann aber nicht sehen?
+Was ist immer vor dir, aber du kannst es nie sehen?
+Was kann man brechen, ohne es je zu berühren?
+Was läuft immer, kommt aber nie an?
+Was möchtest du tun?
+Was willst du? Die Laterne? Die hab ich … gefunden. Fang mich doch!
+Was wird größer, je mehr man es teilt?
+Was wird nass, während es trocknet?
+Was?! Du warst schneller als ich? Meine Großmutter wird mich auslachen. Komm wieder – ich trainiere!
+Webt Licht zu Fäden und Fäden zu Bildern. Als sie das erste Mal durch die Säle von Sternenhall ging, 
+Weg zum Schattenhain
+Weiche den Dornenranken und den violetten Welke-Sporen aus. Drei Treffer, und du stürzt ab.
+Weil Macht, die an einem Ort liegt, Begehrlichkeiten weckt. Geh in den Unterricht, {name}. Das ist ein freundlicher Rat. Ich gebe nicht viele davon.
+Weit draußen im Osten der Wildnis
+Weit draußen in den Bergen der Wildnis.
+Weit draußen in der Wildnis, wo sonst niemand hinkommt.
+Weitere Gewänder kauft man bei Mäusewirtin Pimpernell im Akademiehof.
+Weiterziehen
+Weißt du, warum die Pilze im Pilzkreis leuchten? Sie erzählen sich Witze. Ganz leise.
+Welle
+Welle 
+Wendel
+Wenn alle drei Schalen brennen, steigt etwas aus der Erde.
+Wenn du das liest und diese Person bist: Ich werde dir keine Steine in den Weg legen. Das ist das Einzige, was ich dir noch anbieten kann.\n\n
+Wenn du nachts drei Glühwürmchen in einer Reihe siehst, darfst du dir etwas wünschen. Aber nur etwas Kleines.
+Wenn du zum Herzbaum gehst: Geh nicht allein in deinem Kopf. Denk an die Leute, für die du das machst.
+Wer dieses Heft findet, soll wissen, dass ich es nicht geschrieben habe, um mich zu entschuldigen. Entschuldigungen sind für Dinge, die man aus Versehen tut. Ich habe nichts aus Versehen getan.\n\n
+Wer hineinsieht, sieht sich so, wie Freunde einen sehen.
+Wer klopft an meine Tür? Niemand klopft an meine Tür. Außer Dummköpfe. Und du.
+Wer mich macht, will mich nicht. Wer mich kauft, braucht mich nicht. Wer mich braucht, weiß es nicht.
+Wer sie pflanzt, dem wächst angeblich ein Baum voller Glück.
+Wer zieht in den Dämmerwald?
+Werde stärker: Stufe 
+Werkbank geleert.
+Werkbank: Baustoffe kombinieren
+Westen
+Westwand der Bibliothek – mit Heddas Runenschlüssel
+Westwand des Saals – es ist versiegelt
+Wie der Mond schwimmen lernte
+Wie möchtest du heißen?
+Willenskraft
+Willkommen bei »Pimpernells Fadenwerk« – Gewänder mit Zauber im Saum! Für Trolle in Übergröße, für Feen mit Flügelschlitz.
+Willkommen im 
+Willkommen im Café Wolkenrand! Ich bin Lumi. Setz dich, wohin du magst – der Fensterplatz ist heute besonders schön.
+Willkommen in Sternenhall!
+Willkommen in der Kammer von Cabeceiras – in der alten Sprache heißt das: die Quellen. Hier entspringt alles Licht des Waldes.
+Willkommen zu deiner ersten Stunde! Ich bin Professorin Ysmira Funkelstein.
+Wilma Wurzelweise
+Windläufer-Stiefel & Weste
+Windschritt
+Windspiel aus Greifenfedern
+Windtrank
+Winzige Feenkrone
+Wir Trolle haben den Palastkamin gemauert. Und eine Tür dahinter, von der niemand weiß.
+Wir sind viele. Wir sind einer. Wir erinnern uns an alles, was unter der Erde geschieht.
+Wirf seine Schattenkugeln mit Protego zurück!
+Wirt Nim Blütenstaub
+Wirtin Hilde Steinkuchen
+Witwe Nachtschatten
+Wolkenkakao
+Wunderbar! Genau, was ich brauchte. Hier, 
+Wurzelhain. Eine Akademie, gewachsen aus den Wurzeln eines Baumes, der älter ist als jede Krone. 
+Wächterauge
+Wähle deine Figur
+Ylva Silberranke
+Ysella
+Ysmira
+Ysolde greift nach den Zutaten …
+Ysolde rührt im Kessel und summt ein schiefes Lied.
+Ysolde zeigt dir eine Folge von Zutaten – sie leuchten nacheinander auf.
+Ysolde: Die Welke ist kein Gift, sondern eingesperrte Trauer.
+Ysoldes Braukessel
+ZUTATEN
+Zauber
+Zauber (Klick/Q) direkt davor
+Zauber: 
+Zauberbuch
+Zauberer
+Zauberklasse
+Zauberpalast
+Zauberrätsel
+Zauberstunde: 
+Zauberunterricht in der Zauberklasse
+Zauberunterricht: 
+Zehn goldene Ringe, der Reihe nach. Der nächste leuchtet am hellsten. Die Kerze brennt 100 Sekunden – los!
+Zeig mir, dass du die alten Runen lesen kannst. Zieh sie mit gedrückter Maustaste nach – in einem Zug, in der richtigen Reihenfolge.
+Zeit in Prüfungen
+Zeit: 
+Zeitdehnung
+Ziegel
+Zu finden: 
+Zu wenig Mana
+Zu zweit, geteilter Bildschirm
+Zuerst geschah gar nichts. Und dann, ganz langsam, füllte sich die Höhle mit etwas, das kein Geräusch war und doch zu hören. Es war das Gefühl von kaltem Wasser, in dem sich der Himmel spiegelt. Es war der Moment, bevor ein Vogel zu singen beginnt. Liss saß sehr still, und Orrin sah, wie ihre Schultern sich senkten, wie sie das erste Mal seit drei Tagen richtig ausatmete.\n\n
+Zuhause
+Zuhause von 
+Zuhause · 
+Zum Titelbild: Fortschritt seit dem letzten Speichern geht verloren.
+Zurück Esc
+Zurück nach oben
+Zurückgeworfen!
+Zutaten
+Zutaten fliegen dir aus 6 m Entfernung zu.
+Zwei Stockwerke, Fachwerk und echte Glasfenster.
+Zweimal hintereinander – schnell!
+Zweitens: Ein Fremder hat meine Sternlaterne gestohlen. Er lungert am Ostrand herum. Fang ihn!
+Zwölf Lagen. Dann reden wir weiter.
+Zählt Sterne, die andere nicht sehen. Seit dem Neumond leuchtet über der Akademie ein Stern, der in keinem Atlas steht. 
+Zähmte den Nordwind und lieh ihn den Seglern.
+[B] Buch lesen   ·   Maus/Pfeile: umsehen   ·   Wetter: [1] Sonne [2] Regen [3] wie es kommt   ·   [R] nachbestellen   ·   [Esc] Café verlassen
+[E] Das Buch der Fünf aufschlagen
+[E] Das leuchtende Symbol berühren
+[E] Den Fremden mit der gestohlenen Laterne stellen
+[E] Den Runenschlüssel ins leere Regal stecken – hinab in die vergessene Bibliothek
+[E] Die Tafel der Gründer lesen
+[E] Die Wendeltreppe hinauf in die Palastbibliothek
+[E] Flugstunde auf Heddas Besen
+[E] Hinab in die Kammer von Cabeceiras
+[E] Hinab in die alten Ruinen
+[E] Mit Hedda Wendelin sprechen
+[E] Nach Hause
+[E] Palast verlassen
+[E] Zauberpalast Sternenhall betreten
+[E] Zauberunterricht bei Professorin Ysmira Funkelstein
+[E] Zurück hinauf in die vergessene Bibliothek
+[E] Zurück in die Halle des Steinwächters
+[Enter] 
+[Enter] Beginnen        [Esc] Zurück
+[Enter] Nach Hause
+[Enter] Weiter
+[Enter] Weiterspielen – der Dämmerwald wartet
+[Enter] zurück
+[Esc] Aufgeben
+[J] Schriftrolle schließen · Tab: alle Ebenen
+[J] Schriftrolle öffnen (
+[L] Sprache: 
+[Leertaste] Licht, das die Welke verbrennt und Schattenwesen vertreibt.
+[M] zeigt die Karte, [Esc] öffnet dein Tagebuch. Und wenn du dem Rektor begegnest … glaub nicht alles, was er sagt.
+[Q] Zum Titelbild
+[S] Jetzt speichern
+[Umschalt] gedrückt halten, um schneller zu laufen.
+[Umschalt] hilft, wenn du den Windschritt schon kannst. Und wenn nicht – dann lauf eben wie ein Troll: einfach weiter.
+[V] Stimmen der Figuren: 
+ab Ausbaustufe 
+alles erledigt!
+am Wasserrand
+an der Werkbank kombinieren
+baute die Mauern
+bei 2 ♥: ein Geschenk
+bei 3 ♥: ein Geheimnis
+bei 4 ♥: Taler & Trank
+bei 5 ♥: Legendäres
+beste Freundschaft ✦
+der Akademie lesen kann – und einige davon hätten besser verschlossen bleiben sollen.
+die eine verbotene Tür aufmacht.
+du hast 
+dunkle Orte der Welke
+ein weißer Fleck. Er will wissen, warum.
+eine Chronik von Sternenhall, deren letzte Seite leer ist – noch.
+entzündete die Kerzen
+flackerten alle Kerzen gleichzeitig – als hätten sie sie erkannt.
+grub die Keller
+helle Wiesen und Lichtungen
+im Schrank
+mag: ??? (ab 1 Herz)
+nach Sammelaufträgen (Glimmertaler)
+neuer Zauber nötig: 
+oder Gamepad: Stick · A 
+ohne dass jemand für sie übersetzt. Es ist chaotisch, laut und ungerecht.\n\n
+pflanzte den Herzbaum
+sehr selten
+steht schon bei dir
+und an jene verteilt, die ihn hüten sollten. Wer alle sechs zum Herzbaum trägt, kann den Pakt erneuern – oder ihn brechen.
+und die Akademie lehrt beide – im Namen eines Friedens, den niemand mehr hinterfragt.
+und gestern stand es plötzlich an ihrer Zimmertür.
+{name}
+»Doch«, sagte er. »Ich habe sie lange genug aufbewahrt. Ich glaube, sie wollte nie in einem Glas sein. Ich glaube, sie wollte geteilt werden.«\n\n
+»Falsch.« Der Wächter schließt die Augen. Du hast den Eindruck, er sei nicht enttäuscht – nur geduldig.
+»Ich kann nicht schwimmen«, sagte der Mond, und es war das erste Mal, dass er es jemandem gestand.\n\n
+»Oh«, sagte sie leise. Das war alles.\n\n
+»Siehst du?«, rief der Frosch. »Zerfließen ist nicht schlimm. Man muss nur warten, bis man wieder zusammenkommt.«\n\n
+»Stille nach dem ersten Schnee«, stand auf einem Glas. »Stille in einer Höhle, in der einmal ein Bär geschlafen hat«, auf einem anderen. Und auf einem dritten, das er ganz hinten im Regal aufbewahrte: »Stille, nachdem Mutter gegangen war.«\n\n
+»Und die Laterne?«\n\n
+»Vor sechzig Jahren«, sagte Amalind, »war ich jung und dumm und flog über dieses Meer, weil ich wissen wollte, was auf der anderen Seite ist. Ein Sturm hat mich erwischt. Ich bin ins Wasser gestürzt, und meine Flügel waren nass und schwer, und ich dachte, das ist das Ende.« Sie lächelte. »Dann kam ein Wal. Eine junge Walkuh, nicht viel älter als ich. Sie hat mich auf ihrem Rücken an Land getragen, genau hier unten, wo heute die Fischerboote liegen.«\n\n
+»Wale sehen schlecht, aber sie sind neugierig. Ich habe ihr versprochen, dass ich jeden Abend ein Licht anzünde, damit sie mich wiederfindet. Sie ist jedes Jahr gekommen. Dann hat sie Kinder bekommen, und die Kinder sind auch gekommen. Das da draußen«, sie zeigte mit dem Stock auf das Meer, »das sind ihre Enkel.«\n\n
+»Wer fragt, muss auch antworten können.«
+Öffne das Runenregal in der Palastbibliothek
+Öffnungszauber
+× kombiniert: +
+Über dem großen Saal liegt eine Sternwarte, die nicht auf den Plänen steht. Die Wendeltreppe beginnt hinter dem Wandteppich.
+Übergekocht. Wie meine dritte Ehe. Noch mal.
+Überstehe den Angriff im Hain
+Überwinde die Fallen der Ruinen
+überall verstreut, selten
+“  –  Sammlung: 
+… noch leer
+← → wählen · Enter bestätigen · Esc zurück · Figuren sprechen mit den Stimmen deines Computers
+←/→ oder Klick links/rechts: umblättern · Esc: Buch schließen
+←/→ oder Klick: Ebene wechseln · S: speichern · Esc/Tab: Schriftrolle schließen
+↑↓ wählen · Enter brauen (Gedächtnis-Prüfung) · Esc
+♥ Freundschaft +
+✓ Automatisch gespeichert
+✓ Gespeichert
+✓ Spiel gespeichert
+✦ ???  (Belohnung eines Kapitels)
+✦ ???  – wird in einem späteren Kapitel freigeschaltet
+✦ Aus der dunklen Ecke flüstert es … Bring Licht: Lumen (Q)
+✦ Drei Siegel am Gemälde – 
+✦ Geheimrezept! Du hast 
+✦ Neues Rezept entdeckt! 
+✦ RARITÄT: 
+✦ Spieler 1 ✦
+✦ Spieler 2 ✦
+✦ Verstärkter Zauber! ✦
+✧ Zufallsname

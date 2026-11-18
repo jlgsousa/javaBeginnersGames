@@ -285,7 +285,7 @@ public class House {
         g.drawRoundRect(6, 6, 500, 116, 26, 26);
         g.setFont(new java.awt.Font("Serif", java.awt.Font.BOLD | java.awt.Font.ITALIC, title.length() > 18 ? 40 : 50));
         java.awt.FontMetrics fm = g.getFontMetrics();
-        g.drawString(title, 256 - fm.stringWidth(title) / 2, 80);
+        Art.str(g, title, 256 - fm.stringWidth(title) / 2, 80);
         g.dispose();
         Material sm = G3.lit(ColorRGBA.White);
         sm.setTexture("DiffuseMap", G3.tex(img));

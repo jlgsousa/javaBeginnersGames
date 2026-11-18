@@ -119,7 +119,7 @@ public class TitleScene implements Scene {
                 "Alle Prüfungen, Rennen und Rätsel sind endlos wiederholbar.",
                 "Ruhe findest du im Café Wolkenrand auf der Klippe im Süden."
             };
-            for (int i = 0; i < l.length; i++) g.drawString(l[i], 290, 230 + i * 40);
+            for (int i = 0; i < l.length; i++) Art.str(g, l[i], 290, 230 + i * 40);
             g.setFont(Art.UI);
             Art.shadowCentered(g, "[Enter] zurück", 640, 585, Art.GOLD);
         }

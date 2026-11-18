@@ -646,7 +646,7 @@ public final class Palace {
         }
         g.fillOval(113, 155, 30, 30);
         g.setFont(new Font("Serif", Font.BOLD | Font.ITALIC, 30));
-        g.drawString("Sternenhall", 52, 320);
+        Art.str(g, "Sternenhall", 52, 320);
         g.dispose();
         Material m = G3.lit(ColorRGBA.White);
         m.setTexture("DiffuseMap", G3.tex(img));
@@ -662,7 +662,7 @@ public final class Palace {
         g.setColor(new Color(236, 200, 120));
         g.setFont(new Font("Serif", Font.BOLD | Font.ITALIC, 52));
         FontMetrics fm = g.getFontMetrics();
-        g.drawString(text, 256 - fm.stringWidth(text) / 2, 70);
+        Art.str(g, text, 256 - fm.stringWidth(text) / 2, 70);
         g.dispose();
         Material m = G3.lit(ColorRGBA.White);
         m.setTexture("DiffuseMap", G3.tex(img));
@@ -759,7 +759,7 @@ public final class Palace {
         for (int k = 0; k < 4; k++) g.drawImage(Depths.runeImg(k), 24 + k * 120, 40, 96, 96, null);
         g.setColor(new Color(235, 235, 220));
         g.setFont(new java.awt.Font("Serif", java.awt.Font.ITALIC, 30));
-        g.drawString("Lumen · Ignis · Levitaris · Protego", 40, 196);
+        Art.str(g, "Lumen · Ignis · Levitaris · Protego", 40, 196);
         g.setStroke(new BasicStroke(2));
         g.drawLine(40, 210, 470, 210);
         g.dispose();
@@ -1006,7 +1006,7 @@ public final class Palace {
             g.setColor(new Color(230, 200, 130));
             g.setFont(new Font("Serif", Font.BOLD, 14));
             FontMetrics fm = g.getFontMetrics();
-            g.drawString(founders[i][0], 80 - fm.stringWidth(founders[i][0]) / 2, 208);
+            Art.str(g, founders[i][0], 80 - fm.stringWidth(founders[i][0]) / 2, 208);
             g.dispose();
             Material m = G3.lit(ColorRGBA.White);
             m.setTexture("DiffuseMap", G3.tex(img));

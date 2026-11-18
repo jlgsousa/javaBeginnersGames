@@ -595,9 +595,9 @@ public final class Village {
         g.setFont(new Font("Serif", Font.BOLD | Font.ITALIC, text.length() > 16 ? 42 : 52));
         FontMetrics fm = g.getFontMetrics();
         g.setColor(new Color(30, 16, 6));
-        g.drawString(text, 258 - fm.stringWidth(text) / 2, 82);
+        Art.str(g, text, 258 - fm.stringWidth(text) / 2, 82);
         g.setColor(new Color(246, 222, 160));
-        g.drawString(text, 256 - fm.stringWidth(text) / 2, 80);
+        Art.str(g, text, 256 - fm.stringWidth(text) / 2, 80);
         g.dispose();
         Material m = G3.lit(ColorRGBA.White);
         m.setTexture("DiffuseMap", G3.tex(img));

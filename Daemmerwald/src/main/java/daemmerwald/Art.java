@@ -190,7 +190,13 @@ public final class Art {
         g.fill(p);
     }
 
+    /** Text zeichnen (übersetzt in die gewählte Sprache). */
+    public static void str(Graphics2D g, String s, double x, double y) {
+        g.drawString(L.t(s), (float) x, (float) y);
+    }
+
     public static void centered(Graphics2D g, String s, double cx, double y) {
+        s = L.t(s);
         FontMetrics fm = g.getFontMetrics();
         g.drawString(s, (float) (cx - fm.stringWidth(s) / 2.0), (float) y);
     }
@@ -203,6 +209,7 @@ public final class Art {
     }
 
     public static void shadowText(Graphics2D g, String s, double x, double y, Color c) {
+        s = L.t(s);
         g.setColor(new Color(0, 0, 0, 170));
         g.drawString(s, (float) x + 2, (float) y + 2);
         g.setColor(c);
@@ -210,6 +217,7 @@ public final class Art {
     }
 
     public static List<String> wrap(Graphics2D g, String text, double width) {
+        text = L.t(text);
         List<String> out = new ArrayList<>();
         FontMetrics fm = g.getFontMetrics();
         for (String para : text.split("\n", -1)) {

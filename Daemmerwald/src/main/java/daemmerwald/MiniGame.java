@@ -101,7 +101,7 @@ public abstract class MiniGame implements Scene {
         draw(g);
         g.setFont(Art.SMALL);
         g.setColor(new Color(200, 200, 220, 160));
-        g.drawString("[Esc] Aufgeben", 20, GamePanel.H - 16);
+        Art.str(g, "[Esc] Aufgeben", 20, GamePanel.H - 16);
         if (phase == Phase.RESULT) renderResult(g);
     }
 

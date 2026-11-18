@@ -138,16 +138,16 @@ public final class Cards {
             g.setFont(new Font("Serif", Font.BOLD, 13));
             String[] parts = m.title.split(" ", 2);
             FontMetrics fm = g.getFontMetrics();
-            g.drawString(parts[0], w / 2 - fm.stringWidth(parts[0]) / 2, 158);
+            Art.str(g, parts[0], w / 2 - fm.stringWidth(parts[0]) / 2, 158);
             if (parts.length > 1) {
                 g.setFont(new Font("Serif", Font.PLAIN, 11));
                 fm = g.getFontMetrics();
-                g.drawString(parts[1], w / 2 - fm.stringWidth(parts[1]) / 2, 172);
+                Art.str(g, parts[1], w / 2 - fm.stringWidth(parts[1]) / 2, 172);
             }
         } else {
             g.setColor(new Color(140, 120, 180));
             g.setFont(new Font("Serif", Font.BOLD, 60));
-            g.drawString("?", 48, 110);
+            Art.str(g, "?", 48, 110);
         }
         g.dispose();
         return img;

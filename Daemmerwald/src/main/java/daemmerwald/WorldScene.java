@@ -895,9 +895,9 @@ public class WorldScene implements Scene, Main.CameraDirector, Combat.Host {
             Art.dot(g, r.getX() + 34, r.getY() + 40, 18, known ? sp.color : new Color(170, 150, 120), 255);
             g.setFont(new Font("Serif", Font.BOLD | Font.ITALIC, 26));
             g.setColor(ink);
-            g.drawString(known ? sp.word : "???", (float) r.getX() + 64, (float) r.getY() + 36);
+            Art.str(g, known ? sp.word : "???", (float) r.getX() + 64, (float) r.getY() + 36);
             g.setFont(new Font("Serif", Font.PLAIN, 15));
-            g.drawString(known ? sp.title + "  ·  Stufe " + "★".repeat(spellLevel(sp)) + "☆".repeat(3 - spellLevel(sp)) : "Noch nicht gelernt – Unterricht im Palast", (float) r.getX() + 64, (float) r.getY() + 58);
+            Art.str(g, known ? sp.title + "  ·  Stufe " + "★".repeat(spellLevel(sp)) + "☆".repeat(3 - spellLevel(sp)) : "Noch nicht gelernt – Unterricht im Palast", (float) r.getX() + 64, (float) r.getY() + 58);
             if (known) {
                 Art.drawWrapped(g, sp.text, r.getX() + 64, r.getY() + 78, 360, 15);
                 // Zauberbewegung als kleine Pfeile
@@ -905,25 +905,25 @@ public class WorldScene implements Scene, Main.CameraDirector, Combat.Host {
                 for (int d : sp.pattern) arrows += "↑→↓←".charAt(d);
                 g.setFont(new Font("SansSerif", Font.BOLD, 14));
                 g.setColor(new Color(120, 70, 30));
-                g.drawString(arrows, (float) (r.getX() + r.getWidth() - 12 - g.getFontMetrics().stringWidth(arrows)), (float) r.getY() + 36);
+                Art.str(g, arrows, (float) (r.getX() + r.getWidth() - 12 - g.getFontMetrics().stringWidth(arrows)), (float) r.getY() + 36);
             }
             if (active) {
                 g.setFont(new Font("SansSerif", Font.BOLD, 12));
                 g.setColor(new Color(150, 60, 20));
-                g.drawString("GEWÄHLT", (float) (r.getX() + r.getWidth() - 70), (float) r.getY() + 58);
+                Art.str(g, "GEWÄHLT", (float) (r.getX() + r.getWidth() - 70), (float) r.getY() + 58);
             }
         }
         // Kombinationen und Ausrüstung
         double cy = 170 + 3 * 116 + 4;
         g.setFont(new Font("Serif", Font.BOLD | Font.ITALIC, 20));
         g.setColor(new Color(90, 40, 20));
-        g.drawString("Kombinationen", 670, (float) cy + 10);
+        Art.str(g, "Kombinationen", 670, (float) cy + 10);
         int k = 0;
         for (Combat.Combo cb : Combat.Combo.values()) {
             boolean has = st.flags.contains("combo:" + cb.name());
             g.setFont(new Font("Serif", Font.BOLD, 15));
             g.setColor(has ? new Color(60, 30, 15) : new Color(150, 130, 100));
-            g.drawString(has ? "✦ " + cb.title + ":  " + cb.first.word + " → " + cb.second.word : "✦ ???  (Belohnung eines Kapitels)", 676, (float) cy + 34 + k * 22);
+            Art.str(g, has ? "✦ " + cb.title + ":  " + cb.first.word + " → " + cb.second.word : "✦ ???  (Belohnung eines Kapitels)", 676, (float) cy + 34 + k * 22);
             k++;
         }
         String eq = (st.flags.contains("equip:umhang") ? "Wächterumhang (+1 Herz)  " : "") + (st.flags.contains("equip:stab") ? "Sternenstab (Reichweite)  " : "")
@@ -2403,6 +2403,11 @@ public class WorldScene implements Scene, Main.CameraDirector, Combat.Host {
         }
         if (menuTab == 1) for (int i = 0; i < 4; i++) if (in.wasPressed(KeyEvent.VK_1 + i)) drink(Potion.values()[i]);
         if (menuTab == 9 && in.mouseClicked && hitButton(0)) saveFromScroll();
+        if (menuTab == 9 && in.wasPressed(KeyEvent.VK_L)) {
+            String nl = st.lang.equals("de") ? "en" : st.lang.equals("en") ? "pt" : "de";
+            st.lang = nl;
+            L.set(nl);
+        }
         if (menuTab == 9 && in.wasPressed(KeyEvent.VK_V)) { st.voices = !st.voices; Voice.enabled = st.voices; if (!st.voices) Voice.stop(); }
         if (menuTab == 9) {
             if (in.wasPressed(KeyEvent.VK_Q) || (in.mouseClicked && hitButton(1))) {
@@ -2483,11 +2488,11 @@ public class WorldScene implements Scene, Main.CameraDirector, Combat.Host {
         Art.shadowText(g, st.displayName2(), x + 16, 42, new Color(255, 200, 130));
         g.setFont(Art.SMALL);
         g.setColor(new Color(190, 190, 210));
-        g.drawString(st.hero2.name.split(" ")[0] + ", " + st.hero2.epithet, (float) x + 16, 61);
+        Art.str(g, st.hero2.name.split(" ")[0] + ", " + st.hero2.epithet, (float) x + 16, 61);
         Art.bar(g, x + 16, 70, 248, 14, p2.mana / p2.maxMana(), Art.MAGIC);
         g.setColor(Color.WHITE);
         g.setFont(new Font("SansSerif", Font.BOLD, 11));
-        g.drawString("Mana " + (int) p2.mana, (float) x + 22, 81);
+        Art.str(g, "Mana " + (int) p2.mana, (float) x + 22, 81);
 
         if (nearP2 != null && calm()) {
             Vector3f p = world.npcPos.get(nearP2.id);
@@ -2635,11 +2640,11 @@ public class WorldScene implements Scene, Main.CameraDirector, Combat.Host {
         Art.shadowText(g, st.displayName(), 32, 42, Art.GOLD);
         g.setFont(Art.SMALL);
         g.setColor(new Color(190, 190, 210));
-        g.drawString(st.hero.name.split(" ")[0] + ", " + st.hero.epithet + "  ·  " + st.outfit.title, 32, 61);
+        Art.str(g, st.hero.name.split(" ")[0] + ", " + st.hero.epithet + "  ·  " + st.outfit.title, 32, 61);
         Art.bar(g, 32, 70, 296, 14, mana / maxMana(), Art.MAGIC);
         g.setColor(Color.WHITE);
         g.setFont(new Font("SansSerif", Font.BOLD, 11));
-        g.drawString("Mana " + (int) mana, 38, 81);
+        Art.str(g, "Mana " + (int) mana, 38, 81);
         Art.bar(g, 32, 90, 296, 9, st.xp / (double) st.xpNext(), Art.GOLD);
         g.setFont(Art.SMALL);
         Art.shadowText(g, "Stufe " + st.level + "   ·   " + st.coins + " Glimmertaler", 32, 119, Art.GOLD);
@@ -2669,15 +2674,15 @@ public class WorldScene implements Scene, Main.CameraDirector, Combat.Host {
         g.setColor(new Color(200, 200, 220, 200));
         StringBuilder pot = new StringBuilder();
         for (Potion p : Potion.values()) pot.append("[").append(p.ordinal() + 1).append("] ").append(p.title).append(" ×").append(st.potions.getOrDefault(p, 0)).append("   ");
-        g.drawString(pot.toString(), 20, SH - 40);
+        Art.str(g, pot.toString(), 20, SH - 40);
         if (p2 != null) {
-            g.drawString("WASD · Maus · Klick/Q zaubern · Leertaste " + (st.hero.isFairy() ? "fliegen" : "springen") + " · E sprechen · Tab Menü", 20, SH - 18);
-            g.drawString("Pfeile laufen · R-Strg " + (st.hero2.isFairy() ? "fliegen" : "springen") + " · R-Umschalt zaubern · Enter sprechen",
+            Art.str(g, "WASD · Maus · Klick/Q zaubern · Leertaste " + (st.hero.isFairy() ? "fliegen" : "springen") + " · E sprechen · Tab Menü", 20, SH - 18);
+            Art.str(g, "Pfeile laufen · R-Strg " + (st.hero2.isFairy() ? "fliegen" : "springen") + " · R-Umschalt zaubern · Enter sprechen",
                 SW / 2 + 20, SH - 18);
-            g.drawString("oder Gamepad: Stick · A " + (st.hero2.isFairy() ? "fliegen" : "springen") + " · B zaubern · X sprechen", SW / 2 + 20, SH - 40);
+            Art.str(g, "oder Gamepad: Stick · A " + (st.hero2.isFairy() ? "fliegen" : "springen") + " · B zaubern · X sprechen", SW / 2 + 20, SH - 40);
             return;
         }
-        g.drawString("WASD laufen · Maus schauen · Klick/Q zaubern · Leertaste " + (st.gadget(Outfit.Gadget.FLIGHT) ? "fliegen" : st.hero.isFairy() ? "flattern" : "springen")
+        Art.str(g, "WASD laufen · Maus schauen · Klick/Q zaubern · Leertaste " + (st.gadget(Outfit.Gadget.FLIGHT) ? "fliegen" : st.hero.isFairy() ? "flattern" : "springen")
             + (st.has(Ability.SPRINT) ? " · Umschalt rennen" : "") + " · E sprechen · I Tasche · Tab Menü", 20, SH - 18);
     }
 
@@ -2828,10 +2833,10 @@ public class WorldScene implements Scene, Main.CameraDirector, Combat.Host {
             };
             g.setFont(new Font("Serif", Font.BOLD, 15));
             g.setColor(tag);
-            g.drawString(clipText(g, e[1], w - 34), (float) x + 18, (float) yy);
+            Art.str(g, clipText(g, e[1], w - 34), (float) x + 18, (float) yy);
             g.setFont(new Font("Serif", Font.ITALIC, 13));
             g.setColor(soft);
-            g.drawString(clipText(g, e[2], w - 44), (float) x + 26, (float) yy + 17);
+            Art.str(g, clipText(g, e[2], w - 44), (float) x + 26, (float) yy + 17);
             yy += 46;
         }
         g.setClip(clip);
@@ -2885,7 +2890,7 @@ public class WorldScene implements Scene, Main.CameraDirector, Combat.Host {
         Art.shadowText(g, "Pimpernells Fadenwerk", 84, 86, Art.GOLD);
         g.setFont(Art.SMALL);
         g.setColor(new Color(200, 200, 220));
-        g.drawString("Du hast " + st.coins + " Glimmertaler.   ↑↓ wählen · Enter kaufen/anziehen · Esc", 84, 112);
+        Art.str(g, "Du hast " + st.coins + " Glimmertaler.   ↑↓ wählen · Enter kaufen/anziehen · Esc", 84, 112);
         for (int i = 0; i < all.length; i++) {
             Outfit o = all[i];
             double y = 150 + i * 28;
@@ -2900,7 +2905,7 @@ public class WorldScene implements Scene, Main.CameraDirector, Combat.Host {
             Art.shadowText(g, o.title, 112, y, st.outfit == o ? Art.GOOD : Art.PARCH);
             String right = st.outfit == o ? "getragen" : st.owned.contains(o) ? "im Schrank" : o.price + " Taler";
             g.setColor(!st.owned.contains(o) && st.coins < o.price ? new Color(200, 120, 120) : new Color(220, 220, 230));
-            g.drawString(right, 540, (float) y);
+            Art.str(g, right, 540, (float) y);
         }
         Outfit o = all[shopSel];
         Art.panel(g, 680, 480, 560, 200);
@@ -2911,7 +2916,7 @@ public class WorldScene implements Scene, Main.CameraDirector, Combat.Host {
         Art.drawWrapped(g, o.desc, 704, 556, 510, 26);
         g.setFont(Art.SMALL);
         g.setColor(new Color(190, 190, 210));
-        g.drawString(st.owned.contains(o) ? "Enter: anziehen" : (st.coins >= o.price ? "Enter: kaufen & anziehen" : "Noch " + (o.price - st.coins) + " Taler sparen"), 704, 664);
+        Art.str(g, st.owned.contains(o) ? "Enter: anziehen" : (st.coins >= o.price ? "Enter: kaufen & anziehen" : "Noch " + (o.price - st.coins) + " Taler sparen"), 704, 664);
     }
 
     private void drawBrew(Graphics2D g) {
@@ -2934,11 +2939,11 @@ public class WorldScene implements Scene, Main.CameraDirector, Combat.Host {
             Art.shadowText(g, p.title + "   (im Gepäck: " + st.potions.getOrDefault(p, 0) + ")", 300, y - 4, p.canBrew(st) ? Color.WHITE : new Color(160, 160, 175));
             g.setFont(Art.SMALL);
             g.setColor(new Color(200, 200, 215));
-            g.drawString(p.recipe() + "      " + p.desc, 300, (float) y + 18);
+            Art.str(g, p.recipe() + "      " + p.desc, 300, (float) y + 18);
             StringBuilder have = new StringBuilder("Vorrat: ");
             for (Item it : p.needs.keySet()) have.append(it.title).append(" ").append(st.items(it)).append("   ");
             g.setColor(new Color(160, 200, 160));
-            g.drawString(have.toString(), 300, (float) y + 36);
+            Art.str(g, have.toString(), 300, (float) y + 36);
         }
     }
 
@@ -2978,7 +2983,7 @@ public class WorldScene implements Scene, Main.CameraDirector, Combat.Host {
                 Art.drawWrapped(g, sp.text, x + 76, y + 72, 480, 15);
             } else {
                 g.setColor(new Color(130, 125, 140));
-                g.drawString(sp.basic() ? "Unterricht bei Professorin Funkelstein im Palast" : "Fortgeschritten – später im Unterricht", (float) x + 76, (float) y + 56);
+                Art.str(g, sp.basic() ? "Unterricht bei Professorin Funkelstein im Palast" : "Fortgeschritten – später im Unterricht", (float) x + 76, (float) y + 56);
             }
         }
         double y = 170 + 4 * 104 + 6;
@@ -3179,7 +3184,7 @@ public class WorldScene implements Scene, Main.CameraDirector, Combat.Host {
         Art.shadowText(g, inside ? "Du bist hier (rot)." : "Du bist " + (int) d + " m vom Herzbaum entfernt – weit draußen in der Wildnis.", 330, 692, Art.PARCH);
         g.setFont(Art.SMALL);
         g.setColor(new Color(180, 180, 200));
-        g.drawString("Die Welt endet nie: Hinter der Karte warten Wälder, Berge, Seen und Steinkreise.", 920, 140);
+        Art.str(g, "Die Welt endet nie: Hinter der Karte warten Wälder, Berge, Seen und Steinkreise.", 920, 140);
     }
 
     private void drawWardrobe(Graphics2D g) {
@@ -3202,7 +3207,7 @@ public class WorldScene implements Scene, Main.CameraDirector, Combat.Host {
         Art.drawWrapped(g, o.desc, 764, 184, 430, 27);
         g.setFont(Art.SMALL);
         g.setColor(new Color(180, 180, 200));
-        g.drawString("Weitere Gewänder kauft man bei Mäusewirtin Pimpernell im Akademiehof.", 764, 384);
+        Art.str(g, "Weitere Gewänder kauft man bei Mäusewirtin Pimpernell im Akademiehof.", 764, 384);
     }
 
     private void drawInventory(Graphics2D g) {
@@ -3216,7 +3221,7 @@ public class WorldScene implements Scene, Main.CameraDirector, Combat.Host {
             Art.shadowText(g, it.title + "   ×" + st.items(it), 124, y, Art.PARCH);
             g.setFont(Art.SMALL);
             g.setColor(new Color(170, 170, 190));
-            g.drawString(it.where, 124, (float) y + 18);
+            Art.str(g, it.where, 124, (float) y + 18);
             y += 52;
         }
         g.setFont(Art.H2);
@@ -3238,8 +3243,8 @@ public class WorldScene implements Scene, Main.CameraDirector, Combat.Host {
             Art.shadowText(g, "[" + (p.ordinal() + 1) + "] " + p.title + "   ×" + st.potions.getOrDefault(p, 0), 716, y, Art.PARCH);
             g.setFont(Art.SMALL);
             g.setColor(new Color(170, 170, 190));
-            g.drawString(p.desc, 716, (float) y + 18);
-            g.drawString("Rezept: " + p.recipe(), 716, (float) y + 35);
+            Art.str(g, p.desc, 716, (float) y + 18);
+            Art.str(g, "Rezept: " + p.recipe(), 716, (float) y + 35);
             y += 70;
         }
         g.setFont(Art.UI);
@@ -3439,12 +3444,12 @@ public class WorldScene implements Scene, Main.CameraDirector, Combat.Host {
         for (String[] m : missions()) {
             g.setFont(Art.SMALL);
             g.setColor(new Color(170, 170, 195));
-            g.drawString(m[0].toUpperCase(), 270, (float) y);
+            Art.str(g, m[0].toUpperCase(), 270, (float) y);
             g.setFont(Art.UI);
             Art.shadowText(g, m[1], 380, y, Art.PARCH);
             g.setFont(Art.SMALL);
             g.setColor(new Color(190, 190, 210));
-            g.drawString(m[2], 380, (float) y + 18);
+            Art.str(g, m[2], 380, (float) y + 18);
             y += 48;
         }
     }
@@ -3460,7 +3465,7 @@ public class WorldScene implements Scene, Main.CameraDirector, Combat.Host {
             Art.shadowText(g, (ok ? "✦ " : "Stufe " + a.level + ":  ") + a.title, 270, y, ok ? Art.GOOD : new Color(150, 150, 170));
             g.setFont(Art.SMALL);
             g.setColor(ok ? new Color(210, 210, 225) : new Color(130, 130, 150));
-            g.drawString(a.desc, 290, (float) y + 19);
+            Art.str(g, a.desc, 290, (float) y + 19);
             y += 54;
         }
     }
@@ -3476,7 +3481,7 @@ public class WorldScene implements Scene, Main.CameraDirector, Combat.Host {
         for (String n : st.notes) y = Art.drawWrapped(g, "• " + n, 170, y, 940, 26) + 8;
         g.setFont(Art.SMALL);
         g.setColor(new Color(170, 170, 190));
-        g.drawString("Spielzeit " + (int) (st.playTime / 60) + " min · vertriebene Schattenwesen " + st.banished + " · gesammelte Zutaten " + st.collected
+        Art.str(g, "Spielzeit " + (int) (st.playTime / 60) + " min · vertriebene Schattenwesen " + st.banished + " · gesammelte Zutaten " + st.collected
             + " · gelöste Rätsel " + st.riddlesSolved, 170, 640);
     }
 
@@ -3497,6 +3502,7 @@ public class WorldScene implements Scene, Main.CameraDirector, Combat.Host {
         Art.centered(g, "Speichern geht jederzeit: hier, mit dem Siegel „Speichern“ unten auf der Schriftrolle oder mit S, solange sie offen ist.", 640, 420);
         Art.centered(g, "Zum Titelbild: Fortschritt seit dem letzten Speichern geht verloren.", 640, 466);
         Art.centered(g, "[V] Stimmen der Figuren: " + (st.voices ? "an" : "aus") + "  (Stimmen deines Computers)", 640, 500);
+        Art.centered(g, "[L] Sprache: " + (st.lang.equals("en") ? "English" : st.lang.equals("pt") ? "Português (Portugal)" : "Deutsch"), 640, 530);
         Art.centered(g, "Spielstand: " + GameState.saveFile(), 640, 444);
     }
 }

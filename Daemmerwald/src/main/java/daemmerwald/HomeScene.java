@@ -692,7 +692,7 @@ public class HomeScene implements Scene, Main.CameraDirector {
         Art.shadowText(g, benchMsg, 60, 668, benchMsgColor);
         g.setFont(Art.SMALL);
         g.setColor(new Color(190, 185, 210));
-        g.drawString("Enter kombiniert · Rücktaste leert", 900, 558);
+        Art.str(g, "Enter kombiniert · Rücktaste leert", 900, 558);
 
         // Rezeptbuch
         Art.panel(g, 870, 96, 380, 480);
@@ -836,13 +836,13 @@ public class HomeScene implements Scene, Main.CameraDirector {
                 cost = sb.toString();
             }
             g.setColor(own ? new Color(160, 220, 170) : locked ? new Color(120, 115, 135) : ok ? new Color(255, 225, 150) : new Color(230, 150, 150));
-            g.drawString(cost, (float) r.getX() + 340, (float) r.getY() + 21);
+            Art.str(g, cost, (float) r.getX() + 340, (float) r.getY() + 21);
         }
         g.setFont(Art.UI);
         Art.shadowText(g, st.coins + " Glimmertaler  ·  Gemütlichkeit " + Home.cozy(st), 300, 700, Art.GOLD);
         g.setFont(Art.SMALL);
         g.setColor(new Color(195, 190, 215));
-        g.drawString("Klick kauft · Esc zurück", 840, 700);
+        Art.str(g, "Klick kauft · Esc zurück", 840, 700);
     }
 
     // ================================================================ Update / Darstellung
@@ -950,7 +950,7 @@ public class HomeScene implements Scene, Main.CameraDirector {
                 }
                 g.setFont(Art.SMALL);
                 g.setColor(new Color(200, 195, 215));
-                g.drawString("Klick oder Zahl wählen · A/D umsehen · Esc gehen", 770, (float) (280 + labels.size() * 52 + 10));
+                Art.str(g, "Klick oder Zahl wählen · A/D umsehen · Esc gehen", 770, (float) (280 + labels.size() * 52 + 10));
             }
         }
     }
