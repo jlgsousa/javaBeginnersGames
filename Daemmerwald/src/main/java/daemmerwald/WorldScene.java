@@ -102,6 +102,7 @@ public class WorldScene implements Scene, Main.CameraDirector {
         world.setHomeLevel(st.homeLevel);
         world.state = st;
         world.puzzles.apply(st);
+        world.cards.attach(world.root, world.palace, st);
         if (st.twoPlayers) p2 = new Mate(st, world, pos, yaw);
         else if (world.mate != null) { world.mate.remove(); world.mate = null; }
         mana = (float) st.hero.manaMax();
@@ -276,6 +277,9 @@ public class WorldScene implements Scene, Main.CameraDirector {
 
         pickups(pos);
         if (p2 != null) pickups(p2.pos);
+        Cards.Spot card = world.cards.pickup(st, pos, world.inPalace, world.palace);
+        if (card == null && p2 != null) card = world.cards.pickup(st, p2.pos, world.inPalace, world.palace);
+        if (card != null) foundCard(card);
         updateCreatures(dt);
         world.updateMarkers(st, npcs);
 
@@ -343,9 +347,13 @@ public class WorldScene implements Scene, Main.CameraDirector {
         if (flyingNow) sp *= 1.6f;
 
         moveSpeed = 0;
+        // Beim Zaubern bleibt die Figur kurz stehen und führt die Zauberbewegung aus
+        if (castLock > 0) { castLock -= dt; dir.set(0, 0, 0); }
         if (dir.lengthSquared() > 0) {
             dir.normalizeLocal();
-            yaw = FastMath.atan2(dir.x, dir.z);
+            // sanft drehen statt herumzuschnappen
+            float want = FastMath.atan2(dir.x, dir.z);
+            yaw += FastMath.normalize(want - yaw, -FastMath.PI, FastMath.PI) * Math.min(1, dt * 12);
             float step = sp * dt;
             float nx = pos.x + dir.x * step, nz = pos.z + dir.z * step;
             boolean air = !onGround && pos.y > ground + 0.6f;
@@ -383,12 +391,23 @@ public class WorldScene implements Scene, Main.CameraDirector {
         if (pos.y > 220) { pos.y = 220; velY = Math.min(velY, 0); }
     }
 
+    private float castLock;
+
     private boolean canGo(float x, float z, boolean air, boolean swim, float step) {
         if (air) {
             return !world.chunks.blocked(x, z, 0.4f) || pos.y > world.height(x, z) + 8;
         }
         float hNew = world.height(x, z), hCur = world.height(pos.x, pos.z);
-        if ((hNew - hCur) / Math.max(0.001f, step) > 1.5f && hNew > hCur + 0.05f) return false;
+        if ((hNew - hCur) / Math.max(0.001f, step) > 1.5f && hNew > hCur + 0.05f) {
+            // Kante bis knapp einen Meter: automatisch hinaufhüpfen
+            if (hNew - hCur < 0.95f && onGround && !world.blockedIgnoringWater(x, z, 0.45f)) {
+                velY = Math.max(velY, 3.6f);
+                onGround = false;
+                pos.y = Math.max(pos.y, hNew - 0.05f);
+                return true;
+            }
+            return false;
+        }
         if (!swim && hNew < WorldGen.WATER - 1.3f) return false;
         return !world.blockedIgnoringWater(x, z, 0.45f);
     }
@@ -400,8 +419,9 @@ public class WorldScene implements Scene, Main.CameraDirector {
         if (mana < cost) { floatText("Zu wenig Mana", pos.add(0, fig.height + 0.8f, 0), Art.DANGER); return; }
         mana -= cost;
         fig.cast();
-        if (game.app.music != null) game.app.music.sfx("spell");
+        if (game.app.music != null) game.app.music.sfx("spell", spellPitch(st.spell));
         castT = 0.32f;
+        castLock = 0.55f;
     }
 
     /** Fliegendes Lichtgeschoss mit Leuchtspur und eigenem Licht. */
@@ -478,7 +498,88 @@ public class WorldScene implements Scene, Main.CameraDirector {
         lightBoost = 3;
     }
 
+    static float spellPitch(Spell s) {
+        return switch (s) {
+            case FUNKE -> 1.0f;
+            case LICHT -> 1.45f;
+            case FLAMME -> 0.75f;
+            case SCHWEBE -> 1.2f;
+            case FROST -> 1.7f;
+            case OEFFNEN -> 1.1f;
+        };
+    }
+
+    private final List<Object[]> flashes = new ArrayList<>();
+
+    /** Eigene Wirkung je Zauber: Feuer, Frost, Lichtblitz, Schwebefunken, goldener Ring. */
+    private void spellEffect(Vector3f at, Spell spell) {
+        ColorRGBA c = G3.rgb(spell.color);
+        switch (spell) {
+            case FLAMME -> {
+                com.jme3.effect.ParticleEmitter f = G3.particles("spellFire", 60, "Effects/Explosion/flame.png", new ColorRGBA(1f, 0.6f, 0.2f, 1),
+                    new ColorRGBA(1f, 0.15f, 0.05f, 0), 0.7f, 0.15f, 0.5f, 1.1f);
+                f.setImagesX(2);
+                f.setImagesY(2);
+                f.setSelectRandomImage(true);
+                f.getParticleInfluencer().setInitialVelocity(new Vector3f(0, 2.2f, 0));
+                f.getParticleInfluencer().setVelocityVariation(0.6f);
+                f.setParticlesPerSec(0);
+                f.setLocalTranslation(at);
+                world.root.attachChild(f);
+                f.emitAllParticles();
+                flashes.add(new Object[]{f, 1.4f});
+            }
+            case FROST -> {
+                for (int i = 0; i < 8; i++) {
+                    Geometry shard = G3.geom("iceShard", new Sphere(3, 4, 0.18f), G3.litGlow(new ColorRGBA(0.8f, 0.95f, 1f, 1), new ColorRGBA(0.3f, 0.5f, 0.7f, 1)));
+                    float a = i * FastMath.TWO_PI / 8;
+                    shard.setLocalTranslation(at.add(FastMath.sin(a) * 0.6f, -0.6f + FastMath.nextRandomFloat() * 0.4f, FastMath.cos(a) * 0.6f));
+                    shard.setLocalScale(0.6f, 2.2f, 0.6f);
+                    shard.setLocalRotation(new Quaternion().fromAngles(FastMath.sin(a) * 0.5f, 0, FastMath.cos(a) * 0.5f));
+                    world.root.attachChild(shard);
+                    flashes.add(new Object[]{shard, 1.2f});
+                }
+            }
+            case LICHT -> {
+                com.jme3.light.PointLight l = new com.jme3.light.PointLight(at.clone(), new ColorRGBA(1f, 0.97f, 0.85f, 1).mult(4f), 18);
+                world.root.addLight(l);
+                flashes.add(new Object[]{l, 1.6f});
+            }
+            case SCHWEBE -> {
+                for (int i = 0; i < 3; i++) world.burst(at.add(0, i * 0.6f, 0), c, 25);
+            }
+            case OEFFNEN -> {
+                Geometry ring = G3.geom("goldRing", new com.jme3.scene.shape.Torus(24, 6, 0.06f, 0.9f), G3.emissive(new ColorRGBA(1f, 0.85f, 0.4f, 1)));
+                ring.setLocalTranslation(at);
+                world.root.attachChild(ring);
+                flashes.add(new Object[]{ring, 1.0f});
+            }
+            default -> { }
+        }
+    }
+
+    private void updateFlashes(float dt) {
+        for (Iterator<Object[]> it = flashes.iterator(); it.hasNext(); ) {
+            Object[] f = it.next();
+            float life = (Float) f[1] - dt;
+            f[1] = life;
+            if (f[0] instanceof Spatial sp) {
+                if (sp.getName().equals("goldRing")) {
+                    sp.setLocalScale(1 + (1 - life) * 1.5f);
+                    sp.rotate(0, dt * 3, 0);
+                }
+                if (sp.getName().equals("iceShard")) sp.setLocalScale(0.6f * Math.max(0.01f, life), 2.2f * Math.max(0.01f, life), 0.6f * Math.max(0.01f, life));
+                if (life <= 0) sp.removeFromParent();
+            } else if (f[0] instanceof com.jme3.light.PointLight l) {
+                l.setColor(new ColorRGBA(1f, 0.97f, 0.85f, 1).mult(Math.max(0, life) * 2.5f));
+                if (life <= 0) world.root.removeLight(l);
+            }
+            if (life <= 0) it.remove();
+        }
+    }
+
     private void spellImpact(Vector3f target, Spell spell) {
+        spellEffect(target, spell);
         if (palaceSpell(target, spell)) return;
         world.burst(target, G3.rgb(spell.color), 70);
         if (puzzleSpell(target, spell)) return;
@@ -607,13 +708,78 @@ public class WorldScene implements Scene, Main.CameraDirector {
         float gh = world.height(desired.x, desired.z) + 0.6f;
         if (desired.y < gh) desired.y = gh;
         if (!camInit) { camPos.set(desired); camInit = true; }
-        camPos.interpolateLocal(desired, Math.min(1, tpf * 8));
+        camPos.interpolateLocal(desired, Math.min(1, tpf * 5));
         cam.setLocation(camPos);
         cam.lookAt(target, Vector3f.UNIT_Y);
     }
 
     /** Wird nach dem Welt-Update aufgerufen: Figuren, Kreaturen, Begleiter. */
+    private void foundCard(Cards.Spot c) {
+        int n = Cards.count(st);
+        if (game.app.music != null) game.app.music.sfx("chime", 1.3f);
+        world.burst(pos.add(0, 1.5f, 0), new ColorRGBA(1f, 0.85f, 0.4f, 1), 70);
+        List<String> l = new ArrayList<>();
+        l.add("*✦ Magierkarte gefunden: " + c.mage().title + "! ✦");
+        l.add("*„" + c.mage().fact + "“  –  Sammlung: " + n + "/" + Cards.Mage.values().length);
+        if (n % 8 == 0) {
+            int coins = st.earn(150);
+            Treasure t = n == 24 ? Treasure.HERZSAMEN : randomPrize();
+            st.addTreasure(t, 1);
+            l.add("*Sammlerglück! Für " + n + " Karten gibt es " + coins + " Glimmertaler und " + t.title + ".");
+        }
+        l.addAll(st.addXp(20));
+        say(null, null, l.toArray(new String[0]), null);
+        saveNow(false);
+    }
+
     private float treasureT;
+    private Geometry runeMarker;
+
+    /** Ein magisches Symbol leuchtet über allem, worauf ein Zauber wirkt – in der Farbe des Zaubers. */
+    private void updateRuneMarker(float dt) {
+        if (runeMarker == null) {
+            java.awt.image.BufferedImage img = new java.awt.image.BufferedImage(128, 128, java.awt.image.BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g = img.createGraphics();
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g.setColor(Color.WHITE);
+            g.setStroke(new BasicStroke(5));
+            g.draw(new Ellipse2D.Double(10, 10, 108, 108));
+            g.setStroke(new BasicStroke(3));
+            for (int i = 0; i < 5; i++) {
+                double a1 = -Math.PI / 2 + i * 4 * Math.PI / 5, a2 = -Math.PI / 2 + (i + 1) * 4 * Math.PI / 5;
+                g.drawLine(64 + (int) (Math.cos(a1) * 44), 64 + (int) (Math.sin(a1) * 44), 64 + (int) (Math.cos(a2) * 44), 64 + (int) (Math.sin(a2) * 44));
+            }
+            g.dispose();
+            com.jme3.material.Material m = new com.jme3.material.Material(G3.am, "Common/MatDefs/Misc/Unshaded.j3md");
+            m.setTexture("ColorMap", G3.tex(img));
+            m.setColor("Color", ColorRGBA.White);
+            m.getAdditionalRenderState().setBlendMode(com.jme3.material.RenderState.BlendMode.AlphaAdditive);
+            m.getAdditionalRenderState().setFaceCullMode(com.jme3.material.RenderState.FaceCullMode.Off);
+            m.getAdditionalRenderState().setDepthWrite(false);
+            runeMarker = G3.geom("runeMarker", new com.jme3.scene.shape.Quad(1.2f, 1.2f), m);
+            runeMarker.setQueueBucket(com.jme3.renderer.queue.RenderQueue.Bucket.Transparent);
+            runeMarker.setShadowMode(com.jme3.renderer.queue.RenderQueue.ShadowMode.Off);
+            world.root.attachChild(runeMarker);
+        }
+        Vector3f at = null;
+        Spell need = null;
+        if (world.inPalace) {
+            Palace.Secret sc = world.palace.secretNear(pos, 9f);
+            if (sc != null && !Palace.isOpen(st, sc.id)) { at = world.palace.toWorld(sc.spot).addLocal(0, 1.6f, 0); need = secretSpell(sc.id); }
+        } else {
+            SpellPuzzles.Puzzle p = world.puzzles.near(st, pos, 12f);
+            if (p != null && world.puzzles.ready(st, p)) { at = p.pos.add(0, p.kind == SpellPuzzles.Kind.BOULDER ? 4.2f : 3.6f, 0); need = p.spell; }
+        }
+        if (at == null) { runeMarker.setCullHint(Spatial.CullHint.Always); return; }
+        runeMarker.setCullHint(Spatial.CullHint.Inherit);
+        ColorRGBA c = G3.rgb(need.color);
+        float pulse = 0.55f + 0.45f * FastMath.sin(treasureT * 3);
+        runeMarker.getMaterial().setColor("Color", st.spells.contains(need) ? c.mult(pulse) : new ColorRGBA(0.45f, 0.42f, 0.55f, 1).mult(pulse));
+        Camera cam = game.app.getCamera();
+        Quaternion q = cam.getRotation().clone();
+        runeMarker.setLocalRotation(q.mult(new Quaternion().fromAngleAxis(treasureT * 0.8f, Vector3f.UNIT_Z)));
+        runeMarker.setLocalTranslation(at.add(q.mult(new Vector3f(-0.6f, -0.6f, 0))).addLocal(0, FastMath.sin(treasureT * 2) * 0.12f, 0));
+    }
 
     /** Manche Raritäten zeigen sich nur nachts, bei Sonnenaufgang oder nach dem Regen. */
     boolean treasureVisible(Treasure t) {
@@ -628,6 +794,9 @@ public class WorldScene implements Scene, Main.CameraDirector {
 
     public void update3D(float dt) {
         if (p2 != null) p2.update3D(dt);
+        updateFlashes(dt);
+        world.cards.update(dt, st);
+        updateRuneMarker(dt);
         treasureT += dt;
         for (Chunks.Spot sp : world.chunks.spotsNear(pos.x, pos.z, 90)) {
             if (sp.treasure == null || sp.geo == null) continue;
@@ -1724,7 +1893,7 @@ public class WorldScene implements Scene, Main.CameraDirector {
 
     // ================================================================ Menü
 
-    private static final String[] TABS = {"Karte", "Tasche", "Freunde", "Garderobe", "Missionen", "Fähigkeiten", "Tagebuch", "Spiel"};
+    private static final String[] TABS = {"Karte", "Tasche", "Karten", "Freunde", "Garderobe", "Missionen", "Fähigkeiten", "Tagebuch", "Spiel"};
 
     private void updateMenu() {
         if (in.wasPressed(KeyEvent.VK_ESCAPE, KeyEvent.VK_TAB) || (menuTab == 0 && in.wasPressed(KeyEvent.VK_M))) { menuTab = -1; return; }
@@ -1732,11 +1901,11 @@ public class WorldScene implements Scene, Main.CameraDirector {
         if (in.wasPressed(KeyEvent.VK_LEFT, KeyEvent.VK_A)) menuTab = (menuTab + TABS.length - 1) % TABS.length;
         if (in.mouseClicked) {
             for (int i = 0; i < TABS.length; i++) {
-                double x = 40 + i * 152;
-                if (in.mouseX > x && in.mouseX < x + 144 && in.mouseY > 40 && in.mouseY < 84) menuTab = i;
+                double x = 30 + i * 136;
+                if (in.mouseX > x && in.mouseX < x + 130 && in.mouseY > 40 && in.mouseY < 84) menuTab = i;
             }
         }
-        if (menuTab == 3) {
+        if (menuTab == 4) {
             List<Outfit> owned = new ArrayList<>(st.owned);
             for (int i = 0; i < owned.size(); i++) {
                 double y = 150 + i * 40;
@@ -1747,7 +1916,7 @@ public class WorldScene implements Scene, Main.CameraDirector {
             }
         }
         if (menuTab == 1) for (int i = 0; i < 4; i++) if (in.wasPressed(KeyEvent.VK_1 + i)) drink(Potion.values()[i]);
-        if (menuTab == 7) {
+        if (menuTab == 8) {
             if (in.wasPressed(KeyEvent.VK_Q) || (in.mouseClicked && hitButton(1))) {
                 fig.node.removeFromParent();
                 for (Creature c : creatures) c.remove();
@@ -2026,7 +2195,7 @@ public class WorldScene implements Scene, Main.CameraDirector {
                     hints > 0 ? hints + " Geheimnis(se) von Freunden bekannt – zaubern!" : "Freunde (3 ♥) verraten, wo man zaubern muss"});
             }
         }
-        m.add(new String[]{"Sammeln", "Raritäten: " + st.treasureKinds() + "/" + Treasure.values().length, "Taste I zeigt deine Tasche und Gerüchte"});
+        m.add(new String[]{"Sammeln", "Raritäten: " + st.treasureKinds() + "/" + Treasure.values().length + " · Magierkarten: " + Cards.count(st) + "/" + Cards.Mage.values().length, "Taste I zeigt deine Tasche und Gerüchte"});
         if (st.homeLevel + 1 < Home.LEVELS.size()) {
             Home.Level nx = Home.LEVELS.get(st.homeLevel + 1);
             StringBuilder need = new StringBuilder();
@@ -2193,15 +2362,15 @@ public class WorldScene implements Scene, Main.CameraDirector {
         g.setColor(new Color(4, 6, 12, 200));
         g.fillRect(0, 0, SW, SH);
         for (int i = 0; i < TABS.length; i++) {
-            double x = 40 + i * 152;
+            double x = 30 + i * 136;
             boolean sel = i == menuTab;
             g.setColor(sel ? new Color(70, 56, 104, 230) : new Color(20, 22, 36, 220));
-            g.fill(new RoundRectangle2D.Double(x, 40, 144, 44, 16, 16));
+            g.fill(new RoundRectangle2D.Double(x, 40, 130, 44, 16, 16));
             g.setColor(sel ? Art.GOLD : Art.alpha(Art.GOLD, 90));
             g.setStroke(new BasicStroke(sel ? 2.5f : 1.2f));
-            g.draw(new RoundRectangle2D.Double(x, 40, 144, 44, 16, 16));
+            g.draw(new RoundRectangle2D.Double(x, 40, 130, 44, 16, 16));
             g.setFont(Art.UI);
-            Art.shadowCentered(g, TABS[i], x + 72, 68, sel ? Color.WHITE : Art.PARCH);
+            Art.shadowCentered(g, TABS[i], x + 65, 68, sel ? Color.WHITE : Art.PARCH);
         }
         g.setFont(Art.SMALL);
         g.setColor(new Color(170, 170, 190));
@@ -2209,11 +2378,12 @@ public class WorldScene implements Scene, Main.CameraDirector {
         switch (menuTab) {
             case 0 -> drawMapTab(g);
             case 1 -> drawBag(g);
-            case 2 -> drawFriends(g);
-            case 3 -> drawWardrobe(g);
-            case 4 -> drawMissionsTab(g);
-            case 5 -> drawAbilities(g);
-            case 6 -> drawJournal(g);
+            case 2 -> drawCards(g);
+            case 3 -> drawFriends(g);
+            case 4 -> drawWardrobe(g);
+            case 5 -> drawMissionsTab(g);
+            case 6 -> drawAbilities(g);
+            case 7 -> drawJournal(g);
             default -> drawGameTab(g);
         }
     }
@@ -2458,6 +2628,43 @@ public class WorldScene implements Scene, Main.CameraDirector {
         } else {
             Art.shadowText(g, "Maus über eine Rarität halten. Manche zeigen sich nur nachts, bei Sonnenaufgang oder nach Regen.", 524, 640, new Color(180, 175, 200));
         }
+    }
+
+    // ---------------------------------------------------------------- Magierkarten
+
+    private final Map<String, java.awt.image.BufferedImage> cardImgs = new HashMap<>();
+
+    private void drawCards(Graphics2D g) {
+        Art.panel(g, 30, 100, 1220, 570);
+        Cards.Mage[] all = Cards.Mage.values();
+        g.setFont(Art.H2);
+        Art.shadowText(g, "Magierkarten  " + Cards.count(st) + " / " + all.length, 54, 138, Art.GOLD);
+        g.setFont(Art.SMALL);
+        Art.shadowText(g, "Berühmte Hexen und Zauberer – versteckt an schwer erreichbaren Orten, in Geheimräumen und weit draußen. Alle 8 Karten eine Belohnung.", 360, 136, new Color(190, 185, 210));
+        Cards.Mage hover = null;
+        for (int i = 0; i < all.length; i++) {
+            Cards.Mage m = all[i];
+            boolean f = Cards.has(st, m);
+            double x = 58 + (i % 12) * 98, y = 160 + (i / 12) * 200;
+            java.awt.image.BufferedImage im = cardImgs.computeIfAbsent(m.name() + f, k -> Cards.image(m, f));
+            g.drawImage(im, (int) x, (int) y, 88, 124, null);
+            if (new java.awt.geom.Rectangle2D.Double(x, y, 88, 124).contains(in.mouseX, in.mouseY)) {
+                hover = m;
+                g.setColor(Art.GOLD);
+                g.setStroke(new BasicStroke(2.5f));
+                g.drawRoundRect((int) x - 2, (int) y - 2, 92, 128, 12, 12);
+            }
+            g.setFont(new Font("SansSerif", Font.PLAIN, 10));
+            String nm = f ? m.title.split(" ")[0] : "???";
+            Art.shadowCentered(g, nm, x + 44, y + 142, f ? Art.PARCH : new Color(130, 125, 150));
+        }
+        g.setFont(Art.UI);
+        if (hover != null) {
+            boolean f = Cards.has(st, hover);
+            String where = "";
+            for (Cards.Spot sp : world.cards.spots) if (sp.mage() == hover) where = sp.where();
+            Art.shadowText(g, f ? hover.title + " – " + hover.fact : "Noch nicht gefunden. Gerücht: " + where, 58, 620, f ? Art.PARCH : new Color(200, 190, 230));
+        } else Art.shadowText(g, "Maus über eine Karte halten.", 58, 620, new Color(180, 175, 200));
     }
 
     // ---------------------------------------------------------------- Freunde

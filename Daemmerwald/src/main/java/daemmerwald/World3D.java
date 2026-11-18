@@ -126,6 +126,7 @@ public class World3D {
     public Village village;
     public Palace palace;
     public SpellPuzzles puzzles;
+    public final Cards cards = new Cards();
     /** Aktueller Spielstand (für Rätsel-Zustände), wird von der Weltszene gesetzt. */
     public GameState state;
     /** Spieler ist im Inneren des Zauberpalasts. */

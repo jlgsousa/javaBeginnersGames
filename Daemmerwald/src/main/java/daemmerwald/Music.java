@@ -58,10 +58,14 @@ public class Music {
         return n;
     }
 
-    public void sfx(String name) {
+    public void sfx(String name) { sfx(name, 1f); }
+
+    /** Soundeffekt mit Tonhöhe (jeder Zauber klingt anders). */
+    public void sfx(String name, float pitch) {
         AudioNode n = tracks.get(name);
         if (n != null) {
             n.setVolume(0.5f * masterVolume);
+            n.setPitch(Math.max(0.5f, Math.min(2f, pitch)));
             n.playInstance();
         }
     }
