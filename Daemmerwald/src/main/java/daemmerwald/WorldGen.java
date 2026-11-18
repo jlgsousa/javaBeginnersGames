@@ -29,7 +29,7 @@ public final class WorldGen {
 
     private static final Feature[] FLAT = {
         new Feature(0, -100, 54), new Feature(COURTYARD, 30), new Feature(HEART, 34), new Feature(MEADOW, 36),
-        new Feature(MUSHROOMS, 22), new Feature(SHADOW, 28), new Feature(CAFE, 22), new Feature(LAKE, 46), new Feature(HOME, 28), new Feature(VILLAGE, 34), new Feature(PALACE, 46), new Feature(GROVE, 30)
+        new Feature(MUSHROOMS, 22), new Feature(SHADOW, 28), new Feature(CAFE, 22), new Feature(LAKE, 46), new Feature(HOME, 28), new Feature(VILLAGE, 34), new Feature(PALACE, 52), new Feature(GROVE, 30), new Feature(0, -150, 22)
     };
 
     private record Feature(float x, float z, float r) {
@@ -106,9 +106,21 @@ public final class WorldGen {
         // Klippen-Plateau beim Café
         double plateau = smooth(130, 196, z) * smooth(-170, -60, x) * (1 - smooth(170, 260, x));
         h += plateau * 20;
+        // Schlosssee: hinter und neben dem Schloss, vorn bleibt der Weg trocken
+        double dp = dist(x, z, PALACE);
+        double causeway = z > PALACE[1] ? 1 - smooth(9, 14, Math.abs(x - PALACE[0])) : 0;
+        double lake = G3.smooth(44, 50, (float) dp) * (1 - G3.smooth(72, 84, (float) dp)) * (1 - causeway);
+        if (lake > 0) h = lerp(h, WATER - 3.5, lake);
         // Übergang in die endlose Wildnis
         double w = smooth(250, 360, r);
         if (w > 0) h = lerp(h, wild(x, z) + plateau * 20, w);
+        // Berge im Norden hinter dem Schloss
+        double north = smooth(PALACE[1] - 85, PALACE[1] - 150, z) * (1 - smooth(200, 320, Math.abs(x - PALACE[0])));
+        if (north > 0) {
+            double ridge = G3.fbm(x * 0.011 + 40, z * 0.011 - 15, 4);
+            double peaks = Math.pow(Math.max(0, G3.fbm(x * 0.024 - 7, z * 0.024 + 3, 3) - 0.35) / 0.65, 1.6);
+            h = Math.max(h, h * (1 - north) + north * (40 + ridge * 80 + peaks * 120));
+        }
         // Meer
         double s = sea(x, z);
         if (s > 0) h = lerp(h, -16 - G3.fbm(x * 0.01, z * 0.01, 2) * 10, s);
@@ -116,7 +128,7 @@ public final class WorldGen {
         double isl = G3.fbm(x * 0.008 + 300, z * 0.008 - 200, 3);
         if (s > 0.9 && isl > 0.68) h = Math.max(h, -16 + (isl - 0.68) / 0.32 * 70);
         // Festland nicht unter Wasser (außer Seen/Moor)
-        if (r < 250 && dl > 34 && ds > 36 && sd > 5 && z < 200) h = Math.max(h, 1.0);
+        if (r < 250 && dl > 34 && ds > 36 && sd > 5 && z < 200 && lake < 0.02) h = Math.max(h, 1.0);
         return (float) h;
     }
 
@@ -196,6 +208,7 @@ public final class WorldGen {
             if (d < c.r * 1.05) f *= G3.smooth((float) c.r * 0.7f, (float) c.r * 1.05f, (float) d);
         }
         f *= G3.smooth(26, 34, (float) dist(x, z, QUARRY));
+        f *= G3.smooth(95, 130, (float) dist(x, z, PALACE));   // freier Blick auf Schloss und See
         f *= G3.smooth(24, 30, (float) dist(x, z, RAVINE));
         f *= G3.smooth(4, 8, (float) pathDist(x, z));
         f *= 1 - brightness(x, z) * 0.7f;

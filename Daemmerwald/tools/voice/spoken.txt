@@ -1,0 +1,401 @@
+! Setz dich, ruh dich aus. Hier kannst du auch deine Reise festhalten – ich hab ein dickes Gästebuch.
+) – das Spiel läuft ohne Musik.
+)! Es liegt jetzt in deiner Tasche.
++15 % Zeit in allen zeitbegrenzten Prüfungen.
++20 % Erfahrung für alles, was du tust.
++20 % Zeit in allen zeitbegrenzten Prüfungen.
+, selbst gebraut! Trink ihn, wenn du ihn brauchst – nicht vorher, sonst wirkt er nicht.
+. Dahinter wartet etwas Seltenes …
+. Ich hab mehr, als in meine Gläser passt.
+1–4  –  Tränke trinken. Zutaten sammelst du, indem du darüber läufst.
+3 Minuten lang können dir Schattenwesen nichts anhaben.
+3 Minuten lang läufst du 40 % schneller.
+5 Minuten lang zeigt die Karte alle Zutaten in deiner Nähe.
+: Ich verrate dir ein Geheimnis … 
+: „Noch nicht ganz. Übung macht den Zauberer – komm einfach wieder.“
+>Niemand hat mich geschickt. Ich will verstehen, was hier passiert ist.
+>Und manche Häuser sollte man vielleicht nicht zusammenhalten.
+>Und warum sind die Splitter des Paktsteins dann über den ganzen Wald verstreut?
+>Und was glaubst du?
+>Weil ich dich nicht besiegen will. Ich will, dass das aufhört.
+Aber Abmachungen altern schlecht. Wie Pergament. Wie die Leute, die sie unterschreiben.
+Ach, Pech! Aber Pech ist nur Glück, das sich verlaufen hat. Gleich noch mal?
+Ach, wie schön! Weißt du, hier draußen kommt selten jemand vorbei. Erzähl, wie geht es dir?
+Ah! Du musst die Neue sein – oder der Neue. Der Brief kam also wirklich an. Ich bin Ysmira Funkelstein und, nun ja, die einzige Lehrerin hier.
+Ah, du schon wieder! Ich habe frisch gebügelt.
+Ah. {name}. Ich habe von deinem … Engagement gehört.
+Alle Erinnerungen gefunden. Unter deinen Füßen rauscht es, als würde die Erde ausatmen.
+Alle Prüfungen, Rennen und Rätsel sind endlos wiederholbar.
+Am Ostufer des Mondsees steht ein Frostkristall. Draußen auf der Insel glänzt seit Jahren eine Truhe.
+Am Palast wuchern Dornenranken um eine Truhe. Auf der Sonnenwiese warten drei kalte Feuerschalen. Und unser Kamin im Saal ist seltsam kalt …
+Arcanum, den Energieblitz, kannst du schon. Dazu lernst du Lumen, Ignis, Levitaris und Protego – und später zwei fortgeschrittene Zauber.
+Aschfell liegt erschöpft am Boden. Befreie ihn mit Lumen!
+Aschfell: „Die Fünf haben ihn verbannt und seinen Namen ausgelöscht. Doch Schatten vergessen nicht. Er war es, der mich verdorben hat.“
+Aschfell: „Es waren nicht fünf Gründer. Es waren sechs. Der sechste hieß Malrik. Er wollte die Kraft unter dem Schloss für sich.“
+Aschfell: „Geh nach Laternhain, ins Feendorf. Dort lebt Hedda Wendelin – die letzte Nachfahrin der Fünf. Sie hütet einen Schlüssel.“
+Aschfell: „Mensch … Du hast mich zurückgeholt. Ich war Wächter dieses Waldes, als Sternenhall noch ein Hügel war.“
+Aschfell: „Und nimm dies: Wenn du Lumen und gleich danach Arcanum sprichst, verbinden sie sich zum Sternenblitz.“
+Aufsitzen! W fliegt vorwärts, die Maus lenkt, Leertaste steigt, Umschalt sinkt.
+Autsch. Die Dornen merken sich Gesichter. Ruh dich aus und versuch's noch mal.
+Beantworte meine Rätsel, Wanderer. Jedes Mal, wenn du gewinnst, denke ich mir schwierigere aus. Ich habe Zeit.
+Bemerkenswert. Ich werde der Königin sagen, es sei meine Idee gewesen.
+Benommen! Zerschlag die Kristalle!
+Berühmte Hexen und Zauberer – versteckt an schwer erreichbaren Orten, in Geheimräumen und weit draußen. Alle 8 Karten eine Belohnung.
+Berührst du einen falschen Knoten, beginnt die Rune von vorn und du verlierst 3 Sekunden.
+Bezahlt wird in Glimmertalern. Die verdienst du mit Prüfungen, Rennen, Aufträgen und beim Sammeln. Schau dich um!
+Bitte schön. Lass dir Zeit – hier oben hat es niemand eilig. Wenn du magst, nimm dir ein Buch aus dem Regal.
+Bring Licht in die dunkle Ecke: Lumen!
+Clanälteste Grumhild verschränkt die Arme.
+Corvina wartet. Seit vierzig Jahren. Sie ist nicht deine Feindin. Aber sie wird dich nicht erkennen.
+Da bist du ja. Pünktlich, wie es in meinem Brief stand.
+Dafür fehlen dir Zutaten.
+Danke, Professorin!
+Dann entscheide. Die Splitter können den Pakt erneuern. Ich schlafe wieder, der Baum lebt weiter, die Akademie behält ihr Licht. Niemand erfährt etwas.
+Dann kam die Welke. Zuerst verloren die Birken am Mondsee ihre Farbe. Dann wurden die Quellen im Steinbruch bitter. Heute frisst sie sich in violetten Adern durch den Dämmerwald, und mit jedem toten Baum werden die Stimmen im Rat lauter. Die Clans beschuldigen den Feenhof. Der Hof beschuldigt die Clans.
+Das Auge ist geblendet!
+Das Auge lässt sich nicht verletzen – blende es mit Lumen!
+Das Pilzorakel teilt, was die Erde nie vergisst.
+Das Prachtstück: Flug, Schutz und Lichtschein in einem.
+Das Symbol erscheint im Licht!
+Dein Haus ist fertig – eine echte Baumvilla!
+Dein Lichtzauber reicht viel weiter.
+Deine Zauber im Duell sind deutlich stärker.
+Deine alte Kleidung. Bequem, geflickt, ehrlich.
+Denke nach. Ich warte. Ich bin gut im Warten.
+Der Gegenstrahl bricht. Niemand ist verletzt – nur ein Wille hat nachgegeben.
+Der Hof empfängt keine Bittsteller ohne Termin. Aber gut – die Königin ist in Trauer, und ich bin gelangweilt.
+Der Kamin im Thronsaal ist kalt – aber dahinter zieht es. Ein Feuerzauber würde ihn öffnen.
+Der Kamin ist kalt, aber es zieht …
+Der Kessel kocht über. Es riecht genau so schlimm, wie Ysolde versprochen hat.
+Der Schattenpanzer hält – warte, bis er benommen ist!
+Der Schattenschutz hält!
+Der Schild hält länger.
+Der See leuchtet still. Für einen Augenblick wirken selbst die Toten zufrieden.
+Der Splitter des Wassers gehört dir. Und weil du nett warst: Die Welke ist kein Gift. Sie ist ein Gefühl. Trauer, die zu lange eingesperrt war. Auch Bäume können trauern.
+Der Splitter des Windes liegt auf der anderen Seite der Schlucht. Der einzige Weg führt durch die Dornen.
+Der Stein fällt ins Leere. Unten lacht jemand. Nicht böse – aber laut.
+Der Steinwächter wird wütend – und schneller!
+Der Trank schimmert grün wie junges Laub. Das Moor atmet ein wenig leichter.
+Der Wandteppich bewegt sich, als ob dahinter Wind weht …
+Der Zauber geht durch ihn hindurch – erst Lumen!
+Der Zauber reicht weiter und wirkt stärker.
+Dichte Dornenranken umschlingen eine Truhe.
+Dichter Nebel – hier geht es erst später weiter.
+Dick, süß und mit einer Haube aus Schaum, die aussieht wie ein Sturm in Zeitlupe.
+Die Akademie schweigt. Und in Wurzelhain hat Schweigen immer einen Preis. Der Paktstein, der die Völker einst band, wurde vor vierzig Jahren in sechs Splitter zerschlagen und an jene verteilt, die ihn hüten sollten. Wer alle sechs zum Herzbaum trägt, kann den Pakt erneuern – oder ihn brechen.
+Die Akademie war fünfhundert Jahre verschlossen. Seit einem Monat öffnen sich ihre Türen wieder von selbst. Niemand weiß, warum.
+Die Bibliothek hat ein Regal, das nur so tut, als wäre es ein Regal. Ein Lichtzauber verrät es.
+Die Dornen erwischen dich. Du landest unsanft im Moos.
+Die Dornen schützen ihn – nur Feuer hilft: Ignis!
+Die Erinnerungen versinken wieder im Boden.
+Die Feen sagen, in Sternenhall brennt wieder Licht. Das ist dein Werk, nicht wahr?
+Die Fünf: „Du hast getan, was wir nicht konnten. Du hast ihn nicht eingesperrt. Du hast ihn erlöst.“
+Die Fünf: „Sternenhall gehört jetzt dir – und allen, die nach dir kommen. Öffne die Tore. Lass die Kinder zurückkehren.“
+Die Gruft unter dem Palast … dort schlafe ich manchmal. Die Platte mit dem Mond, du weißt schon.
+Die Irrlichter des Mondsees sind die Erinnerungen derer, die hier gestorben sind. Seit die Welke kommt, mischen sich Schatten darunter.
+Die Karte wird gezeichnet …
+Die Kerze ist abgebrannt. Lande erst mal … und dann gleich noch einmal!
+Die Kerze ist heruntergebrannt.
+Die Lichter zerstreuen sich über dem Wasser.
+Die Lichtfüchse sind eigentlich sehr schüchtern. Sie kommen nur zu Leuten, die leise lachen.
+Die Reihenfolge wird kurz gezeigt. Bei der ersten Rune bleiben die Zahlen sichtbar – danach musst du sie dir merken.
+Die Reihenfolge wird nur kurz gezeigt. Ab dieser Stufe musst du sie dir immer merken.
+Die Runen verzeihen keine Hast. Komm wieder, wenn dein Kopf klarer ist.
+Die Strahlen prallen aufeinander. Tippe die angezeigten Pfeile (Pfeiltasten oder WASD), um deinen Strahl vorzuschieben.
+Die Toten sind wählerisch. Versuch es noch einmal, wenn du ruhiger atmest.
+Die Truhe auf der kleinen Insel.
+Die Wale vor der Klippe singen nur bei Sonnenuntergang. Dann summt das ganze Café mit.
+Die Welke hat meinen Enkeln ihr Zuhause genommen, {name}. Sie leben jetzt in der Stadt, zwischen Leuten, die sie Steinköpfe nennen. Manchmal weiß ich nicht, was schlimmer ist.
+Die Welke ist eine natürliche Erscheinung. Zyklen, verstehst du? Wälder sterben, Wälder wachsen. Die Akademie hat alles im Griff.
+Die Welke zerbricht!
+Die Welt endet nie: Hinter der Karte warten Wälder, Berge, Seen und Steinkreise.
+Die Werkbank ist leer.
+Die Wurzeln flüstern einen Namen, den oben niemand mehr ausspricht: Corvina.
+Doppelte Mana-Regeneration.
+Dort oben schwebt das Sternenherz. Wer es bricht, lebt ewig. Der Wald? Der stirbt. Die Akademie? Die stirbt. Ich nicht.
+Drei Fehler, und der Kessel kocht über.
+Drei Fehler, und der Kessel kocht über. Dann riecht hier alles eine Woche lang nach verbrannten Zehennägeln.
+Drei Fehler, und die Stunde ist vorbei. Du kannst jederzeit wiederkommen.
+Drittens: Wer in die Tiefe will, muss fliegen können. Nimm meinen Besen – zehn Ringe, bevor die Kerze abbrennt.
+Du bist aus dem Hain geflohen …
+Du bist hier (roter Punkt).
+Du bist weit draußen – der rote Pfeil zeigt, wo.
+Du bist zurück. Gut. Ich habe nachgedacht. Das tue ich meistens.
+Du fliegst wie jemand, der etwas zu verlieren hat. Gut so.
+Du hast dich also wirklich gemeldet. Mutig. Oder dumm. In Wurzelhain ist das selten ein Unterschied.
+Du hast dich durch die Welke gebrannt. Nicht schlecht. Die meisten drehen vorher um.
+Du hast gesehen. Nun höre: Corvina lehrte an der Akademie. Sie fand heraus, dass der Rektor das Leben des Herzbaums in die Mauern der Akademie leitet.
+Du hast mir heute schon etwas geschenkt. Morgen freue ich mich wieder!
+Du kannst durch tiefes Wasser waten und schwimmen.
+Du kennst alle Zauber dieses Jahres! Jede Übungsstunde verbessert einen Zauber (bis Stufe 3).
+Du landest auf der anderen Seite. Deine Flügel zittern noch lange nach.
+Du läufst 30 % schneller, auch ohne Trank.
+Du riechst nach Sonnenlicht. Wie ekelhaft. Lass uns sehen, ob du so mutig bist, wie du stinkst.
+Du schon wieder. Bleib nur. Die Nacht ist lang, und ich habe gelernt, mit dir zu ringen, statt dich zu hassen.
+Du schon wieder. Na gut … setz dich. Aber fass nichts an. Und erzähl niemandem, dass ich nett war.
+Du springst dreimal so hoch.
+Du suchst den Splitter des Wissens. Ich habe ihn seit vierzig Jahren in einer Schublade, die niemand öffnet. Das war die Abmachung.
+Du verdienst 30 % mehr Glimmertaler.
+Du warst fleißig, wie ich höre.
+Du willst den Splitter des Steins? Dann zeig, dass du etwas bauen kannst, statt nur zu reden.
+Du willst mich aufhalten? Mit den fünf Kinderzaubern, die ich dir habe beibringen lassen? Gut. Zeig sie mir.
+Du wirst zurückgedrängt und gehst in die Knie. Erschöpft, aber unversehrt.
+Du … hältst stand. Warum?
+Dunkle Schattenlichter kosten dich 2 Punkte. Je länger die Prüfung dauert, desto mehr mischen sich darunter.
+Ein Akademiekind im Steinbruch. Die letzten von euch kamen mit Verträgen. Und gingen mit unseren Quellen.
+Ein Frostkristall am Ufer. Draußen auf der Insel glänzt eine Truhe.
+Ein Gründerfeuer brennt!
+Ein Irrlicht folgt dir und vertreibt Schattenwesen von selbst.
+Ein Kind aus Sternenhall? Hier? … Du riechst nach Wald. Und nach altem Licht. Du warst bei Aschfell.
+Ein Lichtkind im Schattenhain. Wie erfrischend. Die meisten trauen sich nur bis zum Waldrand.
+Ein Mantel aus Nachtfaltergewebe. Halte [Leertaste], um zu fliegen – solange dein Mana reicht.
+Ein Rat unter uns: Der Hof weiß, dass die Trolle die Quellen nicht vergiftet haben. Aber ein Feind ist so viel bequemer als eine Frage.
+Ein Runenstein gleitet über dem Turm hin und her.
+Ein Symbol leuchtet im großen Saal …
+Ein Zauber mit Kraft: Arcanum oder Ignis!
+Ein blaues Buch steht verkehrt herum im Regal …
+Ein falscher Pfeil wirft dich zurück, und die Folge beginnt neu.
+Ein fester Sockel aus Stein und ein gemauerter Schornstein.
+Ein heller Tee, der nach Nachtluft und Honig duftet.
+Ein neues Gemälde im großen Saal …
+Ein riesiger Felsbrocken. Unter ihm glitzert etwas.
+Ein runder Turm mit Sternenfenster und Wetterfahne aus Greifenfedern.
+Ein schimmernder Schild umgibt dich einige Sekunden und hält jeden Angriff ab.
+Ein uralter Baum wächst durch dein Haus, im Garten leuchten Mondblumen.
+Ein wabernder Schattenschleier versperrt einen Steinbogen.
+Eine Bodenplatte trägt ein silbernes Mondzeichen …
+Eine echte Rarität? Für mich? Das bewahre ich gut auf.
+Eine eingenähte Glühlaterne – dein Licht reicht doppelt so weit.
+Eine kalte, steinerne Feuerschale.
+Eine vergessene Akademie. Ein Brief ohne Absender. Und tief unter dem Schloss: die Kammer von Cabeceiras.
+Eine verschlossene Truhe mit Messingschloss.
+Eingestürzt. Passiert. Mein Großvater hat drei Häuser gebaut, bevor eins stand.
+Einhornhaar findest du nur bei Sonnenaufgang auf den hellsten Wiesen. Steh früh auf!
+Entzünde die fünf Gründerfeuer mit Ignis – dann bricht sein Schild!
+Entzünde die fünf Gründerfeuer mit Ignis!
+Entzünde die fünf Gründerfeuer!
+Er duckt sich zum Sprung – weich aus!
+Er hebt die Fäuste – spring über die Welle!
+Er ist unverwundbar, solange seine Diener kämpfen!
+Er sagte, die Laterne der Wendelins dürfe nie wieder leuchten. Unheimlicher Kerl. Ich hab mich nicht getraut, Nein zu sagen.
+Er schleudert Schattenkugeln: Protego (Schild) wirft sie zurück! Irrgeister: erst Lumen.
+Er springt – weich aus! Ist er benommen: Arcanum oder Ignis auf die Schattenkristalle.
+Er taumelt! Das Runenherz liegt offen – jetzt!
+Er wehrt sich nicht mehr. Befreie ihn mit Lumen!
+Erhellt dunkle Räume, löst Schattenschleier auf und zeigt verborgene Geheimnisse.
+Erst muss der Weg frei sein …
+Erstens: Die vier Laternen am Platz sind erloschen. Ohne sie finden die Feen nachts nicht heim. Ignis!
+Falsch! Ysolde zeigt es dir noch einmal.
+Fang den Dieb!  
+Fang die goldenen Lichter mit der Maus. Die dunklen lass in Ruhe – sie sind hungrig und nehmen dir, was du gesammelt hast.
+Finde alle Paare, bevor die Zeit abläuft. Ab Stufe 3 tauschen nach jedem Fehlgriff zwei verdeckte Karten heimlich die Plätze.
+Finde die Paare in unseren Erinnerungen, und wir geben dir den Splitter der Erinnerung.
+Flüsternde Muscheln liegen an der Südküste unter der Klippe. Ich trage eine als Hut!
+Folge der Vorlage.
+Freundliche Lichtfüchse folgen dir und schenken doppelt Mana.
+Frieden, Licht und Schweigen. Corvina schläft weiter.
+Früher habe ich Briefe an den Wind geschrieben. Manchmal kam eine Feder zurück. Das zählt als Antwort.
+Führe die Zauberbewegung mit den Pfeiltasten (oder W A S D) aus – genau in der gezeigten Reihenfolge.
+Füllt dein Mana auf und verdoppelt 2 Minuten lang die Regeneration.
+Fünfhundert Jahre war ich ein Schatten in den Mauern. Fünf Narren haben mich ausgelöscht, weil ich nicht sterben wollte.
+Für jede gesammelte Zutat gibt es manchmal eine zweite.
+Geh. Komm wieder, wenn du weißt, wofür du kämpfst.
+Gehärtetes Leder mit Silberfäden. Schattenwesen rauben dir 60 % weniger Mana.
+Gelingt es dir, gehört der Splitter des Lichts dir. Der Hof kann sich ein wenig Großzügigkeit leisten. Öffentlich zumindest.
+Getroffen – er taumelt!
+Gewann jedes Duell ihrer alten Schule. Dann kam der Brief von Sternenhall – ohne Absender, mit ihrem Namen in Goldtinte. Sie will wissen, wer sie gerufen hat.
+Gib sie in derselben Reihenfolge in den Kessel: Klick auf die Zutat oder Tasten 1–6.
+Goldene Funken heilen einen Treffer, wenn du fünf davon sammelst.
+Grumhild: Die Akademie hat vor 40 Jahren die Quellen der Trolle zum Herzbaum umgeleitet.
+Größer, mit Veranda, Bank und Laternen vor der Tür.
+Gut! Noch eine Zutat mehr …
+Hah! Du hast ein Händchen. Und kein Gewissen, das dir dazwischenfunkt. Das mag ich.
+Hah. Du schmeckst nach Sonnenlicht und Trotz. Komm wieder. Ich werde mich vorbereiten.
+Halte Malrik auf!
+Halte die linke Maustaste gedrückt und ziehe die Rune in einem Zug nach.
+Hast du ein kleines Geschenk für mich?
+Hat die Bibliothek der Hauptstadt geordnet, Buch für Buch. Ein einziges Buch war nirgends verzeichnet: eine Chronik von Sternenhall, deren letzte Seite leer ist – noch.
+Hat jede Landkarte des Reiches gezeichnet – nur eine nicht: die der Akademie. Auf allen alten Plänen ist an ihrer Stelle ein weißer Fleck. Er will wissen, warum.
+Hebt Gegenstände an und bewegt sie: Felsbrocken, Wandteppiche, Steinplatten.
+Hedda Wendelin: Du hast es geschafft. Laternhain leuchtet wieder – und meine Sternlaterne ist zurück.
+Hedda Wendelin: Hier ist der Runenschlüssel. In der Bibliothek von Sternenhall gibt es ein Regal ohne Bücher. Dort passt er hinein.
+Hedda Wendelin: Und nimm diesen Umhang. Er hat meiner Familie gehört. Er hält mehr aus, als man denkt.
+Herein, herein! Bei mir ist immer Platz für eine Tasse und ein Schwätzchen.
+Hier hilft ein Zauber, den du noch lernen musst …
+Hier, der Splitter. Ich hab Leute gesehen, die bei dem Versuch alles verloren haben, was sie einmal waren. Pass auf dich auf.
+Hihi! Frisches Mana, frisch gewaschen! Bleib doch, {name}. Für immer. Oder wenigstens für ein Spielchen.
+Hinter dem Bogen steht eine alte Truhe.
+Hinter dem Moor, im Südosten, liegt die Dornenschlucht. Die Welke hat den Eingang zugewuchert. Ohne Lichtzauber kommst du da nicht durch.
+Hinter den Bergen im Norden soll es einen Wald aus Glas geben. Ich war nie dort. Ich mag meinen Sessel.
+Hm. Gerade, ehrlich, ohne Schnörkel. Das gefällt mir.
+Hoho! Ein Akademiekind mit Beinen! Ich bin Brumm. Ich laufe. Das ist alles, was ich kann – aber das kann ich gut.
+Hoho! Erster! Wie immer! Aber du warst nah dran. Fast. Ein bisschen. Na gut, nicht wirklich.
+Holz, das man glatt hobelt …
+Ich bewache Steine. Auch die mit dem Mondzeichen im Palastkeller. Darunter: die Gruft.
+Ich bewache diesen Weg seit dreihundert Jahren. Niemand hat mich je gebeten, damit aufzuhören.
+Ich bin nur, was von ihrem Zorn übrig blieb. Zeig mir, dass er nicht mehr gebraucht wird.
+Ich bin, was übrig bleibt, wenn dunkle Magie zu lange in einem Ort wohnt. Kein Dämon. Eher … Restwärme.
+Ich brauche einen Trank, der die Welke zurückhält. Für die Moorleute, die noch nicht weggezogen sind.
+Ich fliege oft zur geheimen Sternwarte hinauf. Der Weg beginnt hinter dem Wandteppich im Saal!
+Ich glaube, alle wissen mehr, als sie zugeben. Das ist das Einzige, worauf sich Trolle und Feen noch einigen können.
+Ich habe einmal mit einem Troll um die Wette gegähnt. Unentschieden. Wir haben beide verloren – und geschlafen.
+Ich hoffe, du weißt, was du da mit dir herumträgst. Manche Wahrheiten halten ein Haus zusammen – ganz gleich, wie morsch das Fundament ist.
+Ich langweile mich, {name}. Duellier dich mit mir. Immer wieder, wenn du willst. Jedes Mal werde ich stärker – und du hoffentlich auch.
+Ich leih dir meine Flugform. Weich den Ranken aus – Pfeiltasten oder WASD. Drei Treffer, und du landest im Dreck.
+Ich sehe … Sterne hinter Stoff. Einen Wandteppich, der atmet.
+Ich weiß nicht, warum. Vielleicht, weil hier zu viel gelacht wird. Trauer mag kein Gelächter.
+Ich zeige dir die Zutaten. Merk dir die Reihenfolge und gib sie genauso in den Kessel – per Maus oder mit den Tasten 1 bis 6.
+Ignis, dann Levitaris: ein brennender Komet – verbrennt Dornenwesen ringsum.
+Im Feendorf Laternhain krabbeln Uhrwerk-Käfer. Ganz selten, aber es gibt sie!
+Im Schattenhain soll ein Schattenschleier einen alten Steinbogen versperren. Und in unserer Bibliothek … nun ja, schau dir die Regale genau an.
+Im Steinbruch liegen manchmal Drachenschuppen – nein, keine echten. Oder doch?
+Im Steinbruch liegt ein Felsbrocken, den kein Troll bewegen kann. Und manche Wandteppiche hängen nicht ohne Grund.
+Ist mit einem Boot voller Zauberbücher über das Nordmeer gekommen. Furchtlos, laut und immer die Erste, die eine verbotene Tür aufmacht.
+Ja – der Brief war von mir. Das Symbol, das dich führte, war meins. Die Siegel am Gemälde? Du hast sie für mich gebrochen. Danke.
+Ja, ich bin eine Wendelin. Meine Urururgroßmutter war eine der Fünf. Und ja – ich habe den Runenschlüssel.
+Jetzt aus dem Gedächtnis!
+Jetzt kannst du all die verschlossenen Truhen öffnen. Und im Trankkeller gibt es eine Platte mit einem Mondzeichen …
+Juhu! Siehst du, die Wiese freut sich mit dir. Die Blumen leuchten sogar heller.
+Kalt, klar und ehrlich. Mehr braucht es manchmal nicht.
+Kanzler Oberion sieht dir gelangweilt zu.
+Kein Kampf auf Leben und Tod – ein Ringen der Willen.
+Kein Tongerät gefunden – das Spiel läuft ohne Musik.
+Kestra: Am Herzbaum wartet etwas, das einen Menschen verschlucken kann.
+Kestras Flugform trägt dich – solange du nicht zögerst.
+Klack! Das Fallgitter hebt sich.
+Klug. Nimm diese Taler – ich habe sie von Wanderern, die nicht so klug waren.
+Kombiniere zuerst etwas, dann kannst du es wiederholen.
+Komm wieder, wenn das alles vorbei ist. Ich mach dir einen Tee, der dich vergessen lässt. Oder erinnern. Je nachdem, was du brauchst.
+Laternen mit Ignis anzünden · den Dieb am Ostrand fangen (Levitaris oder Arcanum halten ihn auf) · Flugstunde am Besen neben mir.
+Laufen mit WASD oder den Pfeiltasten. [E] zum Sprechen. [Leertaste] wirkt deinen Lichtzauber – der brennt die Welke weg, kostet aber Mana.
+Leg Zutaten auf die Werkbank und kombiniere sie!
+Leise. Hier drin hören selbst die Bücher mit.
+Levitaris hebt den Felsen!
+Levitaris hebt ihn in die Luft!
+Liest Runen wie andere Leute Briefe. Seit Wochen träumt sie von einem Symbol, das sie noch nie gesehen hat – und gestern stand es plötzlich an ihrer Zimmertür.
+Lumen enthüllt den Irrgeist!
+Lumen zeigt die Reihenfolge der Runen!
+Lumen, dann Arcanum: ein Blitz aus Sternenlicht – trifft alles in der Nähe und enthüllt Unsichtbares.
+Lust auf ein Rennen? Folge den leuchtenden Ringen quer durch den Wald. Wer zuerst durch den letzten Ring läuft, gewinnt.
+Lust auf ein Spiel? Ich such eins aus – du weißt vorher nie, welches! Dafür gibt's bei mir anderthalbmal so viel Erfahrung.
+Magistra Velmara prüft deine Handschrift.
+Malrik ruft seine Diener! Besiege sie – Lumen gegen Irrgeister, Ignis gegen Dornen.
+Malrik: „Fünf Kinderzauber …“ – dann zerfällt er zu Staub, und der Staub zu Licht.
+Malriks Diener!
+Mehr Kraft: Arcanum oder Ignis!
+Mein Großvater hat einmal einen Stern im Mondsee gefangen. Er hat ihn wieder freigelassen – Sterne werden traurig in Eimern.
+Mein Lieblingsding! Du hast dir gemerkt, was ich mag.
+Meine Mutter sitzt im Hofrat. Sie sagt, die Trolle hätten die Quellen vergiftet.
+Meine Urururgroßmutter schrieb: „Das Herz unter dem Schloss ist kein Ungeheuer. Es ist das Licht, das den Wald am Leben hält.“
+Merke dir die Reihenfolge!
+Na so was, {name}! Ich hab gerade Wasser aufgesetzt. Setz dich ans Feuer.
+Neu an der verlassenen Akademie Sternenhall. Zauber lernst du im Unterricht – Arcanum kannst du schon.
+Nicht schlecht für jemanden mit Puls. Ruh dich aus. Die Nacht läuft nicht weg.
+Nichts passiert … diese Mischung ergibt nichts. Die Zutaten bleiben dir.
+Nimm den Splitter. Und hör zu: Vor vierzig Jahren hat die Akademie unsere Quellen umgeleitet. Zum Herzbaum, hieß es. Zum Schutz. Seitdem ist das Wasser bitter.
+Nimm ihn. Und wenn du schon Fragen stellst: Frag dich, wohin das Licht des Herzbaums fließt. Achte beim Rektor auf seine Hände, nicht auf seine Worte.
+Noch eine Runde? Ich hab da so ein Gefühl … das wird diesmal ganz anders!
+Noch eine Runde? Ich hab mich warmgelaufen. Diesmal bin ich schneller, versprochen.
+Noch eins. Noch ein Kind, das der Rektor schickt, um mich wieder einzuschließen.
+Noch nichts. Sprich mit den Hüterinnen und Hütern der Splitter.
+Oberion: Der Feenhof weiß, dass die Trolle unschuldig sind – und schweigt aus Bequemlichkeit.
+Oder du brichst ihn. Ich bin frei. Der Baum heilt. Aber das Licht der Akademie erlischt – und jeder wird wissen, warum.
+Oh! Besuch! Willkommen auf der Lichtwiese – dem einzigen Ort im Wald, an dem die Welke noch nie war.
+Oh! Das ist ja … genau das habe ich mir immer gewünscht! Danke, danke, danke!
+Oh! Kundschaft! Nicht so stürmisch, meine Schnurrhaare sind frisch gekämmt.
+Oh, Besuch! Komm rein, komm rein – putz dir nur die Füße ab, das Moos ist frisch gekämmt.
+Oh, danke. Das ist … nett von dir.
+Oh, knapp daneben! Macht nichts – beim Spielen gewinnt man immer etwas: gute Laune.
+Orakel: Magistra Corvina entdeckte, dass der Rektor dem Herzbaum das Leben entzieht. Sie wurde an den Baum gebunden. Ihr Zorn ist die Welke.
+Pass auf dich auf, Kind. Malrik war klug. Klüger als die Fünf zusammen.
+Politik, {name}, ist die Kunst, im richtigen Moment das Falsche zu glauben.
+Prickelt in der Nase. Manchmal steigt ein winziger Funke aus dem Glas.
+Protego hält Schattenwölfe und Motten auf Abstand. Ein Schild zur rechten Zeit ist mehr wert als zehn Blitze!
+Protego, dann Arcanum: der Schild zerspringt in eine Welle, die alle Gegner zurückwirft.
+Präg dir die Bewegung ein …
+Präge dir die Reihenfolge ein …
+Prüfung bestanden.
+Prüfung nicht bestanden.
+Psst! In der Palastbibliothek gibt es ein blaues Buch, das nicht ins Regal passt. Zauber es an!
+Regen und Nebel stören deine Sicht kaum noch.
+Repariert Uhren, die rückwärts laufen, und Spieluhren, die Erinnerungen abspielen. Er glaubt, dass die Akademie selbst ein Uhrwerk ist – und dass sie gerade wieder anfängt zu ticken.
+Riechst du das? Torf, Rauch und Lügen. Das Moor erzählt alles, wenn man lange genug still sitzt.
+Ruhe findest du im Café Wolkenrand auf der Klippe im Süden.
+Sauber. Beinahe arrogant sauber.
+Schattenwesen bemerken dich erst aus nächster Nähe.
+Schattenwesen rauben dir nur halb so viel Mana.
+Schattenwesen, die dich berühren, werden sofort vertrieben.
+Schiebe den Strahl ganz bis zu deinem Gegenüber.
+Schon gut, schon gut! Hier ist die Laterne. Ein Mann im schwarzen Mantel hat mir Gold dafür versprochen …
+Schwarz, stark, mit einer Prise Salz – wie der Wind hier oben.
+Sechs Splitter. Magistra Velmara in der Bibliothek hat einen. Der Rest liegt draußen: Mondsee im Westen, Steinbruch im Osten, das Moor im Süden.
+Sein Schattenschild schluckt jeden Zauber. Wirf seine Kugeln mit Protego zurück!
+Sein Schild ist gebrochen! Sternenblitz: Lumen, dann sofort Arcanum (3×).
+Sein Schild schluckt jeden Zauber – wirf seine Schattenkugeln mit Protego zurück!
+Seine Familie braut seit sieben Generationen Tränke. Er ist der Erste, der die alten Rezepte der Akademie lesen kann – und einige davon hätten besser verschlossen bleiben sollen.
+Sie sagt das sehr überzeugt – für jemanden, der noch nie im Steinbruch war.
+Sie wollte es dem Rat sagen. Man band sie an den Baum – nicht tot, nicht lebendig. Ihr Zorn wurde zur Welke. Ihre Trauer auch.
+Sieh an, sieh an. Ein Wanderer, der sich verlaufen hat. Wie … appetitlich für meine Langeweile.
+Stapel die Runensteine. [Leertaste] oder Klick, wenn der Stein über dem Turm liegt. Was übersteht, bricht weg – wie bei jedem Bündnis.
+Stein ist zu hart. Heb einen Trümmerstein mit Levitaris!
+Steinwächter: „Endlich … Ich sollte jeden aufhalten, der zum Herzen will. Auch die, die es retten wollen. Verzeih.“
+Steinwächter: „Er ist schon unten. Der Namenlose. Er wartet auf dich – weil du die Siegel für ihn gebrochen hast.“
+Steinwächter: „Nimm mein Amulett. Und denk daran: Ein Schild kann auch zuschlagen.“
+Steuere die Motte mit den Pfeiltasten oder WASD.
+Stolpert über jede Schwelle und findet dabei jede Geheimtür. Niemand weiß, ob er Glück oder Pech hat. Er selbst am allerwenigsten.
+Tongerät nicht nutzbar – das Spiel läuft ohne Musik.
+Triffst du fast exakt, rastet der Stein perfekt ein.
+Täglich plaudern, Lieblingsgeschenke, Aufträge und gemeinsame Spiele bringen Herzen.
+Unter dem Felsen schaut eine Truhenecke hervor.
+Unter dem Palast ist eine Gruft. Der Eingang ist eine Steinplatte mit einem Mondzeichen im Keller.
+Unter dem Schloss liegt mehr, als man glaubt … Dieser Teil der Karte füllt sich, sobald du ihn betrittst.
+Unter den Pilzkappen liegen acht Paare von Erinnerungen.
+Unter diesem Namen wird man dich im Dämmerwald kennen.
+Velmara: Das Licht des Herzbaums fließt irgendwohin. Der Rektor weiß, wohin.
+Vergessen ist leicht. Erinnern ist Arbeit. Noch einmal.
+Verstehen? Dann versteh DAS.
+Vier Wände, ein Dach, ein Strohbett. Ein Anfang.
+Vierzig Jahre. Und am Ende hat es nur jemanden wie dich gebraucht. Und ein wenig Mut, den ich nicht hatte.
+Voll aufgeladen!
+Wahrheit und Freiheit. Die Akademie verliert ihr Licht.
+Was möchtest du tun?
+Was willst du? Die Laterne? Die hab ich … gefunden. Fang mich doch!
+Was?! Du warst schneller als ich? Meine Großmutter wird mich auslachen. Komm wieder – ich trainiere!
+Webt Licht zu Fäden und Fäden zu Bildern. Als sie das erste Mal durch die Säle von Sternenhall ging, flackerten alle Kerzen gleichzeitig – als hätten sie sie erkannt.
+Weiche den Dornenranken und den violetten Welke-Sporen aus. Drei Treffer, und du stürzt ab.
+Weil Macht, die an einem Ort liegt, Begehrlichkeiten weckt. Geh in den Unterricht, {name}. Das ist ein freundlicher Rat. Ich gebe nicht viele davon.
+Weitere Gewänder kauft man bei Mäusewirtin Pimpernell im Akademiehof.
+Weißt du, warum die Pilze im Pilzkreis leuchten? Sie erzählen sich Witze. Ganz leise.
+Wenn alle drei Schalen brennen, steigt etwas aus der Erde.
+Wenn du nachts drei Glühwürmchen in einer Reihe siehst, darfst du dir etwas wünschen. Aber nur etwas Kleines.
+Wenn du zum Herzbaum gehst: Geh nicht allein in deinem Kopf. Denk an die Leute, für die du das machst.
+Wer klopft an meine Tür? Niemand klopft an meine Tür. Außer Dummköpfe. Und du.
+Wer zieht in den Dämmerwald?
+Werkbank geleert.
+Wie möchtest du heißen?
+Willkommen bei »Pimpernells Fadenwerk« – Gewänder mit Zauber im Saum! Für Trolle in Übergröße, für Feen mit Flügelschlitz.
+Willkommen im Café Wolkenrand! Ich bin Lumi. Setz dich, wohin du magst – der Fensterplatz ist heute besonders schön.
+Willkommen in Sternenhall!
+Willkommen in der Kammer von Cabeceiras – in der alten Sprache heißt das: die Quellen. Hier entspringt alles Licht des Waldes.
+Willkommen zu deiner ersten Stunde! Ich bin Professorin Ysmira Funkelstein.
+Wir Trolle haben den Palastkamin gemauert. Und eine Tür dahinter, von der niemand weiß.
+Wir sind viele. Wir sind einer. Wir erinnern uns an alles, was unter der Erde geschieht.
+Wirf seine Schattenkugeln mit Protego zurück!
+Wurzelhain. Eine Akademie, gewachsen aus den Wurzeln eines Baumes, der älter ist als jede Krone. Dreihundert Jahre lang hat der Pakt gehalten: Die Trolle hüten die Steine, die Feen das Licht, und die Akademie lehrt beide – im Namen eines Friedens, den niemand mehr hinterfragt.
+Ysolde greift nach den Zutaten …
+Ysolde rührt im Kessel und summt ein schiefes Lied.
+Ysolde zeigt dir eine Folge von Zutaten – sie leuchten nacheinander auf.
+Ysolde: Die Welke ist kein Gift, sondern eingesperrte Trauer.
+Zehn goldene Ringe, der Reihe nach. Der nächste leuchtet am hellsten. Die Kerze brennt 100 Sekunden – los!
+Zeig mir, dass du die alten Runen lesen kannst. Zieh sie mit gedrückter Maustaste nach – in einem Zug, in der richtigen Reihenfolge.
+Zum Titelbild: Fortschritt seit dem letzten Speichern geht verloren.
+Zurückgeworfen!
+Zutaten fliegen dir aus 6 m Entfernung zu.
+Zwei Stockwerke, Fachwerk und echte Glasfenster.
+Zweimal hintereinander – schnell!
+Zweitens: Ein Fremder hat meine Sternlaterne gestohlen. Er lungert am Ostrand herum. Fang ihn!
+Zwölf Lagen. Dann reden wir weiter.
+Zählt Sterne, die andere nicht sehen. Seit dem Neumond leuchtet über der Akademie ein Stern, der in keinem Atlas steht. Er ist ihm bis hierher gefolgt.
+Über dem großen Saal liegt eine Sternwarte, die nicht auf den Plänen steht. Die Wendeltreppe beginnt hinter dem Wandteppich.
+Übergekocht. Wie meine dritte Ehe. Noch mal.
+✦ Neues Rezept entdeckt! 

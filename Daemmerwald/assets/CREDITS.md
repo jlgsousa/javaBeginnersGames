@@ -42,3 +42,8 @@ für das Spiel in OGG umgewandelt (ansonsten unverändert):
 | cafe1.ogg / cafe2.ogg | Gymnopedie No 1 / Heartwarming | Café, Zuhause, freundliche Häuser |
 | boss1.ogg / boss2.ogg | Final Battle of the Dark Wizards / Curse of the Scarab | Bosskämpfe |
 | deep1.ogg | Gathering Darkness | Unter dem Schloss: Bibliothek, Ruinen |
+
+## Stimmen
+Die gesprochenen Sätze in `assets/voice/` wurden mit der freien Sprachsynthese [Piper](https://github.com/rhasspy/piper)
+erzeugt. Stimmen: **Kerstin** (de_DE-kerstin-medium, Datensatz CC0) und **Thorsten** (de_DE-thorsten-high,
+Thorsten-Voice von Thorsten Müller, CC0). Neu erzeugen: `tools/voice/render.py`.

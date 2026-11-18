@@ -226,69 +226,114 @@ public final class Palace {
 
     // ================================================================ Außen: das Schloss
 
+    /** Prunkvolles Schloss: hoher Sandsteinbau mit vielen schlanken Türmen, goldenen Spitzen und leuchtenden Fenstern. */
     private void buildExterior() {
         Node n = exterior;
-        float W = 15, D = 11, H = 15;
-        // Sockel und Freitreppe
-        box(n, stone, W + 2, 1.2f, D + 2, 0, 0.2f, 0, 0.6f);
-        for (int i = 0; i < 6; i++) box(n, stone, 4.5f - i * 0.1f, 0.15f, 0.6f, 0, 0.15f + i * 0.3f, D + 6.4f - i * 0.75f, 0.8f);
-        // Hauptbau
-        box(n, stone, W, H / 2, D, 0, 1.4f + H / 2, 0, 0.45f);
-        // Dach mit blauen Ziegeln
-        for (int s = -1; s <= 1; s += 2) {
-            Geometry r = box(n, roofTiles, D * 0.78f, 0.25f, W + 0.6f, s * D * 0.5f, 1.4f + H + 3.6f, 0, 0.5f);
-            r.setLocalRotation(new Quaternion().fromAngles(0, FastMath.HALF_PI, s * 0.72f));
-            r.setLocalTranslation(0, 1.4f + H + 3.4f, s * D * 0.52f);
+        Material sand = G3.ph("white_sandstone_bricks", new ColorRGBA(1.0f, 0.93f, 0.8f, 1));
+        Material slate = G3.ph("roof_slates_02", new ColorRGBA(0.55f, 0.6f, 0.78f, 1));
+        Material rock = G3.ph("rock_face_03", new ColorRGBA(0.85f, 0.8f, 0.75f, 1));
+        Material oldStone = stone;
+        stone = sand;
+        Material oldRoof = roofTiles;
+        roofTiles = slate;
+        Material winM = G3.litGlow(new ColorRGBA(1f, 0.82f, 0.45f, 1), new ColorRGBA(0.75f, 0.48f, 0.15f, 1));
+        float W = 18, D = 13, H = 24;
+        // Sockel und breite Freitreppe
+        box(n, sand, W + 3, 1.2f, D + 3, 0, 0.2f, 0, 0.5f);
+        for (int i = 0; i < 6; i++) box(n, sand, 5.5f - i * 0.1f, 0.15f, 0.6f, 0, 0.15f + i * 0.3f, D + 7.4f - i * 0.75f, 0.8f);
+        // Hauptbau mit Strebepfeilern
+        box(n, sand, W, H / 2, D, 0, 1.4f + H / 2, 0, 0.3f);
+        for (int i = -4; i <= 4; i++) {
+            if (Math.abs(i) <= 1) continue;
+            box(n, sand, 0.6f, H * 0.42f, 0.9f, i * 4.2f, 1.4f + H * 0.42f, D + 0.7f, 0.5f);
+            box(n, sand, 0.6f, H * 0.42f, 0.9f, i * 4.2f, 1.4f + H * 0.42f, -D - 0.7f, 0.5f);
         }
-        // Türme an den Ecken
-        float[][] corners = {{-W, -D}, {W, -D}, {-W, D}, {W, D}};
-        for (float[] c : corners) tower(n, c[0], c[1], 3.6f, H + 9, 5.5f);
-        // Mittelturm mit Kristallspitze
-        tower(n, 0, -D * 0.2f, 4.4f, H + 18, 8f);
-        Geometry crystal = new Geometry("crystal", new Sphere(4, 6, 1.4f));
-        crystal.setMaterial(G3.litGlow(new ColorRGBA(0.6f, 0.8f, 1f, 1), new ColorRGBA(0.5f, 0.75f, 1f, 1)));
-        crystal.setLocalScale(1, 2.2f, 1);
-        crystal.setLocalTranslation(0, 1.4f + H + 18 + 8f + 2.4f, -D * 0.2f);
-        crystal.setShadowMode(ShadowMode.Off);
-        n.attachChild(crystal);
-        // Tor: Spitzbogen mit leuchtender Tür
-        Geometry gate = box(n, darkWood, 2.4f, 3.2f, 0.25f, 0, 1.4f + 3.2f, D + 0.1f, 0);
-        Geometry glowDoor = box(n, G3.litGlow(new ColorRGBA(1f, 0.8f, 0.5f, 1), new ColorRGBA(0.5f, 0.32f, 0.12f, 1)), 2.0f, 2.9f, 0.05f, 0, 1.4f + 2.9f, D + 0.4f, 0);
-        glowDoor.setShadowMode(ShadowMode.Off);
-        Geometry archTop = new Geometry("arch", new Cylinder(2, 24, 2.4f, 0.5f, true));
-        archTop.setMaterial(stone);
-        archTop.setLocalTranslation(0, 1.4f + 6.4f, D + 0.2f);
-        n.attachChild(archTop);
-        // Fensterreihen (warm leuchtend)
-        Material winM = G3.litGlow(new ColorRGBA(0.95f, 0.8f, 0.5f, 1), new ColorRGBA(0.42f, 0.27f, 0.1f, 1));
-        for (int f = 0; f < 2; f++) {
-            for (int i = -3; i <= 3; i++) {
-                if (f == 0 && Math.abs(i) < 1) continue;
-                float y = 1.4f + 4.5f + f * 6;
-                Geometry w = box(n, winM, 0.7f, 1.4f, 0.05f, i * 3.8f, y, D + 0.06f, 0);
-                w.setShadowMode(ShadowMode.Off);
-                Geometry wb = box(n, winM, 0.7f, 1.4f, 0.05f, i * 3.8f, y, -D - 0.06f, 0);
-                wb.setShadowMode(ShadowMode.Off);
-                Geometry arch = new Geometry("wa", new Cylinder(2, 12, 0.7f, 0.06f, true));
-                arch.setMaterial(winM);
-                arch.setLocalTranslation(i * 3.8f, y + 1.4f, D + 0.06f);
-                n.attachChild(arch);
+        // steiles Schieferdach mit First in Gold
+        for (int sd = -1; sd <= 1; sd += 2) {
+            Geometry r = box(n, slate, D * 0.8f, 0.3f, W + 0.6f, 0, 0, 0, 0.35f);
+            r.setLocalRotation(new Quaternion().fromAngles(0, FastMath.HALF_PI, sd * 0.95f));
+            r.setLocalTranslation(0, 1.4f + H + 5.6f, sd * D * 0.43f);
+        }
+        box(n, gold, W + 0.4f, 0.18f, 0.18f, 0, 1.4f + H + 10.6f, 0, 0);
+        // Hinterer Bergfried und Seitenflügel
+        box(n, sand, 12, 17, 9, 0, 1.4f + 17, -21, 0.3f);
+        for (int sd = -1; sd <= 1; sd += 2) {
+            Geometry kr = box(n, slate, 9.6f, 0.3f, 12.6f, 0, 0, 0, 0.35f);
+            kr.setLocalRotation(new Quaternion().fromAngles(0, FastMath.HALF_PI, sd * 0.95f));
+            kr.setLocalTranslation(0, 1.4f + 34 + 6, -21 + sd * 9 * 0.43f);
+            // Seitenflügel
+            box(n, sand, 7, 9, 9, sd * (W + 7), 1.4f + 9, -2, 0.3f);
+            Geometry wr = box(n, slate, 7.2f, 0.3f, 7.6f, 0, 0, 0, 0.35f);
+            wr.setLocalRotation(new Quaternion().fromAngles(0.95f, 0, 0));
+            wr.setLocalTranslation(sd * (W + 7), 1.4f + 18 + 3.4f, -2 + 4.1f);
+            Geometry wr2 = box(n, slate, 7.2f, 0.3f, 7.6f, 0, 0, 0, 0.35f);
+            wr2.setLocalRotation(new Quaternion().fromAngles(-0.95f, 0, 0));
+            wr2.setLocalTranslation(sd * (W + 7), 1.4f + 18 + 3.4f, -2 - 4.1f);
+            for (int f = 0; f < 2; f++) for (int k = 0; k < 3; k++) {
+                float x = sd * (W + 2.5f + k * 4.2f), y = 1.4f + 4.5f + f * 7;
+                lancet(n, winM, x, y, 7.06f, 0.6f, 1.6f, 0);
             }
         }
-        // Banner
-        for (int s = -1; s <= 1; s += 2) {
-            Geometry b = box(n, G3.lit(new ColorRGBA(0.25f, 0.2f, 0.6f, 1)), 0.9f, 2.6f, 0.03f, s * 5.6f, 1.4f + H - 3.5f, D + 0.12f, 0);
-            Geometry star = new Geometry("bannerStar", new Sphere(5, 6, 0.35f));
+        // Türme: Ecken, Tor, Flügelenden, Bergfried – alle mit schlanken Spitzhelmen
+        float[][] towers = {
+            {-W, D, 4.2f, 34, 16}, {W, D, 4.2f, 34, 16}, {-W, -D, 4.2f, 38, 17}, {W, -D, 4.2f, 38, 17},
+            {-7.5f, D + 0.5f, 2.8f, 38, 15}, {7.5f, D + 0.5f, 2.8f, 38, 15},
+            {-(W + 14), -2, 3.6f, 28, 13}, {W + 14, -2, 3.6f, 28, 13},
+            {-12, -30, 4f, 46, 18}, {12, -30, 4f, 46, 18},
+            {-6, -31, 2f, 52, 14}, {6, -31, 2f, 52, 14}};
+        for (float[] t : towers) tower(n, t[0], t[1], t[2], t[3], t[4]);
+        // kleine Ecktürmchen auf dem Hauptbau
+        for (int sx = -1; sx <= 1; sx += 2) for (int sz = -1; sz <= 1; sz += 2) tower(n, sx * (W - 5), sz * (D - 1.5f), 1.2f, H + 9, 6);
+        // Großer Mittelturm mit Kristallspitze
+        tower(n, 0, -8, 5.8f, H + 40, 24);
+        Geometry crystal = new Geometry("crystal", new Sphere(4, 6, 1.6f));
+        crystal.setMaterial(G3.litGlow(new ColorRGBA(0.6f, 0.8f, 1f, 1), new ColorRGBA(0.5f, 0.75f, 1f, 1)));
+        crystal.setLocalScale(1, 2.2f, 1);
+        crystal.setLocalTranslation(0, H + 40 + 24 + 3, -8);
+        crystal.setShadowMode(ShadowMode.Off);
+        n.attachChild(crystal);
+        // Tor: hoher Spitzbogen mit Eichentor
+        Geometry gate = box(n, darkWood, 2.8f, 3.8f, 0.25f, 0, 1.4f + 3.8f, D + 0.1f, 0);
+        Geometry glowDoor = box(n, G3.litGlow(new ColorRGBA(1f, 0.8f, 0.5f, 1), new ColorRGBA(0.45f, 0.28f, 0.1f, 1)), 2.3f, 3.4f, 0.05f, 0, 1.4f + 3.4f, D + 0.4f, 0);
+        glowDoor.setShadowMode(ShadowMode.Off);
+        Geometry archTop = new Geometry("arch", new Cylinder(2, 24, 2.8f, 0.5f, true));
+        archTop.setMaterial(sand);
+        archTop.setLocalTranslation(0, 1.4f + 7.6f, D + 0.2f);
+        n.attachChild(archTop);
+        // Rosette über dem Tor
+        Geometry rose = new Geometry("rose", new Cylinder(2, 32, 2.6f, 0.1f, true));
+        rose.setMaterial(G3.litGlow(new ColorRGBA(0.9f, 0.6f, 0.9f, 1), new ColorRGBA(0.6f, 0.3f, 0.7f, 1)));
+        rose.setLocalTranslation(0, 1.4f + 14, D + 0.08f);
+        rose.setShadowMode(ShadowMode.Off);
+        n.attachChild(rose);
+        Geometry roseRing = new Geometry("roseRing", new com.jme3.scene.shape.Torus(32, 8, 0.25f, 2.7f));
+        roseRing.setMaterial(gold);
+        roseRing.setLocalTranslation(0, 1.4f + 14, D + 0.15f);
+        n.attachChild(roseRing);
+        // drei Reihen hoher Spitzbogenfenster – golden erleuchtet
+        for (int f = 0; f < 3; f++) {
+            for (int i = -4; i <= 4; i++) {
+                if (f < 2 && Math.abs(i) < 1) continue;
+                if (f == 1 && Math.abs(i) <= 1) continue;
+                float x = i * 4.2f + (i > 0 ? -2.1f : i < 0 ? 2.1f : 0), y = 1.4f + 4.5f + f * 6.5f;
+                lancet(n, winM, x, y, D + 0.06f, 0.7f, 1.8f, 0);
+                lancet(n, winM, x, y, -D - 0.06f, 0.7f, 1.8f, FastMath.PI);
+            }
+        }
+        // Banner in Blau und Gold
+        for (int sd = -1; sd <= 1; sd += 2) {
+            Geometry b = box(n, G3.lit(new ColorRGBA(0.2f, 0.18f, 0.6f, 1)), 1.1f, 3.6f, 0.03f, sd * 4.6f, 1.4f + H - 6, D + 0.12f, 0);
+            b.setShadowMode(ShadowMode.Cast);
+            Geometry star = new Geometry("bannerStar", new Sphere(5, 6, 0.45f));
             star.setMaterial(G3.litGlow(new ColorRGBA(1f, 0.85f, 0.4f, 1), new ColorRGBA(0.6f, 0.45f, 0.1f, 1)));
-            star.setLocalTranslation(s * 5.6f, 1.4f + H - 3.0f, D + 0.18f);
+            star.setLocalTranslation(sd * 4.6f, 1.4f + H - 5, D + 0.18f);
             star.setLocalScale(1, 1, 0.2f);
             n.attachChild(star);
-            b.setShadowMode(ShadowMode.Cast);
         }
         // Laternen am Aufgang
-        for (int s = -1; s <= 1; s += 2) {
-            for (int k = 0; k < 2; k++) {
-                float lx = s * 5.2f, lz = D + 3 + k * 3.5f;
+        for (int sd = -1; sd <= 1; sd += 2) {
+            for (int k = 0; k < 3; k++) {
+                float lx = sd * 6.4f, lz = D + 3 + k * 2.8f;
                 cylY(n, darkWood, 0.1f, 0.12f, 3.2f, 8, lx, 1.6f, lz);
                 Spatial l = G3.model("Lantern_01");
                 l.setLocalScale(1.3f);
@@ -300,10 +345,113 @@ public final class Palace {
                 n.attachChild(glow);
             }
         }
+        // Felsen, auf denen das Schloss thront (hinten und an den Seiten)
+        java.util.Random rr = new java.util.Random(12);
+        for (int i = 0; i < 16; i++) {
+            float a = FastMath.PI * 0.62f + i * (FastMath.PI * 0.76f / 15f) * 2 - FastMath.PI * 0.76f;
+            float rad = 36 + rr.nextFloat() * 6;
+            float x = FastMath.sin(a) * rad, z = FastMath.cos(a) * rad;
+            if (z > 4) continue;
+            Geometry rg = new Geometry("crag", G3.rock(500 + i, 7 + rr.nextFloat() * 4));
+            rg.setMaterial(rock);
+            rg.setLocalScale(1.4f, 1.9f + rr.nextFloat() * 1.0f, 1.2f);
+            rg.setLocalTranslation(x, -2 + rr.nextFloat() * 3, z);
+            n.attachChild(rg);
+        }
         G3.tangents(n);
         n.setShadowMode(ShadowMode.CastAndReceive);
         n.setLocalTranslation(PX, groundY - 0.4f, PZ);
+        stone = oldStone;
+        roofTiles = oldRoof;
+        buildWaterfalls();
     }
+
+    /** Spitzbogenfenster mit warmem Licht. */
+    private void lancet(Node n, Material m, float x, float y, float z, float hw, float hh, float yaw) {
+        Geometry w = box(n, m, hw, hh, 0.05f, x, y, z, 0);
+        w.setShadowMode(ShadowMode.Off);
+        Geometry arch = new Geometry("wa", new Cylinder(2, 12, hw, 0.06f, true));
+        arch.setMaterial(m);
+        arch.setLocalTranslation(x, y + hh, z);
+        arch.setShadowMode(ShadowMode.Off);
+        n.attachChild(arch);
+        if (yaw != 0) { w.setLocalRotation(new Quaternion().fromAngleAxis(yaw, Vector3f.UNIT_Y)); arch.setLocalRotation(w.getLocalRotation()); }
+    }
+
+    /** Wasserfälle von den Felsen hinter dem Schloss in den See. */
+    public final List<Geometry> falls = new ArrayList<>();
+
+    private void buildWaterfalls() {
+        BufferedImage img = new BufferedImage(64, 256, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g = img.createGraphics();
+        Random r = new Random(5);
+        for (int i = 0; i < 260; i++) {
+            int x = r.nextInt(64), y = r.nextInt(256), len = 20 + r.nextInt(60);
+            g.setColor(new Color(235, 245, 255, 60 + r.nextInt(150)));
+            g.fillRect(x, y, 1 + r.nextInt(3), len);
+            if (y + len > 256) g.fillRect(x, 0, 2, y + len - 256);
+        }
+        g.dispose();
+        com.jme3.texture.Texture2D t = G3.tex(img);
+        t.setWrap(com.jme3.texture.Texture.WrapMode.Repeat);
+        float[][] spots = {{-40, -22, 7, 26}, {38, -26, 6, 24}, {-22, -46, 9, 30}, {26, -44, 5, 22}};
+        for (float[] sp : spots) {
+            Material m = new Material(G3.am, "Common/MatDefs/Misc/Unshaded.j3md");
+            m.setTexture("ColorMap", t);
+            m.setColor("Color", new ColorRGBA(1, 1, 1, 0.85f));
+            m.getAdditionalRenderState().setBlendMode(com.jme3.material.RenderState.BlendMode.Alpha);
+            m.getAdditionalRenderState().setFaceCullMode(com.jme3.material.RenderState.FaceCullMode.Off);
+            m.getAdditionalRenderState().setDepthWrite(false);
+            Quad q = new Quad(sp[2], sp[3]);
+            q.scaleTextureCoordinates(new com.jme3.math.Vector2f(sp[2] / 8f, sp[3] / 16f));
+            Geometry f = G3.transparent(new Geometry("waterfall", q));
+            f.setMaterial(m);
+            float ang = FastMath.atan2(-sp[0], -sp[1]);
+            f.setLocalRotation(new Quaternion().fromAngleAxis(ang, Vector3f.UNIT_Y));
+            Vector3f base = new Vector3f(PX + sp[0], WorldGen.WATER - 1, PZ + sp[1]);
+            f.setLocalTranslation(base.add(new Quaternion().fromAngleAxis(ang, Vector3f.UNIT_Y).mult(new Vector3f(-sp[2] / 2, 0, 0))));
+            exteriorExtras.attachChild(f);
+            falls.add(f);
+            com.jme3.effect.ParticleEmitter mist = G3.particles("fallMist", 40, "Effects/Smoke/Smoke.png",
+                new ColorRGBA(0.9f, 0.95f, 1f, 0.35f), new ColorRGBA(0.9f, 0.95f, 1f, 0), 2f, 5f, 2f, 3.5f);
+            mist.setImagesX(15);
+            mist.getMaterial().getAdditionalRenderState().setBlendMode(com.jme3.material.RenderState.BlendMode.Alpha);
+            mist.setShape(new com.jme3.effect.shapes.EmitterSphereShape(Vector3f.ZERO, sp[2] * 0.4f));
+            mist.getParticleInfluencer().setInitialVelocity(new Vector3f(0, 1.2f, 0));
+            mist.getParticleInfluencer().setVelocityVariation(0.6f);
+            mist.setParticlesPerSec(10);
+            mist.setLocalTranslation(PX + sp[0], WorldGen.WATER + 0.5f, PZ + sp[1]);
+            exteriorExtras.attachChild(mist);
+        }
+    }
+
+    /** Wasser fällt: Textur nach unten verschieben. */
+    public void animateFalls(float time) {
+        for (Geometry f : falls) {
+            com.jme3.scene.VertexBuffer vb = f.getMesh().getBuffer(com.jme3.scene.VertexBuffer.Type.TexCoord);
+            java.nio.FloatBuffer fb = (java.nio.FloatBuffer) vb.getData();
+            Object o = f.getUserData("uv");
+            float[] orig;
+            if (o == null) {
+                orig = new float[fb.limit()];
+                fb.rewind();
+                fb.get(orig);
+                f.setUserData("uvlen", orig.length);
+                origUv.put(f, orig);
+                f.setUserData("uv", 1);
+            }
+            orig = origUv.get(f);
+            fb.rewind();
+            for (int i = 0; i < orig.length; i += 2) { fb.put(orig[i]); fb.put(orig[i + 1] + time * 1.6f); }
+            fb.rewind();
+            vb.updateData(fb);
+        }
+    }
+
+    private final java.util.Map<Geometry, float[]> origUv = new java.util.HashMap<>();
+
+    /** Dinge außerhalb des Schlossknotens (Weltkoordinaten), z. B. Wasserfälle. */
+    public final Node exteriorExtras = new Node("palaceExtras");
 
     private void tower(Node n, float x, float z, float r, float h, float roofH) {
         Mesh m = Village.lathe(new float[]{r * 1.1f, r, r, r * 1.05f}, new float[]{0, 1.6f, h - 1f, h}, 24, 6);
@@ -316,7 +464,8 @@ public final class Palace {
             float a = i * FastMath.TWO_PI / 12;
             box(n, stone, 0.35f, 0.4f, 0.3f, x + FastMath.sin(a) * r * 1.02f, h + 0.4f, z + FastMath.cos(a) * r * 1.02f, 1).setLocalRotation(new Quaternion().fromAngleAxis(a, Vector3f.UNIT_Y));
         }
-        Mesh roof = Village.lathe(new float[]{0, r * 1.3f, r * 1.2f, r * 0.6f, 0.02f}, new float[]{h + 0.2f, h + 0.1f, h + roofH * 0.25f, h + roofH * 0.65f, h + roofH}, 24, 5);
+        Mesh roof = Village.lathe(new float[]{0, r * 1.16f, r * 1.02f, r * 0.62f, r * 0.24f, 0.02f},
+            new float[]{h + 0.2f, h + 0.1f, h + roofH * 0.12f, h + roofH * 0.45f, h + roofH * 0.78f, h + roofH}, 24, 6);
         Geometry rg = new Geometry("towerRoof", roof);
         rg.setMaterial(roofTiles);
         rg.setLocalTranslation(x, 0, z);

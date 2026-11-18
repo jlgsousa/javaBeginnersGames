@@ -8,7 +8,9 @@ import json, os, sys, urllib.request
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "assets", "polyhaven")
 TEXTURES = ["bark_brown_02", "brown_planks_05", "mossy_stone_wall", "thatch_roof_angled", "clay_roof_tiles",
-            "clay_plaster", "forest_ground_04", "mossy_rock", "mossy_cobblestone", "moss_wood"]
+            "clay_plaster", "forest_ground_04", "mossy_rock", "mossy_cobblestone", "moss_wood",
+            "white_sandstone_bricks", "roof_slates_02", "rock_face_03", "castle_wall_varriation", "plastered_wall_02",
+            "cobblestone_floor_01", "mossy_brick", "marble_01"]
 TEX_MAPS = ["Diffuse", "nor_gl"]
 MODELS = ["Lantern_01", "wooden_lantern_01", "fern_02", "tree_stump_01", "rock_moss_set_01", "Rockingchair_01",
           "wooden_bookshelf_worn", "tea_set_01", "vintage_oil_lamp", "wicker_basket_01", "wooden_bucket_01",

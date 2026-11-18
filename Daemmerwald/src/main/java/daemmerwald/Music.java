@@ -24,6 +24,7 @@ public class Music {
         this.app = app;
         enabled = app.getAudioRenderer() != null;
         if (!enabled) return;
+        installVoice();
         Thread t = new Thread(() -> {
             LinkedHashMap<String, Supplier<byte[]>> gen = new LinkedHashMap<>();
             gen.put("spell", MusicSynth::spell);
@@ -64,6 +65,43 @@ public class Music {
     }
 
     private static final Set<String> SFX = Set.of("spell", "chime", "step", "door", "owl", "hit", "roar", "whoosh");
+
+    // ---------------------------------------------------------------- Sprachausgabe
+
+    private AudioNode voiceNode;
+
+    private void installVoice() {
+        Voice.player = new Voice.Player() {
+            @Override
+            public void play(String asset, float pitch) {
+                stop();
+                try {
+                    AudioKey key = new AudioKey(asset, false, false);
+                    AudioNode n = new AudioNode((AudioData) app.getAssetManager().loadAsset(key), key);
+                    n.setPositional(false);
+                    n.setLooping(false);
+                    n.setVolume(1.15f * masterVolume * Voice.volume);
+                    n.setPitch(pitch);
+                    app.getRootNode().attachChild(n);
+                    n.play();
+                    voiceNode = n;
+                } catch (Exception e) {
+                    voiceNode = null;
+                }
+            }
+
+            @Override
+            public void stop() {
+                if (voiceNode != null) {
+                    voiceNode.stop();
+                    app.getRootNode().detachChild(voiceNode);
+                    voiceNode = null;
+                }
+            }
+        };
+    }
+
+    private boolean speaking() { return voiceNode != null && voiceNode.getStatus() == com.jme3.audio.AudioSource.Status.Playing; }
 
     public void sfx(String name) { sfx(name, 1f); }
 
@@ -183,9 +221,9 @@ public class Music {
         trackTime += dt;
         // (erst nach ein paar Sekunden – falls ein Tongerät Stücke sofort beendet, nicht ständig neu starten)
         if (current != null && trackTime > 8 && current.getStatus() == com.jme3.audio.AudioSource.Status.Stopped) startTrack(currentMood);
-        float target = musicVolume * masterVolume * (currentMood.equals("drama") ? 0.95f : currentMood.equals("cafe") ? 0.75f : 0.85f);
+        float target = musicVolume * masterVolume * (currentMood.equals("drama") ? 0.95f : currentMood.equals("cafe") ? 0.75f : 0.85f) * (speaking() ? 0.5f : 1f);
         currentVol = Math.min(target, currentVol + dt * 0.35f);
-        if (currentVol > target) currentVol = target;
+        if (currentVol > target) currentVol = Math.max(target, currentVol - dt * 1.5f);
         if (current != null) current.setVolume(currentVol);
         if (fading != null) {
             fadingVol -= dt * 1.2f;

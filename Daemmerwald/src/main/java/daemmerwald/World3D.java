@@ -107,6 +107,7 @@ public class World3D {
         setHomeLevel(0);
         palace = new Palace();
         root.attachChild(palace.exterior);
+        root.attachChild(palace.exteriorExtras);
         solid(Palace.PX, Palace.PZ - 1, 13.5f);
         for (int sx = -1; sx <= 1; sx += 2) for (int sz = -1; sz <= 1; sz += 2) solid(Palace.PX + sx * 15, Palace.PZ + sz * 11, 4.2f);
         puzzles = new SpellPuzzles();
@@ -131,6 +132,7 @@ public class World3D {
     public GameState state;
     /** Spieler ist im Inneren des Zauberpalasts. */
     public boolean inPalace;
+    private float fallT;
 
     public void setPalace(boolean inside) {
         if (inside == inPalace) return;
@@ -1205,6 +1207,7 @@ public class World3D {
 
         lantern.setPosition(focus.add(0, 2.4f, 0));
         lantern.setColor(new ColorRGBA(1f, 0.76f, 0.48f, 1).multLocal(inPalace ? 1.1f : 0.15f + 1.1f * night));
+        if (!inPalace) { fallT += tpf; palace.animateFalls(fallT); }
         if (inPalace) palace.update(tpf);
         else if (puzzles != null) puzzles.update(tpf);
         for (int i = 0; i < nightLights.size(); i++) {

@@ -18,6 +18,8 @@ public class DialogBox {
         String speaker;
         Look look;
         String text;
+        /** Originalzeile (für die Sprachaufnahme). */
+        String key;
     }
 
     /** Name, mit dem die Figuren die Spielerin oder den Spieler ansprechen. */
@@ -32,6 +34,7 @@ public class DialogBox {
         for (String s : raw) {
             s = L.t(s);
             Line l = new Line();
+            l.key = s.startsWith(">") || s.startsWith("*") ? s.substring(1) : s;
             if (s.startsWith(">") || s.startsWith("> ")) {
                 l.speaker = playerName.isBlank() ? hero.name : playerName;
                 l.look = hero.look;
@@ -63,14 +66,13 @@ public class DialogBox {
             int c = text.indexOf(": ");
             if (c > 0 && c < 28 && Character.isUpperCase(text.charAt(0))) {
                 who = text.substring(0, c);
-                text = text.substring(c + 2);
                 female = who.startsWith("Hedda") || who.startsWith("Die Fünf") || who.startsWith("Professorin");
             } else {
                 Voice.stop();
                 return;
             }
         }
-        Voice.say(text, female, who);
+        Voice.say(l.key, female, who);
     }
 
     public void update(double dt, Input in) {
