@@ -4,6 +4,41 @@
 // =====================================================================
 
 const STARS_NEEDED = 5;
+
+// ---------------- Vorlesen auf Deutsch (eingebaute Sprachausgabe des Browsers) ----------------
+const Voice = (() => {
+  const synth = window.speechSynthesis;
+  let voice = null, muted = false;
+  function pickVoice() {
+    if (!synth) return;
+    const voices = synth.getVoices().filter(v => v.lang && v.lang.toLowerCase().startsWith("de"));
+    // möglichst eine freundliche, natürliche Stimme nehmen
+    voice = voices.find(v => /anna|petra|helena|katja|hedda|marlene|female|weiblich/i.test(v.name))
+         || voices.find(v => /google/i.test(v.name)) || voices[0] || null;
+  }
+  if (synth) { pickVoice(); synth.onvoiceschanged = pickVoice; }
+  function clean(text) {
+    return text.replace(/<br\s*\/?>/gi, " ").replace(/<[^>]+>/g, "")
+      .replace(/[\u{1F000}-\u{1FFFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE0F}\u{200D}]/gu, "")
+      .replace(/[„“"]/g, "").replace(/…/g, ",").replace(/\s+/g, " ").trim();
+  }
+  function speak(text) {
+    if (!synth || muted) return;
+    synth.cancel();
+    const t = clean(text);
+    if (!t) return;
+    const u = new SpeechSynthesisUtterance(t);
+    u.lang = "de-DE"; if (voice) u.voice = voice;
+    u.rate = 0.95; u.pitch = 1.15;            // etwas langsamer und fröhlich für Kinder
+    synth.speak(u);
+  }
+  return {
+    speak,
+    stop() { synth && synth.cancel(); },
+    get speaking() { return !!synth && (synth.speaking || synth.pending); },
+    setMuted(m) { muted = m; if (m && synth) synth.cancel(); },
+  };
+})();
 const game = { state: "title", t: 0 };   // title → intro → play ⇄ dialog → ending
 
 const ROSI = { name: "Rosi", emoji: "🦄" };
@@ -141,6 +176,8 @@ function showNext() {
     dlgNext.style.display = "inline-block";
   }
   Sound.talk();
+  if (step.riddle) Voice.speak(`${step.name} fragt: ${step.riddle.q} ` + step.riddle.options.map((o, i) => `${i + 1}: ${o}.`).join(" "));
+  else Voice.speak(step.text);
 }
 function answer(i) {
   const step = dlg.current;
@@ -154,10 +191,12 @@ function answer(i) {
   } else {
     Sound.wrong();
     dlgText.innerHTML = "🤔 Hmm, das stimmt nicht ganz. Versuch es nochmal!<br><br>🧩 " + step.riddle.q;
+    Voice.speak("Hmm, das stimmt nicht ganz. Versuch es nochmal!");
     [...dlgOpts.children][i].disabled = true;
   }
 }
 function closeDialog() {
+  if (game.state !== "ending") Voice.stop();
   dlgEl.style.display = "none";
   dlg.current = null;
   if (game.state === "dialog") game.state = "play";
@@ -231,7 +270,7 @@ const headingTo = (from, to) => Math.atan2(to.x - from.x, to.z - from.z);
 const circlePos = (a, r = 3) => new THREE.Vector3(Math.cos(a) * r, 0, Math.sin(a) * r);
 const camGoal = { pos: new THREE.Vector3(0, 6, 14), look: new THREE.Vector3(0, 1, 0) };
 const camLook = new THREE.Vector3(0, 1, 0);
-let lastCaption = -1, giggled = 0, introHearts = 0;
+let voiceWait = 0, lastCaption = -1, giggled = 0, introHearts = 0;
 
 function placeIntroStart() {
   camera.position.set(0, 6, 14); camLook.set(0, 1, 0); camera.lookAt(camLook);
@@ -246,10 +285,14 @@ function setUni(pos, heading, speed, y = 0) {
 function jumpArc(T, t0, dur, h) { const f = (T - t0) / dur; return f > 0 && f < 1 ? 4 * h * f * (1 - f) : 0; }
 
 function introUpdate(dt) {
+  // Damit die Stimme jeden Satz zu Ende lesen kann, wartet der Film kurz am Übergang
+  const nextCap = CAPTIONS[lastCaption + 1];
+  if (nextCap && game.t >= nextCap[0] && Voice.speaking && voiceWait < 4) { game.t = nextCap[0] - 0.001; voiceWait += dt; }
+  else if (!Voice.speaking) voiceWait = 0;
   const T = game.t;
   // Untertitel
   let ci = 0; CAPTIONS.forEach((c, i) => { if (T >= c[0]) ci = i; });
-  if (ci !== lastCaption) { lastCaption = ci; captionEl.textContent = CAPTIONS[ci][1]; captionEl.classList.remove("show"); void captionEl.offsetWidth; captionEl.classList.add("show"); }
+  if (ci !== lastCaption) { lastCaption = ci; captionEl.textContent = CAPTIONS[ci][1]; Voice.speak(CAPTIONS[ci][1]); captionEl.classList.remove("show"); void captionEl.offsetWidth; captionEl.classList.add("show"); }
 
   const B_END = 12, SPEED = 0.85, aEnd = (B_END - 3) * SPEED;
   const pStand = new THREE.Vector3(1.2, 0, 0.5), uStand = new THREE.Vector3(-1.2, 0, 0.5);
@@ -330,6 +373,7 @@ function introUpdate(dt) {
 // ---------------- Spielstart nach dem Intro ----------------
 function startPlay() {
   game.state = "play";
+  Voice.stop();
   captionEl.classList.remove("show"); captionEl.style.display = "none";
   document.getElementById("skip").style.display = "none";
   document.getElementById("hudWrap").style.display = "block";

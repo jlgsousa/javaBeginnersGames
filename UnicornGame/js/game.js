@@ -11,7 +11,7 @@ window.addEventListener("keydown", e => {
   if (e.code.startsWith("Arrow") || e.code === "Space") e.preventDefault();
 });
 window.addEventListener("keyup", e => { keys[e.code] = false; });
-function toggleMute() { document.getElementById("mute").textContent = Sound.toggleMute() ? "🔇" : "🔊"; }
+function toggleMute() { const m = Sound.toggleMute(); Voice.setMuted(m); document.getElementById("mute").textContent = m ? "🔇" : "🔊"; }
 window.addEventListener("keydown", e => { if (e.code === "KeyM") toggleMute(); });
 document.getElementById("mute").addEventListener("click", toggleMute);
 
