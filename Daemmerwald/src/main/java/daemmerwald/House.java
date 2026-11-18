@@ -25,6 +25,8 @@ public class House {
     public final long seed;
     /** Rast-Café: hier kann man speichern. */
     public boolean cafe;
+    /** Laden in der Laternengasse: das Haus baut die Gasse selbst, hier zählt nur die Tür. */
+    public boolean facade;
 
     public House(String id, String owner, String title, float x, float z, float yaw, boolean tree, boolean evil, Look look, long seed) {
         this.id = id;
@@ -39,7 +41,7 @@ public class House {
         this.seed = seed;
     }
 
-    public float radius() { return tree ? 3.3f : 5.2f; }
+    public float radius() { return facade ? 3.0f : tree ? 3.3f : 5.2f; }
 
     private static final String[] CAFE_NAMES = {"Teestube Mooskessel", "Café Zum Grünen Kessel", "Rastplatz Honigtau", "Café Wurzelwerk",
         "Teehaus Sternschnuppe", "Café Am Stillen Weiher", "Kaffeestube Kieselgrund", "Café Morgenrot"};
@@ -143,6 +145,7 @@ public class House {
 
     /** Baut die Außenansicht. Darf in Hintergrund-Threads aufgerufen werden. */
     public Node buildExterior() {
+        if (facade) return new Node("facade");
         initMats();
         Node n = new Node("house_" + id);
         float y = WorldGen.height(x, z);

@@ -314,7 +314,7 @@ public final class Depths {
     // ================================================================ Die alten Ruinen
 
     private Palace.Wall buildRuins() {
-        Material stone = p.stone;
+        Material stone = G3.ph("castle_wall_varriation", new ColorRGBA(0.55f, 0.62f, 0.72f, 1));
         corridor = p.room("deep_ruin", "Die alten Ruinen", 150, 158, -60, 20, RY, 8);
         arena = p.room("deep_arena", "Halle des Steinwächters", 140, 176, -100, -60, RY, 16);
         p.wallX(corridor, 20, 150, 158, new float[][]{}, null, stone);
@@ -330,7 +330,10 @@ public final class Depths {
         for (int i = 0; i < 9; i++) {
             float z = 16 - i * 9.5f;
             for (int s = -1; s <= 1; s += 2) {
-                p.cylY(n, stone, 0.35f, 0.4f, 6 - (i % 3), 8, 154 + s * 3.4f, RY + (6 - (i % 3)) / 2f, z);
+                float ch = 7.4f - (i % 3) * 0.8f;
+                p.cylY(n, stone, 0.5f, 0.55f, ch, 12, 154 + s * 3.3f, RY + ch / 2f, z);
+                p.box(n, stone, 0.7f, 0.25f, 0.7f, 154 + s * 3.3f, RY + 0.25f, z, 0.8f);
+                p.box(n, stone, 0.75f, 0.3f, 0.75f, 154 + s * 3.3f, RY + ch - 0.1f, z, 0.8f);
                 if (i % 2 == 0) {
                     Geometry torch = G3.geom("torch", new Sphere(6, 6, 0.14f), G3.emissive(new ColorRGBA(1f, 0.55f, 0.2f, 1)));
                     torch.setLocalScale(1, 1.7f, 1);
@@ -387,7 +390,130 @@ public final class Depths {
         heartPortal = archway(TO_HEART.x, RY, -99.6f, 0, new ColorRGBA(0.6f, 0.4f, 1f, 1));
         heartPortal.setCullHint(Spatial.CullHint.Always);
         archway(RUIN_BACK.x, RY, 19.6f, 0, new ColorRGBA(1f, 0.8f, 0.5f, 1));
+        decorateRuins(stone);
         return gw;
+    }
+
+    /** Tempelruine wie im Höhlenbild: Wasserlauf, leuchtendes türkises Moos, Reliefs, warmes Tor. */
+    private void decorateRuins(Material stone) {
+        Node moss = new Node("glowMoss");
+        Material teal = G3.emissive(new ColorRGBA(0.25f, 0.95f, 0.78f, 1));
+        Material tealDim = G3.emissive(new ColorRGBA(0.1f, 0.45f, 0.38f, 1));
+        Material mossy = G3.ph("mossy_rock", new ColorRGBA(0.55f, 0.7f, 0.62f, 1));
+        java.util.Random r = new java.util.Random(19);
+        // Moospolster mit Leuchtfäden an Gang- und Hallenrändern
+        List<float[]> spots = new ArrayList<>();
+        for (int i = 0; i < 70; i++) spots.add(new float[]{150.6f + (r.nextBoolean() ? 0 : 6.8f) + r.nextFloat() * 0.4f, -58 + r.nextFloat() * 76});
+        for (int i = 0; i < 140; i++) {
+            float a = r.nextFloat() * FastMath.TWO_PI;
+            float x = 158 + FastMath.cos(a) * (14 + r.nextFloat() * 3.5f), z = -80 + FastMath.sin(a) * (17 + r.nextFloat() * 2.5f);
+            spots.add(new float[]{Math.max(141, Math.min(175, x)), Math.max(-99, Math.min(-61, z))});
+        }
+        for (float[] sp : spots) {
+            Geometry pad = new Geometry("mossPad", new Sphere(6, 8, 0.35f + r.nextFloat() * 0.5f));
+            pad.setMaterial(r.nextFloat() < 0.35f ? teal : tealDim);
+            pad.setLocalScale(1, 0.12f, 1);
+            pad.setLocalTranslation(sp[0], RY + 0.02f, sp[1]);
+            moss.attachChild(pad);
+            for (int k = 0; k < 4; k++) {
+                float fh = 0.2f + r.nextFloat() * 0.5f;
+                Geometry fil = new Geometry("filament", new Cylinder(2, 4, 0.008f, fh, true));
+                fil.setMaterial(tealDim);
+                fil.setLocalRotation(new Quaternion().fromAngleAxis(-FastMath.HALF_PI, Vector3f.UNIT_X));
+                float fx = sp[0] + (r.nextFloat() - 0.5f) * 0.8f, fz = sp[1] + (r.nextFloat() - 0.5f) * 0.8f;
+                fil.setLocalTranslation(fx, RY + fh / 2, fz);
+                moss.attachChild(fil);
+                Geometry tip = new Geometry("filTip", new Sphere(4, 4, 0.025f));
+                tip.setMaterial(teal);
+                tip.setLocalTranslation(fx, RY + fh, fz);
+                moss.attachChild(tip);
+            }
+        }
+        moss.setShadowMode(ShadowMode.Off);
+        jme3tools.optimize.GeometryBatchFactory.optimize(moss);
+        n.attachChild(moss);
+        // Wasserlauf durch die Halle mit bemoosten Steinen
+        Material water = new Material(G3.am, "Common/MatDefs/Misc/Unshaded.j3md");
+        water.setColor("Color", new ColorRGBA(0.1f, 0.35f, 0.4f, 0.75f));
+        water.setColor("GlowColor", new ColorRGBA(0.02f, 0.12f, 0.12f, 1));
+        water.getAdditionalRenderState().setBlendMode(com.jme3.material.RenderState.BlendMode.Alpha);
+        Geometry stream = new Geometry("ruinWater", new Quad(4, 34));
+        stream.setMaterial(water);
+        stream.setQueueBucket(com.jme3.renderer.queue.RenderQueue.Bucket.Transparent);
+        stream.setLocalRotation(new Quaternion().fromAngleAxis(-FastMath.HALF_PI, Vector3f.UNIT_X));
+        stream.setLocalTranslation(165, RY + 0.04f, -63);
+        n.attachChild(stream);
+        for (int i = 0; i < 12; i++) {
+            Geometry b = new Geometry("ruinBoulder", G3.rock(700 + i, 0.6f + r.nextFloat() * 0.9f));
+            b.setMaterial(mossy);
+            b.setLocalScale(1.2f, 0.6f, 1.1f);
+            b.setLocalTranslation(165 + (r.nextFloat() - 0.2f) * 6, RY + 0.1f, -64 - i * 3 + r.nextFloat());
+            n.attachChild(b);
+        }
+        // Reliefs an den Hallenwänden
+        Material relief = G3.lit(new ColorRGBA(0.75f, 0.68f, 0.55f, 1));
+        relief.setTexture("DiffuseMap", G3.tex(reliefImg()));
+        for (int i = 0; i < 4; i++) {
+            Geometry q = new Geometry("relief", new Quad(5, 4));
+            q.setMaterial(relief);
+            boolean west = i < 2;
+            float z = -66 - (i % 2) * 18;
+            q.setLocalTranslation(west ? 140.35f : 175.65f, RY + 2.5f, west ? z - 5 : z);
+            q.setLocalRotation(new Quaternion().fromAngleAxis(west ? FastMath.HALF_PI : -FastMath.HALF_PI, Vector3f.UNIT_Y));
+            n.attachChild(q);
+            light(west ? 141.5f : 174.5f, RY + 4, z - 2.5f, new ColorRGBA(1f, 0.62f, 0.3f, 1).mult(0.9f), 8, true);
+        }
+        // Warm erleuchtetes Tor mit Stufen zur Kammer
+        Material sand = G3.ph("white_sandstone_bricks", new ColorRGBA(0.85f, 0.72f, 0.55f, 1));
+        for (int sd = -1; sd <= 1; sd += 2) p.box(n, sand, 0.6f, 3.4f, 0.6f, TO_HEART.x + sd * 2.4f, RY + 3.4f, -99.2f, 0.6f);
+        p.box(n, sand, 3.2f, 0.5f, 0.7f, TO_HEART.x, RY + 7.1f, -99.2f, 0.6f);
+        Geometry ornament = new Geometry("ornament", new Cylinder(2, 24, 2.6f, 0.4f, true));
+        ornament.setMaterial(sand);
+        ornament.setLocalTranslation(TO_HEART.x, RY + 8.6f, -99.4f);
+        n.attachChild(ornament);
+        for (int k = 0; k < 3; k++) p.box(n, sand, 2.6f - k * 0.2f, 0.12f, 0.5f, TO_HEART.x, RY + 0.12f + k * 0.24f, -97.6f - k * 0.45f, 0.8f);
+        light(TO_HEART.x, RY + 3, -97, new ColorRGBA(1f, 0.6f, 0.28f, 1).mult(1.8f), 12, true);
+        // kühles Höhlenlicht und schwebende Funken
+        light(158, RY + 10, -80, new ColorRGBA(0.3f, 0.75f, 0.7f, 1).mult(0.8f), 26, true);
+        light(154, RY + 5, -20, new ColorRGBA(0.3f, 0.75f, 0.7f, 1).mult(0.6f), 22, true);
+        for (float[] at : new float[][]{{158, -80, 14}, {154, -20, 3}}) {
+            com.jme3.effect.ParticleEmitter sp = G3.particles("ruinSpores", 80, null, new ColorRGBA(0.4f, 1f, 0.85f, 1), new ColorRGBA(0.2f, 0.8f, 0.7f, 0), 0.06f, 0.02f, 4f, 7f);
+            sp.setShape(new com.jme3.effect.shapes.EmitterBoxShape(new Vector3f(-at[2], 0, -at[2] * 1.4f), new Vector3f(at[2], 4, at[2] * 1.4f)));
+            sp.getParticleInfluencer().setInitialVelocity(new Vector3f(0, 0.15f, 0));
+            sp.getParticleInfluencer().setVelocityVariation(1f);
+            sp.setParticlesPerSec(14);
+            sp.setLocalTranslation(at[0], RY + 0.5f, at[1]);
+            n.attachChild(sp);
+        }
+    }
+
+    /** Steinrelief: Wächterfiguren und Rankenornamente. */
+    private static BufferedImage reliefImg() {
+        BufferedImage img = new BufferedImage(320, 256, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g = img.createGraphics();
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g.setColor(new Color(150, 135, 110));
+        g.fillRect(0, 0, 320, 256);
+        java.util.Random r = new java.util.Random(4);
+        for (int i = 0; i < 2000; i++) { g.setColor(new Color(120 + r.nextInt(50), 105 + r.nextInt(40), 85 + r.nextInt(30))); g.fillRect(r.nextInt(320), r.nextInt(256), 2, 2); }
+        for (int f = 0; f < 3; f++) {
+            int cx = 60 + f * 100;
+            g.setColor(new Color(95, 82, 64));
+            g.fillOval(cx - 16, 50, 32, 34);
+            g.fillRoundRect(cx - 28, 84, 56, 80, 20, 20);
+            g.fillRoundRect(cx - 44, 150, 88, 26, 14, 14);
+            g.setColor(new Color(185, 170, 140));
+            g.setStroke(new BasicStroke(3));
+            g.drawOval(cx - 16, 50, 32, 34);
+            g.drawRoundRect(cx - 28, 84, 56, 80, 20, 20);
+            g.drawArc(cx - 30, 30, 60, 40, 0, 180);
+        }
+        g.setColor(new Color(90, 78, 60));
+        g.setStroke(new BasicStroke(5));
+        for (int x = 0; x < 320; x += 40) g.drawArc(x, 200, 40, 40, 0, 180);
+        g.drawRect(4, 4, 312, 248);
+        g.dispose();
+        return img;
     }
 
     public void openGate(boolean open) {

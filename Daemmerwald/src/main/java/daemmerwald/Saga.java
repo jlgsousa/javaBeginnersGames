@@ -51,8 +51,9 @@ public final class Saga {
     static final Vector3f BROOM_POS = new Vector3f(-82.4f, 0, -43.6f);
     static final Vector3f FENN_POS = new Vector3f(-70, 0, -36);
     static final Vector3f[] LANTERNS = {new Vector3f(-79, 0, -46), new Vector3f(-88, 0, -47.5f), new Vector3f(-78.5f, 0, -36.5f), new Vector3f(-86.5f, 0, -35.5f)};
-    static final Vector3f[] THIEF_ROUTE = {new Vector3f(-70, 0, -36), new Vector3f(-62, 0, -44), new Vector3f(-62, 0, -56), new Vector3f(-72, 0, -64),
-        new Vector3f(-80, 0, -58), new Vector3f(-76, 0, -48), new Vector3f(-68, 0, -28)};
+    /** Der Dieb flieht durch die Laternengasse und zurück. */
+    static final Vector3f[] THIEF_ROUTE = {new Vector3f(-70, 0, -36), new Vector3f(-58, 0, -48), new Vector3f(-58, 0, -72), new Vector3f(-64, 0, -95),
+        new Vector3f(-114, 0, -95), new Vector3f(-104, 0, -76), new Vector3f(-82, 0, -64), new Vector3f(-72, 0, -46)};
     static final Vector3f RUNE_SHELF = new Vector3f(-28.4f, 0, 4.5f);
 
     private Figure hedda, fenn;

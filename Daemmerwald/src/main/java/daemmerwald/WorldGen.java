@@ -24,12 +24,12 @@ public final class WorldGen {
     public static final float[][] PATHS = {
         {0, -92, 0, -14}, {0, 30, 0, 66}, {-26, 14, -88, -2}, {26, 6, 92, -30}, {-100, 22, -114, 74},
         {26, 94, 100, 84}, {20, -62, 94, -44}, {-20, -66, -100, -86}, {20, -74, 92, -98}, {12, 104, 30, 182},
-        {-16, -64, -58, -50}, {-58, -50, -84.3f, -37.8f}, {0, -132, 0, -170}, {-101.7f, -42.2f, -112, -60}, {-124, -92, -140, -134}
+        {-16, -64, -58, -50}, {-58, -50, -84.3f, -37.8f}, {0, -132, 0, -170}, {-101.7f, -42.2f, -112, -60}, {-124, -92, -140, -134}, {-80, -62, -82, -89}
     };
 
     private static final Feature[] FLAT = {
         new Feature(0, -100, 54), new Feature(COURTYARD, 30), new Feature(HEART, 34), new Feature(MEADOW, 36),
-        new Feature(MUSHROOMS, 22), new Feature(SHADOW, 28), new Feature(CAFE, 22), new Feature(LAKE, 46), new Feature(HOME, 28), new Feature(VILLAGE, 34), new Feature(PALACE, 52), new Feature(GROVE, 30), new Feature(0, -150, 22)
+        new Feature(MUSHROOMS, 22), new Feature(SHADOW, 28), new Feature(CAFE, 22), new Feature(LAKE, 46), new Feature(HOME, 28), new Feature(VILLAGE, 34), new Feature(PALACE, 52), new Feature(GROVE, 30), new Feature(0, -150, 22), new Feature(-91, -95, 36)
     };
 
     private record Feature(float x, float z, float r) {

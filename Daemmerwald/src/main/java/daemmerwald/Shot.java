@@ -397,6 +397,14 @@ public class Shot {
             WorldScene ws = (WorldScene) app.core.scene();
             ws.say("Ysmira Funkelstein", CharacterDef.ALL.get(9).look, new String[]{"Ah! Du musst die Neue sein – oder der Neue. Der Brief kam also wirklich an. Ich bin Ysmira Funkelstein und, nun ja, die einzige Lehrerin hier."}, null);
         });
+        step("street", 4f, () -> {
+            WorldScene ws = (WorldScene) app.core.scene();
+            skipDialog();
+            ws.clearOverlays();
+            Chapters.set(app.core.state, 4, 1);
+            app.world.dayNight.time = Float.parseFloat(System.getProperty("dw.daytime", "0.78"));
+            teleport(-64, -95, -FastMath.HALF_PI);
+        });
         step("players", 2f, () -> app.core.setScene(new PlayersScene(app.core)));
         step("two_players", 6f, () -> {
             GameState gs = app.core.state;

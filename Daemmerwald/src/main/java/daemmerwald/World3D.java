@@ -108,10 +108,18 @@ public class World3D {
         palace = new Palace();
         root.attachChild(palace.exterior);
         root.attachChild(palace.exteriorExtras);
-        solid(Palace.PX, Palace.PZ - 1, 13.5f);
-        for (int sx = -1; sx <= 1; sx += 2) for (int sz = -1; sz <= 1; sz += 2) solid(Palace.PX + sx * 15, Palace.PZ + sz * 11, 4.2f);
+        // das große Schloss: Hauptbau, Flügel, Türme, Bergfried
+        float[][] cs = {{0, -1, 14}, {-10, 0, 10}, {10, 0, 10}, {-25, -2, 8.5f}, {25, -2, 8.5f}, {-32, -2, 4.4f}, {32, -2, 4.4f},
+            {-18, 13, 4.8f}, {18, 13, 4.8f}, {-18, -13, 4.8f}, {18, -13, 4.8f}, {-7.5f, 13.5f, 3.2f}, {7.5f, 13.5f, 3.2f},
+            {0, -21, 12.5f}, {-12, -30, 4.6f}, {12, -30, 4.6f}};
+        for (float[] c : cs) solid(Palace.PX + c[0], Palace.PZ + c[1], c[2]);
         puzzles = new SpellPuzzles();
         root.attachChild(puzzles.root);
+        street = new MarketStreet();
+        root.attachChild(street.root);
+        for (float[] v : street.solids) solid(v[0], v[1], v[2]);
+        for (com.jme3.light.PointLight l : street.lights) root.addLight(l);
+        houses.addAll(street.shops);
         village = new Village();
         root.attachChild(village.root);
         for (float[] v : village.solids) solid(v[0], v[1], v[2]);
@@ -125,6 +133,7 @@ public class World3D {
     // ================================================================ Hilfen
 
     public Village village;
+    public MarketStreet street;
     public Palace palace;
     public SpellPuzzles puzzles;
     public final Cards cards = new Cards();
@@ -1207,7 +1216,7 @@ public class World3D {
 
         lantern.setPosition(focus.add(0, 2.4f, 0));
         lantern.setColor(new ColorRGBA(1f, 0.76f, 0.48f, 1).multLocal(inPalace ? 1.1f : 0.15f + 1.1f * night));
-        if (!inPalace) { fallT += tpf; palace.animateFalls(fallT); }
+        if (!inPalace) { fallT += tpf; palace.animateFalls(fallT); if (street != null) street.update(tpf, focus); }
         if (inPalace) palace.update(tpf);
         else if (puzzles != null) puzzles.update(tpf);
         for (int i = 0; i < nightLights.size(); i++) {
