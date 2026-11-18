@@ -347,13 +347,14 @@ public final class Palace {
         Room fire = room("fire", "Kammer hinter dem Kamin", -4, 4, -28, -18, 0, 4.2f);
         Room obs = room("observatory", "Geheime Sternwarte", 50, 66, -8, 8, 22, 9);
         Room crypt = room("crypt", "Gruft unter dem Palast", 50, 66, 22, 38, -9, 5);
+        Room gallery = room("gallery", "Galerie der Gründer", -21.5f, -12f, -18f, -10.4f, 0, 6);
 
         // Wände (mit Durchgängen und Geheimtüren)
         float t = 0.35f;
         // Saal
         wallX(hall, hall.z0, -12, 12, new float[][]{{-2, 2, 1}}, "kamin", stone);     // Nordwand mit Kamin-Geheimtür
         wallX(hall, hall.z1, -12, 12, new float[][]{}, null, stone);                    // Südwand (Tor innen)
-        wallZ(hall, hall.x0, -18, 18.5f, new float[][]{{-2.2f, 2.2f, 0}}, null, stone); // West: Tür zur Bibliothek
+        wallZ(hall, hall.x0, -18, 18.5f, new float[][]{{-15f, -13f, 1}, {-2.2f, 2.2f, 0}}, "gemaelde", stone); // West: Gemälde-Geheimtür, Tür zur Bibliothek
         wallZ(hall, hall.x1, -18, 18.5f, new float[][]{{-2.2f, 2.2f, 0}}, null, stone); // Ost: Tür zum Trankkeller
         // Bibliothek
         wallX(lib, lib.z0, -30, -12, new float[][]{{-27.2f, -24.8f, 1}}, "regal", plaster);
@@ -376,7 +377,13 @@ public final class Palace {
             wallZ(r, r.x0, r.z0, r.z1, new float[][]{}, null, stone);
             wallZ(r, r.x1, r.z0, r.z1, new float[][]{}, null, stone);
         }
+        wallX(gallery, gallery.z0(), gallery.x0(), gallery.x1(), new float[][]{}, null, plaster);
+        wallX(gallery, gallery.z1(), gallery.x0(), gallery.x1(), new float[][]{}, null, plaster);
+        wallZ(gallery, gallery.x0(), gallery.z0(), gallery.z1(), new float[][]{}, null, plaster);
         for (Room r : rooms) floorAndCeiling(r);
+        buildGallery();
+        buildPainting();
+        buildSymbol();
 
         decorateHall(hall);
         decorateLibrary(lib);
@@ -463,6 +470,15 @@ public final class Palace {
 
     private void segZ(Room r, float x, float z0, float z1, Material m, String secret) {
         float hw = (z1 - z0) / 2, cz = (z0 + z1) / 2;
+        if (secret != null) {
+            float doorH = 3.8f;
+            Geometry top = box(interior, m, 0.3f, (r.h() - doorH) / 2, hw, x, r.y() + doorH + (r.h() - doorH) / 2, cz, 0.5f);
+            collide.attachChild(top.clone(false));
+            Geometry low = box(interior, m, 0.3f, doorH / 2, hw, x, r.y() + doorH / 2, cz, 0.5f);
+            walls.add(new Wall(x - 0.35f, x + 0.35f, z0, z1, secret));
+            walls.get(walls.size() - 1).door = low;
+            return;
+        }
         Geometry g = box(interior, m, 0.3f, r.h() / 2, hw, x, r.y() + r.h() / 2, cz, 0.5f);
         if (secret == null) collide.attachChild(g.clone(false));
         Wall w = new Wall(x - 0.35f, x + 0.35f, z0, z1, secret);
@@ -781,6 +797,174 @@ public final class Palace {
         }
     }
 
+    // ================================================================ Kapitel: Symbol, Gemälde, Galerie
+
+    private Node symbol, painting;
+    /** Position des Gemäldes (lokal) und des Pults mit der Gründertafel in der Galerie. */
+    public static final Vector3f PAINTING_POS = new Vector3f(-11.6f, 2.8f, -14f), PLAQUE_POS = new Vector3f(-17f, 0, -14.2f);
+    /** Orte des wandernden Symbols: Saal, Bibliothek, Trankkeller (dunkle Ecke). */
+    public static final Vector3f[] SYMBOL_POS = {new Vector3f(5.5f, 3.4f, -17.55f), new Vector3f(-29.55f, 2.6f, -3f), new Vector3f(29.55f, 1.8f, 8.5f)};
+    private static final float[] SYMBOL_YAW = {0, FastMath.HALF_PI, -FastMath.HALF_PI};
+    private int symbolAt = -1;
+    private float symbolFade;
+
+    private static java.awt.image.BufferedImage sigil() {
+        BufferedImage img = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g = img.createGraphics();
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g.setColor(new Color(255, 230, 160));
+        g.setStroke(new BasicStroke(9, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+        g.drawOval(28, 28, 200, 200);
+        g.setStroke(new BasicStroke(6, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+        // Auge über einer gespaltenen Wurzel – das Zeichen der Gründer
+        g.drawArc(68, 86, 120, 70, 0, 180);
+        g.drawArc(68, 50, 120, 70, 180, 180);
+        g.fillOval(113, 92, 30, 30);
+        g.drawLine(128, 150, 128, 210);
+        g.drawLine(128, 180, 92, 214);
+        g.drawLine(128, 180, 164, 214);
+        for (int i = 0; i < 8; i++) {
+            double a = i * Math.PI / 4;
+            g.fillOval(128 + (int) (Math.cos(a) * 112) - 5, 128 + (int) (Math.sin(a) * 112) - 5, 10, 10);
+        }
+        g.dispose();
+        return img;
+    }
+
+    private void buildSymbol() {
+        Material m = new Material(G3.am, "Common/MatDefs/Misc/Unshaded.j3md");
+        m.setTexture("ColorMap", G3.tex(sigil()));
+        m.setColor("Color", new ColorRGBA(0.85f, 0.6f, 1f, 1));
+        m.setColor("GlowColor", new ColorRGBA(0.6f, 0.35f, 0.9f, 1));
+        m.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.AlphaAdditive);
+        m.getAdditionalRenderState().setDepthWrite(false);
+        Geometry q = new Geometry("sigil", new Quad(1.6f, 1.6f));
+        q.setMaterial(m);
+        q.setLocalTranslation(-0.8f, -0.8f, 0);
+        q.setQueueBucket(com.jme3.renderer.queue.RenderQueue.Bucket.Transparent);
+        q.setShadowMode(ShadowMode.Off);
+        symbol = new Node("symbol");
+        symbol.attachChild(q);
+        symbol.setCullHint(Spatial.CullHint.Always);
+        interior.attachChild(symbol);
+    }
+
+    /** Symbol an Ort i zeigen (-1 = verborgen). revealed=false: nur ein Hauch, bis Lumen es sichtbar macht. */
+    public void showSymbol(int i, boolean revealed) {
+        symbolAt = i;
+        if (i < 0) { symbol.setCullHint(Spatial.CullHint.Always); return; }
+        symbol.setCullHint(Spatial.CullHint.Inherit);
+        symbol.setLocalTranslation(SYMBOL_POS[i]);
+        symbol.setLocalRotation(new Quaternion().fromAngleAxis(SYMBOL_YAW[i], Vector3f.UNIT_Y));
+        symbolFade = revealed ? 1 : 0.08f;
+    }
+
+    public void revealSymbol() { symbolFade = 1; }
+
+    public boolean symbolRevealed() { return symbolFade >= 0.99f; }
+
+    public int symbolAt() { return symbolAt; }
+
+    private void buildPainting() {
+        painting = new Node("painting");
+        BufferedImage img = new BufferedImage(256, 340, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g = img.createGraphics();
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g.setPaint(new GradientPaint(0, 0, new Color(30, 24, 50), 0, 340, new Color(70, 45, 40)));
+        g.fillRect(0, 0, 256, 340);
+        // fünf Gestalten vor einem Schloss – die Gründer
+        g.setColor(new Color(60, 50, 80));
+        g.fillPolygon(new int[]{40, 70, 70, 110, 128, 146, 186, 186, 216}, new int[]{200, 200, 120, 120, 70, 120, 120, 200, 200}, 9);
+        for (int i = 0; i < 5; i++) {
+            int x = 34 + i * 44;
+            g.setColor(new Color(20, 16, 26));
+            g.fillOval(x + 6, 214, 22, 22);
+            g.fillRoundRect(x, 234, 34, 70, 14, 14);
+        }
+        g.setColor(new Color(255, 220, 150, 120));
+        g.fillOval(118, 40, 20, 20);
+        g.dispose();
+        Material pm = G3.lit(ColorRGBA.White);
+        pm.setTexture("DiffuseMap", G3.tex(img));
+        Geometry pic = new Geometry("canvas", new Quad(2.0f, 2.66f));
+        pic.setMaterial(pm);
+        pic.setLocalTranslation(-1.0f, -1.33f, 0.02f);
+        painting.attachChild(pic);
+        // goldener Rahmen
+        for (int k = 0; k < 4; k++) {
+            boolean hor = k < 2;
+            Geometry f = new Geometry("frame", new Box(hor ? 1.15f : 0.1f, hor ? 0.1f : 1.43f, 0.06f));
+            f.setMaterial(gold);
+            f.setLocalTranslation(hor ? 0 : (k == 2 ? -1.08f : 1.08f), hor ? (k == 0 ? 1.38f : -1.38f) : 0, 0);
+            painting.attachChild(f);
+        }
+        // drei Siegel
+        Spell[] seals = {Spell.FLAMME, Spell.SCHWEBE, Spell.LICHT};
+        for (int i = 0; i < 3; i++) {
+            Geometry sg = new Geometry("seal" + seals[i].name(), new Cylinder(2, 18, 0.2f, 0.06f, true));
+            ColorRGBA c = G3.rgb(seals[i].color);
+            sg.setMaterial(G3.litGlow(c, c.mult(0.7f)));
+            sg.setLocalTranslation(-0.7f + i * 0.7f, -1.38f, 0.12f);
+            sg.setShadowMode(ShadowMode.Off);
+            painting.attachChild(sg);
+        }
+        painting.setLocalTranslation(PAINTING_POS);
+        painting.setLocalRotation(new Quaternion().fromAngleAxis(FastMath.HALF_PI, Vector3f.UNIT_Y));
+        interior.attachChild(painting);
+    }
+
+    private void buildGallery() {
+        String[][] founders = {{"Arvid Sternenhall", "baute die Mauern"}, {"Mira Tausendlicht", "entzündete die Kerzen"},
+            {"Oswin Graufels", "grub die Keller"}, {"Elena Wurzelherz", "pflanzte den Herzbaum"}, {"Der Fünfte", "Name ausgekratzt"}};
+        for (int i = 0; i < founders.length; i++) {
+            BufferedImage img = new BufferedImage(160, 220, BufferedImage.TYPE_INT_RGB);
+            Graphics2D g = img.createGraphics();
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+            int hue = i * 63;
+            g.setPaint(new GradientPaint(0, 0, new Color(Color.HSBtoRGB(hue / 360f, 0.4f, 0.35f)), 0, 220, new Color(20, 15, 25)));
+            g.fillRect(0, 0, 160, 220);
+            g.setColor(i == 4 ? new Color(10, 8, 12) : new Color(Color.HSBtoRGB(hue / 360f, 0.25f, 0.8f)));
+            g.fillOval(52, 40, 56, 64);
+            g.fillRoundRect(36, 100, 88, 90, 30, 30);
+            if (i == 4) {
+                g.setColor(new Color(120, 20, 30));
+                g.setStroke(new BasicStroke(5));
+                g.drawLine(40, 40, 120, 120);
+                g.drawLine(120, 40, 40, 120);
+            }
+            g.setColor(new Color(230, 200, 130));
+            g.setFont(new Font("Serif", Font.BOLD, 14));
+            FontMetrics fm = g.getFontMetrics();
+            g.drawString(founders[i][0], 80 - fm.stringWidth(founders[i][0]) / 2, 208);
+            g.dispose();
+            Material m = G3.lit(ColorRGBA.White);
+            m.setTexture("DiffuseMap", G3.tex(img));
+            Geometry pq = new Geometry("founder", new Quad(1.4f, 1.92f));
+            pq.setMaterial(m);
+            Node holder = new Node("founderPortrait");
+            pq.setLocalTranslation(-0.7f, -0.96f, 0.04f);
+            holder.attachChild(pq);
+            Geometry fr = new Geometry("frame", new Box(0.8f, 1.06f, 0.03f));
+            fr.setMaterial(gold);
+            holder.attachChild(fr);
+            if (i < 3) {
+                holder.setLocalTranslation(-20f + i * 3.2f, 2.8f, -17.6f);
+            } else {
+                holder.setLocalTranslation(-21.1f, 2.8f, -15.6f + (i - 3) * 3.4f);
+                holder.setLocalRotation(new Quaternion().fromAngleAxis(FastMath.HALF_PI, Vector3f.UNIT_Y));
+            }
+            interior.attachChild(holder);
+        }
+        // Pult mit der Gründertafel
+        box(interior, darkWood, 0.5f, 0.55f, 0.4f, PLAQUE_POS.x, 0.55f, PLAQUE_POS.z, 0);
+        Geometry plaque = box(interior, G3.litGlow(new ColorRGBA(0.9f, 0.75f, 0.4f, 1), new ColorRGBA(0.3f, 0.2f, 0.05f, 1)), 0.4f, 0.03f, 0.3f, PLAQUE_POS.x, 1.14f, PLAQUE_POS.z, 0);
+        plaque.setLocalRotation(new Quaternion().fromAngleAxis(0.3f, Vector3f.UNIT_X));
+        walls.add(new Wall(PLAQUE_POS.x - 0.6f, PLAQUE_POS.x + 0.6f, PLAQUE_POS.z - 0.5f, PLAQUE_POS.z + 0.5f, null));
+        for (int i = 0; i < 4; i++) candle(interior, -20.5f + i * 2.6f, 0.05f, -11f, false);
+        lights.add(new PointLight(new Vector3f(PX - 17, baseY + 4, PZ - 14), new ColorRGBA(0.8f, 0.65f, 1f, 1).mult(1.0f), 10));
+    }
+
     // ================================================================ Geheimnisse
 
     /** Ist ein Geheimgang schon offen? (Flag im Spielstand) */
@@ -793,10 +977,15 @@ public final class Palace {
             if (!w.open) {
                 w.open = true;
                 if (w.door != null) {
-                    if ("kamin".equals(w.secret)) w.door.removeFromParent();
+                    if ("kamin".equals(w.secret) || "gemaelde".equals(w.secret)) w.door.removeFromParent();
                     else w.door.move(0, 0, -1.6f);
                 }
             }
+        }
+        if (isOpen(st, "gemaelde") && painting != null) painting.removeFromParent();
+        if (painting != null) for (Spell sp : new Spell[]{Spell.FLAMME, Spell.SCHWEBE, Spell.LICHT}) {
+            Spatial seal = painting.getChild("seal" + sp.name());
+            if (seal != null && st.flags.contains("seal:" + sp.name())) seal.removeFromParent();
         }
         Spatial fb = interior.getChild("fireplaceBack");
         if (fb != null && isOpen(st, "kamin")) fb.removeFromParent();
@@ -849,6 +1038,12 @@ public final class Palace {
     public void update(float dt) {
         t += dt;
         if (teacher != null) teacher.update(dt, 0, false);
+        if (symbol != null && symbolAt >= 0) {
+            Geometry q = (Geometry) symbol.getChild("sigil");
+            float a = symbolFade * (0.65f + 0.35f * FastMath.sin(t * 3));
+            q.getMaterial().setColor("Color", new ColorRGBA(0.85f, 0.6f, 1f, 1).mult(a));
+            symbol.setLocalScale(1 + FastMath.sin(t * 1.5f) * 0.05f);
+        }
         for (Geometry c : candles) {
             Object o = c.getUserData("float");
             if (o == null) continue;

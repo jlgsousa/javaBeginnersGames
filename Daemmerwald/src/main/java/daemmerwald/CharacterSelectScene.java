@@ -50,6 +50,9 @@ public class CharacterSelectScene implements Scene {
             return;
         }
         game.state.hero = all.get(sel);
+        // Teil 2 beginnt vor dem Tor der Akademie Sternenhall
+        game.state.px = Palace.PX;
+        game.state.pz = Palace.PZ + 34;
         if (game.state.twoPlayers) {
             game.state.dayTime = 0.235f;
             game.setScene(new CharacterSelectScene(game, 2));

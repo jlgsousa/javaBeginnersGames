@@ -133,12 +133,86 @@ public class WorldScene implements Scene, Main.CameraDirector {
     public void onEnter() {
         if (!st.flags.contains("intro")) {
             st.flags.add("intro");
+            st.flags.add("home:seen");
+            chapterCard(1);
             say(null, null, new String[]{
-                "*Der Morgen dämmert über Wurzelhain. Hinter dir ragt die Akademie auf, ein Baum so alt wie der Pakt selbst.",
-                "*Steuerung: WASD laufen · Maus umsehen · Linksklick oder Q zaubern · Leertaste springen · E sprechen · Tab Menü.",
-                "*Rechts siehst du immer deine aktuellen Missionen. Sprich zuerst mit Borga – sie steht links vor dir auf dem Hof."
+                "*Ein Brief ohne Absender, dein Name in Goldtinte: „Sternenhall erwartet dich.“ Niemand hat diese Akademie seit Jahrhunderten betreten.",
+                "*Und doch stehst du jetzt vor ihrem Tor. Die Kristallspitze des höchsten Turms glimmt, als hätte sie auf dich gewartet.",
+                "*Steuerung: WASD laufen · Maus umsehen · Q oder Klick zaubern · R Zauber wechseln · Leertaste springen · E benutzen · I Tasche · B Zauberbuch · Tab Menü.",
+                "*Deine Ziele stehen immer rechts. Geh zum Tor und tritt ein."
             }, null);
         }
+    }
+
+    // ================================================================ Kapitel
+
+    private String cardTitle;
+    private float cardT;
+
+    private void chapterCard(int c) {
+        cardTitle = "Kapitel " + c + " · " + (c < Chapters.TITLES.length ? Chapters.TITLES[c] : "");
+        cardT = 6;
+        if (game.app.music != null) game.app.music.sfx("chime", 0.8f);
+    }
+
+    private void advance(int chapter, int step) {
+        boolean newChapter = chapter != Chapters.chapter(st);
+        Chapters.set(st, chapter, step);
+        if (newChapter) chapterCard(chapter);
+        applyChapterWorld();
+        saveNow(false);
+    }
+
+    /** Symbol im Palast passend zum Fortschritt zeigen. */
+    private void applyChapterWorld() {
+        Palace pal = world.palace;
+        int c = Chapters.chapter(st), s = Chapters.step(st);
+        if (c == 1 && s >= 4 && s <= 6) pal.showSymbol(s - 4, s != 6 || st.flags.contains("symbol:revealed"));
+        else pal.showSymbol(-1, false);
+    }
+
+    private static final String[][] VISIONS = {
+        {"*Kaum berühren deine Finger das Symbol, wird es eiskalt. Für einen Atemzug siehst du den Saal voller Menschen – in Kleidern von vor fünfhundert Jahren.",
+            "*Fünf von ihnen stehen am Kamin und streiten. Einer zeigt nach unten, in die Tiefe. Dann ist alles wieder still.",
+            "*Das Symbol verblasst … und taucht im Westflügel wieder auf. Es wandert."},
+        {"*Wieder die Kälte. Diesmal hörst du eine Stimme: „Wir haben es eingeschlossen. Wir haben es nicht besiegt.“",
+            "*Bücher fallen aus den Regalen, die es gar nicht mehr gibt. Dann: Stille.",
+            "*Das Symbol erlischt. Irgendwo tief unten, im Trankkeller, flüstert etwas aus der Dunkelheit."},
+        {"*Im Licht von Lumen glüht das Symbol so hell, dass du die Augen schließen musst.",
+            "*Du siehst eine Kammer unter dem Schloss. Etwas Großes schläft darin – und es atmet.",
+            "*Eine Frauenstimme, ganz nah: „Wenn du das siehst, ist es zu spät, um zu gehen. Finde das Gemälde. Finde uns.“"}
+    };
+
+    private void touchSymbol() {
+        int s = Chapters.step(st);
+        int idx = s - 4;
+        List<String> l = new ArrayList<>(List.of(VISIONS[idx]));
+        world.burst(world.palace.toWorld(Palace.SYMBOL_POS[idx]), new ColorRGBA(0.8f, 0.5f, 1f, 1), 90);
+        if (game.app.music != null) game.app.music.sfx("spell", 0.6f);
+        if (s < 6) {
+            l.addAll(st.addXp(15));
+            say(null, null, l.toArray(new String[0]), null);
+            advance(1, s + 1);
+        } else {
+            l.add("*Kapitel 1 abgeschlossen! Belohnung: 120 Glimmertaler und eine Rarität.");
+            st.earn(120);
+            st.addTreasure(Treasure.GEISTERLATERNE, 1);
+            l.addAll(st.addXp(80));
+            say(null, null, l.toArray(new String[0]), () -> advance(2, 0));
+        }
+    }
+
+    private void readPlaque() {
+        List<String> l = new ArrayList<>(List.of(
+            "*„Wir, die Fünf, erbauten Sternenhall über dem Schlafenden. Unsere Magie hält ihn im Schlaf – solange die Akademie lebt.“",
+            "*„Doch einer von uns wollte ihn wecken. Wir haben seinen Namen getilgt, sein Bild zerkratzt und die Akademie versiegelt.“",
+            "*„Wer dies liest: Die Akademie ist erwacht. Also ist auch er erwacht. Suche den Wald. Die alte Kreatur dort erinnert sich an alles.“",
+            "*Unter der Tafel ist ein Name eingeritzt, ganz klein und frisch: das Symbol aus dem Saal. Jemand war vor kurzem hier.",
+            "*Kapitel 2 abgeschlossen! Belohnung: 150 Glimmertaler und eine Magierkarte."));
+        st.earn(150);
+        st.flags.add("card:" + Cards.Mage.ARVID.name());
+        l.addAll(st.addXp(100));
+        say(null, null, l.toArray(new String[0]), () -> advance(3, 0));
     }
 
     public boolean racing() { return race != null; }
@@ -150,7 +224,7 @@ public class WorldScene implements Scene, Main.CameraDirector {
     }
 
     public boolean wantsMouse() {
-        return dialog == null && choice == null && menuTab < 0 && !shop && !brew;
+        return dialog == null && choice == null && menuTab < 0 && !shop && !brew && !bookOpen;
     }
 
     void say(String name, Look look, String[] lines, Runnable after) {
@@ -194,6 +268,12 @@ public class WorldScene implements Scene, Main.CameraDirector {
         if (shop) { updateShop(); idle(dt); return; }
         if (brew) { updateBrew(); idle(dt); return; }
         if (menuTab >= 0) { updateMenu(); idle(dt); return; }
+        if (bookOpen) { updateBook(); idle(dt); return; }
+        if (in.wasPressed(KeyEvent.VK_B)) {
+            if (st.flags.contains("spellbook")) bookOpen = true;
+            else floatText("Du hast noch kein Zauberbuch – Professorin Funkelstein im Palast", pos.add(0, fig.height + 1, 0), Art.PARCH);
+            return;
+        }
         dialogNpc = null;
         if (in.wasPressed(KeyEvent.VK_ESCAPE, KeyEvent.VK_TAB)) { menuTab = 0; return; }
         if (in.wasPressed(KeyEvent.VK_M)) { menuTab = 0; return; }
@@ -586,6 +666,79 @@ public class WorldScene implements Scene, Main.CameraDirector {
         }
     }
 
+    // ---------------------------------------------------------------- Zauberbuch (B)
+
+    private boolean bookOpen;
+
+    private RoundRectangle2D bookRow(int i) {
+        double x = i < 4 ? 170 : 670, y = 170 + (i % 4) * 116;
+        return new RoundRectangle2D.Double(x, y, 440, 106, 16, 16);
+    }
+
+    private void updateBook() {
+        if (in.wasPressed(KeyEvent.VK_B, KeyEvent.VK_ESCAPE)) { bookOpen = false; return; }
+        Spell[] all = Spell.values();
+        for (int i = 0; i < all.length; i++) {
+            if (in.mouseClicked && bookRow(i).contains(in.mouseX, in.mouseY) && st.spells.contains(all[i])) {
+                st.spell = all[i];
+                if (game.app.music != null) game.app.music.sfx("spell", spellPitch(all[i]));
+                bookOpen = false;
+                floatText("Zauber: " + st.spell.label(), pos.add(0, fig.height + 1.1f, 0), st.spell.color);
+            }
+        }
+    }
+
+    private void drawBook(Graphics2D g) {
+        g.setColor(new Color(0, 0, 0, 150));
+        g.fillRect(0, 0, SW, SH);
+        // aufgeschlagenes Buch: zwei Pergamentseiten
+        for (int side = 0; side < 2; side++) {
+            double x = side == 0 ? 140 : 640;
+            g.setPaint(new GradientPaint((float) x, 0, new Color(235, 220, 185), (float) x + 500, 0, new Color(215, 195, 155)));
+            g.fill(new RoundRectangle2D.Double(x, 90, 500, 600, 18, 18));
+            g.setColor(new Color(120, 80, 40));
+            g.setStroke(new BasicStroke(3));
+            g.draw(new RoundRectangle2D.Double(x, 90, 500, 600, 18, 18));
+        }
+        g.setColor(new Color(90, 55, 25));
+        g.fillRect(636, 90, 8, 600);
+        g.setFont(new Font("Serif", Font.BOLD | Font.ITALIC, 30));
+        Art.shadowCentered(g, "Zauberbuch", 390, 140, new Color(90, 40, 20));
+        Art.shadowCentered(g, st.displayName(), 890, 140, new Color(90, 40, 20));
+        Spell[] all = Spell.values();
+        for (int i = 0; i < all.length; i++) {
+            Spell sp = all[i];
+            RoundRectangle2D r = bookRow(i);
+            boolean known = st.spells.contains(sp), active = st.spell == sp, hover = r.contains(in.mouseX, in.mouseY);
+            g.setColor(active ? new Color(255, 235, 170) : hover && known ? new Color(245, 230, 195) : new Color(0, 0, 0, 0));
+            g.fill(r);
+            Color ink = known ? new Color(60, 30, 15) : new Color(150, 130, 100);
+            Art.dot(g, r.getX() + 34, r.getY() + 40, 18, known ? sp.color : new Color(170, 150, 120), 255);
+            g.setFont(new Font("Serif", Font.BOLD | Font.ITALIC, 26));
+            g.setColor(ink);
+            g.drawString(known ? sp.word : "???", (float) r.getX() + 64, (float) r.getY() + 36);
+            g.setFont(new Font("Serif", Font.PLAIN, 15));
+            g.drawString(known ? sp.title + "  ·  Stufe " + "★".repeat(spellLevel(sp)) + "☆".repeat(3 - spellLevel(sp)) : "Noch nicht gelernt – Unterricht im Palast", (float) r.getX() + 64, (float) r.getY() + 58);
+            if (known) {
+                Art.drawWrapped(g, sp.text, r.getX() + 64, r.getY() + 78, 360, 15);
+                // Zauberbewegung als kleine Pfeile
+                String arrows = "";
+                for (int d : sp.pattern) arrows += "↑→↓←".charAt(d);
+                g.setFont(new Font("SansSerif", Font.BOLD, 14));
+                g.setColor(new Color(120, 70, 30));
+                g.drawString(arrows, (float) (r.getX() + r.getWidth() - 12 - g.getFontMetrics().stringWidth(arrows)), (float) r.getY() + 36);
+            }
+            if (active) {
+                g.setFont(new Font("SansSerif", Font.BOLD, 12));
+                g.setColor(new Color(150, 60, 20));
+                g.drawString("GEWÄHLT", (float) (r.getX() + r.getWidth() - 70), (float) r.getY() + 58);
+            }
+        }
+        g.setFont(Art.SMALL);
+        g.setColor(new Color(220, 210, 190));
+        Art.centered(g, "Klick wählt einen Zauber · R wechselt auch ohne Buch · B oder Esc schließt", SW / 2.0, 712);
+    }
+
     private void updateFlashes(float dt) {
         for (Iterator<Object[]> it = flashes.iterator(); it.hasNext(); ) {
             Object[] f = it.next();
@@ -823,6 +976,7 @@ public class WorldScene implements Scene, Main.CameraDirector {
     public void update3D(float dt) {
         if (p2 != null) p2.update3D(dt);
         updateFlashes(dt);
+        if (cardT > 0) cardT -= dt;
         if (shieldT > 0) {
             shieldT -= dt;
             float r = fig.height * 0.75f + 0.3f;
@@ -1094,6 +1248,32 @@ public class WorldScene implements Scene, Main.CameraDirector {
             saveNow(false);
             return;
         }
+        // Räume für das Kapitel merken
+        Palace.Room here = pal.roomAt(pos.x, pos.z);
+        if (here != null && st.flags.add("room:" + here.id()) && Chapters.chapter(st) == 1 && Chapters.step(st) == 3
+            && st.flags.contains("room:library") && st.flags.contains("room:cellar")) {
+            say(null, null, new String[]{"*Ein kalter Hauch zieht durch die Gänge. Aus dem großen Saal dringt ein violettes Leuchten …"}, null);
+            advance(1, 4);
+        }
+        int cc = Chapters.chapter(st), cs = Chapters.step(st);
+        if (cc == 1 && cs >= 4 && cs <= 6) {
+            Vector3f sp = pal.toWorld(Palace.SYMBOL_POS[cs - 4]);
+            float d = FastMath.sqrt(FastMath.sqr(sp.x - pos.x) + FastMath.sqr(sp.z - pos.z));
+            if (d < 3.0f && pal.symbolRevealed()) { palaceLabel = "[E] Das leuchtende Symbol berühren"; palaceAction = this::touchSymbol; return; }
+            if (d < 6f && !pal.symbolRevealed()) { palaceLabel = "✦ Aus der dunklen Ecke flüstert es … Bring Licht: Lumen (Q)"; return; }
+        }
+        if (cc == 2) {
+            Vector3f pp = pal.toWorld(Palace.PAINTING_POS);
+            float d = FastMath.sqrt(FastMath.sqr(pp.x - pos.x) + FastMath.sqr(pp.z - pos.z));
+            if (cs == 0 && d < 5f) {
+                say(null, null, new String[]{"*Ein Gemälde, das gestern noch nicht hier hing: fünf Gestalten vor Sternenhall. Eine ist schwarz übermalt.",
+                    "*Am Rahmen leuchten drei Siegel – rot, violett und weiß. Feuer, Schweben, Licht.", "*Brich die Siegel mit Ignis, Levitaris und Lumen."}, null);
+                advance(2, 1);
+                return;
+            }
+            if (cs == 1 && d < 4.5f) { palaceLabel = "✦ Drei Siegel am Gemälde – " + Chapters.objective(st)[2]; return; }
+            if (cs == 2 && pal.toWorld(Palace.PLAQUE_POS).distance(pos) < 2.4f) { palaceLabel = "[E] Die Tafel der Gründer lesen"; palaceAction = this::readPlaque; return; }
+        }
         if (pal.toWorld(Palace.TEACHER_POS).distance(pos) < 3.0f) {
             palaceLabel = "[E] Zauberunterricht bei Professorin Ysmira Funkelstein";
             palaceAction = this::startLesson;
@@ -1134,6 +1314,8 @@ public class WorldScene implements Scene, Main.CameraDirector {
         yaw = camYaw = FastMath.PI;
         camInit = false;
         if (p2 != null) { p2.pos.set(pos).addLocal(1.5f, 0, 0); p2.yaw = FastMath.PI; }
+        applyChapterWorld();
+        if (Chapters.chapter(st) == 1 && Chapters.step(st) == 0) advance(1, 1);
         if (!st.flags.contains("palace:visited")) {
             st.flags.add("palace:visited");
             say(null, null, new String[]{
@@ -1168,6 +1350,35 @@ public class WorldScene implements Scene, Main.CameraDirector {
     private boolean palaceSpell(Vector3f target, Spell spell) {
         if (!world.inPalace) return false;
         Palace pal = world.palace;
+        int cc = Chapters.chapter(st), cs = Chapters.step(st);
+        if (cc == 1 && cs == 6 && spell == Spell.LICHT && !pal.symbolRevealed()) {
+            Vector3f sp = pal.toWorld(Palace.SYMBOL_POS[2]);
+            if (sp.distance(target) < 6 || sp.distance(pos) < 6.5f) {
+                st.flags.add("symbol:revealed");
+                pal.revealSymbol();
+                world.burst(sp, new ColorRGBA(0.8f, 0.5f, 1f, 1), 80);
+                floatText("Das Symbol erscheint im Licht!", pos.add(0, fig.height + 1, 0), new Color(220, 180, 255));
+                return true;
+            }
+        }
+        if (cc == 2 && cs == 1 && (spell == Spell.FLAMME || spell == Spell.SCHWEBE || spell == Spell.LICHT)) {
+            Vector3f pp = pal.toWorld(Palace.PAINTING_POS);
+            if ((pp.distance(target) < 4.5f || pp.distance(pos) < 5f) && st.flags.add("seal:" + spell.name())) {
+                pal.applyOpen(st);
+                world.burst(pp, G3.rgb(spell.color), 70);
+                int broken = 0;
+                for (Spell s2 : new Spell[]{Spell.FLAMME, Spell.SCHWEBE, Spell.LICHT}) if (st.flags.contains("seal:" + s2.name())) broken++;
+                floatText("Siegel gebrochen (" + broken + "/3)", pp.add(0, 1.6f, 0), spell.color);
+                if (broken == 3) {
+                    st.flags.add("secret:gemaelde");
+                    pal.applyOpen(st);
+                    say(null, null, new String[]{"*Das letzte Siegel zerspringt. Das Gemälde schwingt auf wie eine Tür – dahinter ein Raum voller Porträts.",
+                        "*Die Galerie der Gründer. Auf einem Pult in der Mitte liegt eine Tafel."}, null);
+                    advance(2, 2);
+                }
+                return true;
+            }
+        }
         Palace.Secret sc = pal.secretNear(target, 3.4f);
         if (sc == null) sc = pal.secretNear(pos, 3.6f);
         if (sc == null || Palace.isOpen(st, sc.id)) return false;
@@ -1199,6 +1410,17 @@ public class WorldScene implements Scene, Main.CameraDirector {
     }
 
     private void startLesson() {
+        if (!st.flags.contains("spellbook")) {
+            st.flags.add("spellbook");
+            if (Chapters.chapter(st) == 1 && Chapters.step(st) <= 1) advance(1, st.spells.contains(Spell.LICHT) ? 3 : 2);
+            say("Professorin Ysmira Funkelstein", CharacterDef.ALL.get(9).look, new String[]{
+                "Ah! Du musst die Neue sein – oder der Neue. Der Brief kam also wirklich an. Ich bin Ysmira Funkelstein und, nun ja, die einzige Lehrerin hier.",
+                "Die Akademie war fünfhundert Jahre verschlossen. Seit einem Monat öffnen sich ihre Türen wieder von selbst. Niemand weiß, warum.",
+                "*Sie reicht dir ein schweres, in Leder gebundenes Buch. Auf dem Deckel: das Zeichen der Akademie.",
+                "*Du hast dein erstes Zauberbuch erhalten! Mit B öffnest du es und wählst deine Zauber.",
+                "Und jetzt: deine erste Stunde."}, this::startLesson);
+            return;
+        }
         Spell next = nextLesson();
         if (next == null) {
             Choice c = new Choice("Professorin Ysmira Funkelstein");
@@ -1227,6 +1449,7 @@ public class WorldScene implements Scene, Main.CameraDirector {
             if (!practice) {
                 st.spells.add(sp);
                 st.spell = sp;
+                if (sp == Spell.LICHT && Chapters.chapter(st) == 1 && Chapters.step(st) == 2) advance(1, 3);
                 l.add("*Neuer Zauber gelernt: " + sp.label() + "!");
                 l.add("*Mit R wechselst du deinen Zauber, mit Q oder Klick zauberst du.");
                 l.add("Professorin Funkelstein: " + lessonTip(sp));
@@ -2144,6 +2367,17 @@ public class WorldScene implements Scene, Main.CameraDirector {
         if (shop) drawShop(g);
         if (brew) drawBrew(g);
         if (menuTab >= 0) drawMenu(g);
+        if (bookOpen) drawBook(g);
+        if (cardTitle != null && cardT > 0) {
+            float a = Math.min(1, Math.min(cardT, 6 - cardT) * 1.2f);
+            g.setColor(new Color(0, 0, 0, (int) (a * 120)));
+            g.fillRect(0, SH / 2 - 90, SW, 150);
+            g.setFont(new Font("Serif", Font.BOLD | Font.ITALIC, 56));
+            Art.shadowCentered(g, cardTitle, SW / 2.0, SH / 2.0, Art.alpha(Art.GOLD, (int) (a * 255)));
+            Art.ornament(g, SW / 2.0, SH / 2.0 + 26, 420, game.time());
+            g.setFont(Art.ITALIC);
+            Art.shadowCentered(g, "Das Erwachen unter Sternenhall", SW / 2.0, SH / 2.0 + 52, Art.alpha(Art.PARCH, (int) (a * 255)));
+        }
         if (dialog != null) dialog.render(g, game.time());
     }
 
@@ -2226,6 +2460,8 @@ public class WorldScene implements Scene, Main.CameraDirector {
         Outfit cheapest = null;
         for (Outfit o : Outfit.values()) if (!st.owned.contains(o) && (cheapest == null || o.price < cheapest.price)) cheapest = o;
         if (cheapest != null) m.add(new String[]{"Laden", "Nächstes Gewand: " + cheapest.title, cheapest.price + " Taler bei Pimpernell (Hof)"});
+        String[] ch = Chapters.objective(st);
+        m.add(0, new String[]{"Kapitel", ch[1], ch[0] + (ch[2].isEmpty() ? "" : " – " + ch[2])});
         Spell nl = nextLesson();
         if (nl != null) m.add(new String[]{"Unterricht", "Zauberstunde: " + nl.label(), "Bei Professorin Funkelstein im großen Saal des Palasts"});
         SpellPuzzles.Puzzle np = nextPuzzle();
@@ -2299,6 +2535,7 @@ public class WorldScene implements Scene, Main.CameraDirector {
         for (String[] e : m) {
             Color tag = switch (e[0]) {
                 case "Hauptquest" -> Art.GOLD;
+                case "Kapitel" -> new Color(220, 170, 255);
                 case "Auftrag" -> new Color(140, 220, 150);
                 case "Endlos" -> Art.MAGIC;
                 default -> new Color(170, 170, 195);

@@ -190,6 +190,38 @@ public class Shot {
             app.world.dayNight.time = 0.8f;
         });
         step("protego_cast", 5f, () -> press(java.awt.event.KeyEvent.VK_Q));
+        step("ch_start", 6f, () -> {
+            app.core.state = new GameState();
+            app.core.state.hero = CharacterDef.ALL.get(1);
+            app.core.state.px = Palace.PX; app.core.state.pz = Palace.PZ + 34;
+            app.core.state.dayTime = 0.3f;
+            app.core.setScene(new WorldScene(app.core));
+        });
+        step("ch_book", 3f, () -> {
+            GameState gs = app.core.state;
+            ((WorldScene) app.core.scene()).dialog = null;
+            gs.flags.add("spellbook"); gs.spells.add(Spell.LICHT); gs.spells.add(Spell.FLAMME); gs.spell = Spell.LICHT;
+            press(java.awt.event.KeyEvent.VK_B);
+        });
+        step("ch_symbol", 5f, () -> {
+            press(java.awt.event.KeyEvent.VK_B);
+            Chapters.set(app.core.state, 1, 4);
+            ((WorldScene) app.core.scene()).enterPalace();
+            ((WorldScene) app.core.scene()).dialog = null;
+            teleport(Palace.PX + 5.5f, Palace.PZ - 11f, FastMath.PI);
+        });
+        step("ch_painting", 5f, () -> {
+            Chapters.set(app.core.state, 2, 1);
+            app.core.state.flags.add("seal:FLAMME");
+            app.world.palace.applyOpen(app.core.state);
+            teleport(Palace.PX - 6f, Palace.PZ - 14f, -FastMath.HALF_PI);
+        });
+        step("ch_gallery", 5f, () -> {
+            app.core.state.flags.add("seal:SCHWEBE"); app.core.state.flags.add("seal:LICHT"); app.core.state.flags.add("secret:gemaelde");
+            Chapters.set(app.core.state, 2, 2);
+            app.world.palace.applyOpen(app.core.state);
+            teleport(Palace.PX - 13f, Palace.PZ - 14.5f, -FastMath.HALF_PI);
+        });
         step("players", 2f, () -> app.core.setScene(new PlayersScene(app.core)));
         step("two_players", 6f, () -> {
             GameState gs = app.core.state;
