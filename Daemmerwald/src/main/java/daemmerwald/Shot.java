@@ -159,6 +159,29 @@ public class Shot {
         });
         step("palace_cellar", 4f, () -> teleport(Palace.PX + 15, Palace.PZ - 6, FastMath.HALF_PI + 0.4f));
         step("palace_night", 5f, () -> { ((WorldScene) app.core.scene()).exitPalace(); app.world.dayNight.time = 0.88f; teleport(Palace.PX + 10, Palace.PZ + 46, FastMath.PI + 0.2f); });
+        step("lesson", 3f, () -> {
+            GameState gs = app.core.state;
+            gs.flags.add("intro"); gs.flags.add("home:seen"); gs.flags.add("palace:visited");
+            app.core.setScene(new LessonGame(app.core, Spell.FLAMME));
+        });
+        step("lesson_play", 3f, () -> { press(java.awt.event.KeyEvent.VK_ENTER); });
+        step("puzzle_vines", 5f, () -> {
+            app.core.setScene(new WorldScene(app.core));
+            app.core.state.spells.add(Spell.FLAMME); app.core.state.spell = Spell.FLAMME;
+            app.world.dayNight.time = 0.45f;
+        });
+        step("puzzle_vines2", 4f, () -> teleport(24, -175.5f, FastMath.PI));
+        step("puzzle_ice", 5f, () -> {
+            app.core.state.flags.add("puzzle:eis1");
+            app.world.puzzles.apply(app.core.state);
+            teleport(-92, -6, -FastMath.HALF_PI - 0.15f);
+        });
+        step("puzzle_veil", 4f, () -> teleport(-118, -82, FastMath.PI));
+        step("puzzle_boulder", 4f, () -> {
+            app.core.state.flags.add("puzzle:fels1");
+            app.world.puzzles.apply(app.core.state);
+            teleport(112, -26, FastMath.PI);
+        });
         step("players", 2f, () -> app.core.setScene(new PlayersScene(app.core)));
         step("two_players", 6f, () -> {
             GameState gs = app.core.state;

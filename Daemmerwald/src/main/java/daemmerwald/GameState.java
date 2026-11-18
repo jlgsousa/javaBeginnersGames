@@ -25,6 +25,9 @@ public class GameState {
     public final Map<String, int[]> quests = new LinkedHashMap<>();
     /** Eigenes Haus: Baustoffe, Ausbaustufe (0 = kleine Holzhütte), gekaufte Möbel, entdeckte Rezepte. */
     /** Raritäten-Sammlung und Freundschaftspunkte je Figur. */
+    /** Gelernte Zauber und der gerade gewählte. */
+    public final EnumSet<Spell> spells = EnumSet.of(Spell.FUNKE);
+    public Spell spell = Spell.FUNKE;
     public final EnumMap<Treasure, Integer> treasures = new EnumMap<>(Treasure.class);
     public final Map<String, Integer> friendship = new HashMap<>();
     public final EnumMap<Baustoff, Integer> mats = new EnumMap<>(Baustoff.class);
@@ -138,6 +141,8 @@ public class GameState {
         mats.forEach((k, v) -> bm.append(k.name()).append('=').append(v).append(','));
         p.setProperty("mats", bm.toString());
         p.setProperty("home", String.valueOf(homeLevel));
+        p.setProperty("spells", join(spells.stream().map(Enum::name).toList()));
+        p.setProperty("spell", spell.name());
         StringBuilder tr = new StringBuilder();
         treasures.forEach((k, v) -> tr.append(k.name()).append('=').append(v).append(','));
         p.setProperty("treasures", tr.toString());
@@ -198,6 +203,11 @@ public class GameState {
                 s.mats.put(Baustoff.valueOf(a[0]), Integer.parseInt(a[1]));
             }
             s.homeLevel = Integer.parseInt(p.getProperty("home", "0"));
+            for (String x : split(p.getProperty("spells"))) {
+                try { s.spells.add(Spell.valueOf(x)); } catch (IllegalArgumentException ignored) { }
+            }
+            try { s.spell = Spell.valueOf(p.getProperty("spell", "FUNKE")); } catch (IllegalArgumentException e) { s.spell = Spell.FUNKE; }
+            if (!s.spells.contains(s.spell)) s.spell = Spell.FUNKE;
             for (String kv : split(p.getProperty("treasures"))) {
                 String[] a = kv.split("=");
                 try { s.treasures.put(Treasure.valueOf(a[0]), Integer.parseInt(a[1])); } catch (IllegalArgumentException ignored) { }

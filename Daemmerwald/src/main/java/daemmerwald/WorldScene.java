@@ -100,6 +100,8 @@ public class WorldScene implements Scene, Main.CameraDirector {
         if (st.flags.contains("blight")) world.setBlightCleared();
         rebuildFigure();
         world.setHomeLevel(st.homeLevel);
+        world.state = st;
+        world.puzzles.apply(st);
         if (st.twoPlayers) p2 = new Mate(st, world, pos, yaw);
         else if (world.mate != null) { world.mate.remove(); world.mate = null; }
         mana = (float) st.hero.manaMax();
@@ -226,6 +228,13 @@ public class WorldScene implements Scene, Main.CameraDirector {
         }
 
         for (int i = 0; i < 4; i++) if (in.wasPressed(KeyEvent.VK_1 + i)) drink(Potion.values()[i]);
+        if (in.wasPressed(KeyEvent.VK_R) && st.spells.size() > 1) {
+            Spell[] all = Spell.values();
+            int i = st.spell.ordinal();
+            do { i = (i + 1) % all.length; } while (!st.spells.contains(all[i]));
+            st.spell = all[i];
+            floatText("Zauber: " + st.spell.label(), pos.add(0, fig.height + 1.1f, 0), st.spell.color);
+        }
 
         near = nearNpc(pos);
         nearHouse = near == null ? nearHouseAt(pos) : null;
@@ -403,17 +412,21 @@ public class WorldScene implements Scene, Main.CameraDirector {
         final Vector3f p, target;
         float trailLife = -1;
 
-        Bolt(Vector3f from, Vector3f to) {
+        final Spell spell;
+
+        Bolt(Vector3f from, Vector3f to, Spell spell) {
             p = from.clone();
             target = to.clone();
-            node.attachChild(G3.geom("boltCore", new Sphere(10, 10, 0.16f), G3.emissive(new ColorRGBA(0.85f, 0.95f, 1f, 1))));
-            trail = G3.particles("boltTrail", 60, null, new ColorRGBA(0.6f, 0.85f, 1f, 1), new ColorRGBA(0.3f, 0.5f, 1f, 0), 0.22f, 0.02f, 0.3f, 0.6f);
+            this.spell = spell;
+            ColorRGBA sc = G3.rgb(spell.color);
+            node.attachChild(G3.geom("boltCore", new Sphere(10, 10, 0.16f), G3.emissive(sc.add(new ColorRGBA(0.25f, 0.25f, 0.25f, 0)))));
+            trail = G3.particles("boltTrail", 60, null, sc, new ColorRGBA(sc.r * 0.5f, sc.g * 0.5f, sc.b, 0), 0.22f, 0.02f, 0.3f, 0.6f);
             trail.setParticlesPerSec(90);
             trail.setShape(new com.jme3.effect.shapes.EmitterSphereShape(Vector3f.ZERO, 0.06f));
             trail.getParticleInfluencer().setVelocityVariation(0.3f);
             trail.setInWorldSpace(true);
             node.attachChild(trail);
-            light.setColor(new ColorRGBA(0.6f, 0.85f, 1f, 1).multLocal(2.5f));
+            light.setColor(sc.mult(2.5f));
             light.setRadius(9);
             world.root.addLight(light);
             world.root.attachChild(node);
@@ -448,7 +461,7 @@ public class WorldScene implements Scene, Main.CameraDirector {
     private void updateBolts(float dt) {
         for (Iterator<Bolt> it = bolts.iterator(); it.hasNext(); ) {
             Bolt b = it.next();
-            if (b.fly(dt)) spellImpact(b.target);
+            if (b.fly(dt)) spellImpact(b.target, b.spell);
             if (b.trailLife < 0 && b.node.getParent() == null) it.remove();
         }
     }
@@ -461,13 +474,15 @@ public class WorldScene implements Scene, Main.CameraDirector {
         Vector3f target = pos.add(fwd.mult(reach)).addLocal(0, 1.2f, 0);
         Vector3f hand = pos.add(fwd.mult(0.7f)).addLocal(0, figH * 0.72f, 0);
         world.burst(hand, new ColorRGBA(1f, 0.95f, 0.8f, 1), 20);
-        bolts.add(new Bolt(hand, target));
+        bolts.add(new Bolt(hand, target, st.spell));
         lightBoost = 3;
     }
 
-    private void spellImpact(Vector3f target) {
-        if (palaceSpell(target)) return;
-        world.burst(target, new ColorRGBA(0.6f, 0.9f, 1f, 1), 70);
+    private void spellImpact(Vector3f target, Spell spell) {
+        if (palaceSpell(target, spell)) return;
+        world.burst(target, G3.rgb(spell.color), 70);
+        if (puzzleSpell(target, spell)) return;
+        if (spell != Spell.FUNKE && spell != Spell.LICHT && spell != Spell.FLAMME) return;
         float r = st.has(Ability.LANZE) ? 16 : 10;
         for (Iterator<Creature> it = creatures.iterator(); it.hasNext(); ) {
             Creature c = it.next();
@@ -875,6 +890,11 @@ public class WorldScene implements Scene, Main.CameraDirector {
             saveNow(false);
             return;
         }
+        if (pal.toWorld(Palace.TEACHER_POS).distance(pos) < 3.0f) {
+            palaceLabel = "[E] Zauberunterricht bei Professorin Ysmira Funkelstein";
+            palaceAction = this::startLesson;
+            return;
+        }
         if (pal.exitInside().distance(pos) < 2.6f) {
             palaceLabel = "[E] Palast verlassen";
             palaceAction = this::exitPalace;
@@ -894,12 +914,14 @@ public class WorldScene implements Scene, Main.CameraDirector {
         Palace.Secret sc = pal.secretNear(pos, 3.6f);
         if (sc != null && !Palace.isOpen(st, sc.id)) {
             boolean knows = st.flags.contains("hint:" + sc.id);
-            palaceLabel = "✦ " + sc.hint + (knows ? "  Zauber wirken (Q)!" : "");
+            Spell need = secretSpell(sc.id);
+            palaceLabel = "✦ " + sc.hint + (knows || st.spells.contains(need) ? "  → " + need.word + " (" + need.title + ")" : "");
         }
     }
 
     void enterPalace() {
         Palace pal = world.palace;
+        pal.addTeacher(CharacterDef.ALL.get(9).look);
         world.setPalace(true);
         pal.applyOpen(st);
         for (Creature c : creatures) c.remove();
@@ -929,12 +951,28 @@ public class WorldScene implements Scene, Main.CameraDirector {
     }
 
     /** Zauber im Palast: öffnet einen Geheimgang, wenn man an der richtigen Stelle zaubert. */
-    private boolean palaceSpell(Vector3f target) {
+    /** Welcher Zauber öffnet welchen Geheimgang? */
+    static Spell secretSpell(String id) {
+        return switch (id) {
+            case "regal" -> Spell.LICHT;
+            case "kamin" -> Spell.FLAMME;
+            case "sternwarte" -> Spell.SCHWEBE;
+            default -> Spell.OEFFNEN;
+        };
+    }
+
+    private boolean palaceSpell(Vector3f target, Spell spell) {
         if (!world.inPalace) return false;
         Palace pal = world.palace;
         Palace.Secret sc = pal.secretNear(target, 3.4f);
         if (sc == null) sc = pal.secretNear(pos, 3.6f);
         if (sc == null || Palace.isOpen(st, sc.id)) return false;
+        Spell need = secretSpell(sc.id);
+        if (spell != need) {
+            floatText(st.spells.contains(need) ? "Hier wirkt nur " + need.word + " – wechsle mit R" : "Hier hilft ein Zauber, den du noch lernen musst …",
+                pos.add(0, fig.height + 1, 0), new Color(200, 190, 255));
+            return true;
+        }
         st.flags.add("secret:" + sc.id);
         pal.applyOpen(st);
         world.burst(pal.toWorld(sc.spot), new ColorRGBA(0.6f, 0.8f, 1f, 1), 120);
@@ -947,6 +985,143 @@ public class WorldScene implements Scene, Main.CameraDirector {
         say(null, null, l.toArray(new String[0]), null);
         saveNow(false);
         return true;
+    }
+
+    // ================================================================ Zauberunterricht & Zauberrätsel
+
+    private Spell nextLesson() {
+        for (Spell sp : Spell.LESSONS) if (!st.spells.contains(sp)) return sp;
+        return null;
+    }
+
+    private void startLesson() {
+        Spell next = nextLesson();
+        if (next == null) {
+            Choice c = new Choice("Professorin Ysmira Funkelstein");
+            for (Spell sp : Spell.LESSONS) c.add("Noch einmal üben: " + sp.label(), () -> runLesson(sp, true));
+            c.add("Danke, Professorin!", () -> { });
+            say("Professorin Ysmira Funkelstein", CharacterDef.ALL.get(9).look, new String[]{"Du kennst alle fünf Zauber dieses Jahres! Üben schadet trotzdem nie."}, () -> choice = c);
+            return;
+        }
+        String[] intro = st.spells.size() <= 1
+            ? new String[]{"Willkommen zu deiner ersten Stunde! Ich bin Professorin Ysmira Funkelstein.",
+                "Fünf Zauber lernst du dieses Jahr. Jeder öffnet Wege, die anderen verschlossen bleiben – hier im Palast und draußen im Wald.",
+                "Heute: " + next.label() + ". " + next.text}
+            : new String[]{"Ah, da bist du ja! Heute lernen wir " + next.label() + ".", next.text};
+        say("Professorin Ysmira Funkelstein", CharacterDef.ALL.get(9).look, intro, () -> runLesson(next, false));
+    }
+
+    private void runLesson(Spell sp, boolean practice) {
+        LessonGame lg = new LessonGame(game, sp);
+        lg.level = practice ? 2 : 1;
+        in.releaseAll();
+        lg.onDone = r -> {
+            game.setScene(this);
+            in.releaseAll();
+            if (r != MiniGame.Result.WIN) return;
+            List<String> l = new ArrayList<>();
+            if (!practice) {
+                st.spells.add(sp);
+                st.spell = sp;
+                l.add("*Neuer Zauber gelernt: " + sp.label() + "!");
+                l.add("*Mit R wechselst du deinen Zauber, mit Q oder Klick zauberst du.");
+                l.add("Professorin Funkelstein: " + lessonTip(sp));
+            } else l.add("*Gut geübt!");
+            l.addAll(st.addXp(practice ? 15 : 50));
+            saveNow(false);
+            say("Professorin Ysmira Funkelstein", CharacterDef.ALL.get(9).look, l.toArray(new String[0]), null);
+        };
+        game.setScene(lg);
+    }
+
+    private static String lessonTip(Spell sp) {
+        return switch (sp) {
+            case LICHT -> "Im Schattenhain soll ein Schattenschleier einen alten Steinbogen versperren. Und in unserer Bibliothek … nun ja, schau dir die Regale genau an.";
+            case FLAMME -> "Am Palast wuchern Dornenranken um eine Truhe. Auf der Sonnenwiese warten drei kalte Feuerschalen. Und unser Kamin im Saal ist seltsam kalt …";
+            case SCHWEBE -> "Im Steinbruch liegt ein Felsbrocken, den kein Troll bewegen kann. Und manche Wandteppiche hängen nicht ohne Grund.";
+            case FROST -> "Am Ostufer des Mondsees steht ein Frostkristall. Draußen auf der Insel glänzt seit Jahren eine Truhe.";
+            case OEFFNEN -> "Jetzt kannst du all die verschlossenen Truhen öffnen. Und im Trankkeller gibt es eine Platte mit einem Mondzeichen …";
+            default -> "";
+        };
+    }
+
+    /** Zauber auf ein Rätsel in der Welt. */
+    private boolean puzzleSpell(Vector3f target, Spell spell) {
+        if (world.inPalace) return false;
+        SpellPuzzles.Cast c = world.puzzles.cast(st, spell, target, pos);
+        if (c == null) return false;
+        SpellPuzzles.Puzzle p = c.puzzle();
+        if (c.wrongSpell()) {
+            floatText(st.spells.contains(p.spell) ? "Hier hilft nur " + p.spell.word + " – wechsle mit R" : "Dafür brauchst du einen neuen Zauber (Unterricht im Palast)",
+                p.pos.add(0, 2.4f, 0), new Color(200, 190, 255));
+            return true;
+        }
+        if (c.notReady()) {
+            floatText("Erst muss der Weg frei sein …", p.pos.add(0, 2.4f, 0), new Color(200, 190, 255));
+            return true;
+        }
+        if (game.app.music != null) game.app.music.sfx("chime");
+        world.burst(p.pos.add(0, 1, 0), G3.rgb(spell.color), 120);
+        List<String> l = new ArrayList<>();
+        switch (p.kind) {
+            case VINES -> l.add("*Die Dornenranken fangen Feuer, knistern – und zerfallen zu Asche.");
+            case BOULDER -> l.add("*Der Felsbrocken erzittert, löst sich vom Boden und schwebt hoch über deinen Kopf.");
+            case VEIL -> l.add("*Das Licht frisst sich durch den Schatten. Der Schleier zerreißt wie Nebel im Morgen.");
+            case ICE -> l.add("*Knisternd breitet sich Eis über den Mondsee aus – ein Weg bis zur Insel!");
+            case BRAZIER -> {
+                int lit = 0;
+                for (int i = 1; i <= 3; i++) if (SpellPuzzles.solved(st, "schale" + i)) lit++;
+                l.add("*Die Feuerschale lodert auf. (" + lit + "/3)" + (lit == 3 ? " Der Boden in der Mitte bebt – etwas steigt empor!" : ""));
+            }
+            case CHEST -> {
+                int coins = st.earn(60 + rnd.nextInt(60));
+                l.add("*Klick! Das Schloss springt auf. In der Truhe: " + coins + " Glimmertaler.");
+                Treasure t = p.id.equals("truhe4") ? Treasure.MONDPERLE : rnd.nextFloat() < 0.6f ? randomPrize() : null;
+                if (t != null) {
+                    st.addTreasure(t, 1);
+                    l.add("*Und darunter, in Samt gewickelt: " + t.title + " (" + Treasure.RARITY[t.rarity] + ")!");
+                }
+                Potion pt = Potion.values()[rnd.nextInt(Potion.values().length)];
+                st.potions.merge(pt, 1, Integer::sum);
+                l.add("*Außerdem: ein " + pt.title + ".");
+            }
+        }
+        int solved = 0;
+        for (SpellPuzzles.Puzzle q : world.puzzles.all) if (SpellPuzzles.solved(st, q.id)) solved++;
+        l.add("*Zauberrätsel gelöst: " + solved + "/" + world.puzzles.all.size());
+        l.addAll(st.addXp(p.kind == SpellPuzzles.Kind.CHEST ? 35 : 20));
+        say(null, null, l.toArray(new String[0]), null);
+        saveNow(false);
+        return true;
+    }
+
+    /** Hinweis, wenn man vor einem Rätsel steht. */
+    private String puzzleLabel() {
+        if (world.inPalace) return null;
+        SpellPuzzles.Puzzle p = world.puzzles.near(st, pos, 3.5f);
+        if (p == null) return null;
+        if (!world.puzzles.ready(st, p)) return "✦ " + p.hint;
+        return "✦ " + p.hint + "  → " + (st.spells.contains(p.spell) ? p.spell.word + (st.spell == p.spell ? " (Q zaubern)" : " (mit R wählen)") : "neuer Zauber nötig: " + p.spell.title);
+    }
+
+    /** Nächstes lösbares Rätsel (für die Missionsliste). */
+    private SpellPuzzles.Puzzle nextPuzzle() {
+        SpellPuzzles.Puzzle best = null;
+        float bd = 1e9f;
+        for (SpellPuzzles.Puzzle p : world.puzzles.all) {
+            if (SpellPuzzles.solved(st, p.id) || !st.spells.contains(p.spell) || !world.puzzles.ready(st, p)) continue;
+            float d = p.pos.distance(pos);
+            if (d < bd) { bd = d; best = p; }
+        }
+        return best;
+    }
+
+    private String direction(Vector3f target) {
+        String[] dirs = {"Süden", "Südosten", "Osten", "Nordosten", "Norden", "Nordwesten", "Westen", "Südwesten"};
+        float ang = FastMath.atan2(target.x - pos.x, target.z - pos.z);
+        int idx = Math.round(ang / (FastMath.PI / 4));
+        idx = ((idx % 8) + 8) % 8;
+        return (int) FastMath.sqrt(FastMath.sqr(target.x - pos.x) + FastMath.sqr(target.z - pos.z)) + " m Richtung " + dirs[idx];
     }
 
     private void updateCreatures(float dt) {
@@ -1733,6 +1908,8 @@ public class WorldScene implements Scene, Main.CameraDirector {
             if (sc == null) sc = new double[]{SW / 2.0, SH - 140};
             label(g, "[E] Nach Hause", sc, new Color(255, 215, 150), new Color(40, 26, 14, 210));
         }
+        String pl = palaceLabel == null ? puzzleLabel() : null;
+        if (pl != null && calm()) label(g, pl, new double[]{SW / 2.0, SH - 150}, new Color(220, 210, 255), new Color(30, 20, 50, 215));
         if (palaceLabel != null && calm()) label(g, palaceLabel, new double[]{SW / 2.0, SH - 150}, new Color(255, 220, 150), new Color(30, 20, 50, 215));
         if (world.inPalace && calm()) {
             Palace.Room rm = world.palace.roomAt(pos.x, pos.z);
@@ -1831,6 +2008,10 @@ public class WorldScene implements Scene, Main.CameraDirector {
         Outfit cheapest = null;
         for (Outfit o : Outfit.values()) if (!st.owned.contains(o) && (cheapest == null || o.price < cheapest.price)) cheapest = o;
         if (cheapest != null) m.add(new String[]{"Laden", "Nächstes Gewand: " + cheapest.title, cheapest.price + " Taler bei Pimpernell (Hof)"});
+        Spell nl = nextLesson();
+        if (nl != null) m.add(new String[]{"Unterricht", "Zauberstunde: " + nl.label(), "Bei Professorin Funkelstein im großen Saal des Palasts"});
+        SpellPuzzles.Puzzle np = nextPuzzle();
+        if (np != null) m.add(new String[]{"Zauberrätsel", np.name + " (" + np.spell.word + ")", direction(np.pos)});
         if (!st.flags.contains("palace:visited")) m.add(new String[]{"Palast", "Betritt den Zauberpalast Sternenhall", "Nördlich hinter dem Akademiebaum"});
         else {
             int open = 0, taken = 0;

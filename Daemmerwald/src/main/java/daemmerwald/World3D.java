@@ -109,6 +109,8 @@ public class World3D {
         root.attachChild(palace.exterior);
         solid(Palace.PX, Palace.PZ - 1, 13.5f);
         for (int sx = -1; sx <= 1; sx += 2) for (int sz = -1; sz <= 1; sz += 2) solid(Palace.PX + sx * 15, Palace.PZ + sz * 11, 4.2f);
+        puzzles = new SpellPuzzles();
+        root.attachChild(puzzles.root);
         village = new Village();
         root.attachChild(village.root);
         for (float[] v : village.solids) solid(v[0], v[1], v[2]);
@@ -123,6 +125,9 @@ public class World3D {
 
     public Village village;
     public Palace palace;
+    public SpellPuzzles puzzles;
+    /** Aktueller Spielstand (für Rätsel-Zustände), wird von der Weltszene gesetzt. */
+    public GameState state;
     /** Spieler ist im Inneren des Zauberpalasts. */
     public boolean inPalace;
 
@@ -140,6 +145,10 @@ public class World3D {
             if (!Float.isNaN(f)) return f;
         }
         float hg = WorldGen.height(x, z);
+        if (puzzles != null && state != null) {
+            float w = puzzles.walkHeight(state, x, z);
+            if (!Float.isNaN(w) && w > hg) return w;
+        }
         if (village != null) {
             float d = village.deckHeight(x, z);
             if (!Float.isNaN(d) && d > hg) return d;
@@ -176,6 +185,7 @@ public class World3D {
 
     public boolean blockedIgnoringWater(float x, float z, float r) {
         if (inPalace) return palace.blocked(x, z, r);
+        if (puzzles != null && state != null && puzzles.blocked(state, x, z, r)) return true;
         for (float[] o : statics) {
             float dx = x - o[0], dz = z - o[1], rr = r + o[2];
             if (dx * dx + dz * dz < rr * rr) return true;
@@ -1191,6 +1201,7 @@ public class World3D {
         lantern.setPosition(focus.add(0, 2.4f, 0));
         lantern.setColor(new ColorRGBA(1f, 0.76f, 0.48f, 1).multLocal(inPalace ? 1.1f : 0.15f + 1.1f * night));
         if (inPalace) palace.update(tpf);
+        else if (puzzles != null) puzzles.update(tpf);
         for (int i = 0; i < nightLights.size(); i++) {
             nightLights.get(i).setColor(nightLightBase.get(i).mult(0.2f + 0.8f * night));
         }

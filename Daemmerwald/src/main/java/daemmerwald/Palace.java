@@ -828,9 +828,27 @@ public final class Palace {
     }
 
     private float t;
+    /** Professorin für den Zauberunterricht (im großen Saal am Pult). */
+    public Figure teacher;
+    public static final Vector3f TEACHER_POS = new Vector3f(-7.6f, 0, 13.4f);
+
+    public void addTeacher(Look look) {
+        if (teacher != null) return;
+        teacher = new Figure(look);
+        teacher.node.setLocalTranslation(TEACHER_POS);
+        teacher.node.setLocalRotation(new Quaternion().fromAngleAxis(FastMath.HALF_PI, Vector3f.UNIT_Y));
+        interior.attachChild(teacher.node);
+        // Pult mit aufgeschlagenem Zauberbuch und Kerze
+        box(interior, darkWood, 0.45f, 0.55f, 0.35f, TEACHER_POS.x + 1.1f, 0.55f, TEACHER_POS.z, 0);
+        Geometry book = box(interior, G3.lit(new ColorRGBA(0.95f, 0.9f, 0.78f, 1)), 0.35f, 0.03f, 0.25f, TEACHER_POS.x + 1.1f, 1.14f, TEACHER_POS.z, 0);
+        book.setLocalRotation(new Quaternion().fromAngleAxis(0.25f, Vector3f.UNIT_Z));
+        candle(interior, TEACHER_POS.x + 1.45f, 1.12f, TEACHER_POS.z + 0.25f, false);
+        walls.add(new Wall(TEACHER_POS.x - 0.5f, TEACHER_POS.x + 1.6f, TEACHER_POS.z - 0.5f, TEACHER_POS.z + 0.5f, null));
+    }
 
     public void update(float dt) {
         t += dt;
+        if (teacher != null) teacher.update(dt, 0, false);
         for (Geometry c : candles) {
             Object o = c.getUserData("float");
             if (o == null) continue;
