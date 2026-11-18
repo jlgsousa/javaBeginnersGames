@@ -10,6 +10,7 @@ const STARS_NEEDED = 5;
 // Bevorzugt: Mädchen-/Frauenstimmen und natürlich klingende Stimmen.
 const Voice = (() => {
   const synth = window.speechSynthesis;
+  const CLIPS = window.VOICE_CLIPS || {};
   let voice = null, muted = false, list = [];
   const GIRL = /gisela|kinder|child|mädchen/i;
   const NATURAL = /natural|online|neural|premium|enhanced|verbessert/i;
@@ -43,22 +44,45 @@ const Voice = (() => {
       if (voice && v.name === voice.name) o.selected = true;
       sel.appendChild(o);
     });
-    document.getElementById("voiceRow").style.display = list.length ? "flex" : "none";
-    info.style.display = list.length ? "none" : "block";
+    const hasClips = Object.keys(CLIPS).length > 0;   // aufgenommene Stimme vorhanden → keine Auswahl nötig
+    document.getElementById("voiceRow").style.display = !hasClips && list.length ? "flex" : "none";
+    info.style.display = !hasClips && !list.length ? "block" : "none";
   }
-  // Sätze einzeln sprechen → natürliche kleine Pausen wie beim Vorlesen
-  function speak(text) {
-    if (!synth || muted || !voice) return;
-    synth.cancel();
-    const t = clean(text);
-    if (!t) return;
-    (t.match(/[^.!?:]+[.!?:]*/g) || [t]).forEach(sentence => {
-      const u = new SpeechSynthesisUtterance(sentence.trim());
-      u.voice = voice; u.lang = voice.lang;
-      u.rate = 0.88;                                   // ruhig, wie in einer Märchenstunde
-      u.pitch = GIRL.test(voice.name) ? 1.05 : 1.25;   // hell und freundlich wie ein Mädchen
+  // Fertig aufgenommene Märchenstimme: Dateien in audio/voice/, die Liste steht in js/voice-clips.js.
+  // Jeder Satz-Teil wird nacheinander abgespielt. Fehlt eine Datei, liest notfalls die Computerstimme.
+  let queue = [], current = null;
+  function playNext() {
+    current = null;
+    const part = queue.shift();
+    if (part === undefined) { Sound.duck(false); return; }
+    Sound.duck(true);                                    // Musik leiser, solange erzählt wird
+    const file = CLIPS[part];
+    if (file) {
+      const a = new Audio(file);
+      current = a;
+      a.onended = () => { if (current === a) setTimeout(playNext, 250); };
+      a.onerror = () => { if (current === a) playNext(); };
+      a.play().catch(() => { if (current === a) playNext(); });
+    } else if (synth && voice) {
+      const u = new SpeechSynthesisUtterance(part);
+      u.voice = voice; u.lang = voice.lang; u.rate = 0.88; u.pitch = GIRL.test(voice.name) ? 1.05 : 1.25;
+      current = u;
+      u.onend = u.onerror = () => { if (current === u) playNext(); };
       synth.speak(u);
-    });
+    } else playNext();
+  }
+  function speak(parts) {
+    if (muted) return;
+    stop();
+    queue = (Array.isArray(parts) ? parts : [parts]).map(clean).filter(Boolean);
+    playNext();
+  }
+  function stop() {
+    queue = [];
+    if (current && current.pause) current.pause();
+    current = null;
+    if (synth) synth.cancel();
+    Sound.duck(false);
   }
   function clean(text) {
     return text.replace(/<br\s*\/?>/gi, " ").replace(/<[^>]+>/g, "")
@@ -68,10 +92,9 @@ const Voice = (() => {
   if (synth) { load(); synth.onvoiceschanged = load; }
   window.addEventListener("DOMContentLoaded", fillSelect);
   return {
-    speak,
-    stop() { synth && synth.cancel(); },
-    get speaking() { return !!synth && (synth.speaking || synth.pending); },
-    setMuted(m) { muted = m; if (m && synth) synth.cancel(); },
+    speak, stop, clean,
+    get speaking() { return current !== null || queue.length > 0; },
+    setMuted(m) { muted = m; if (m) stop(); },
     choose(name) { voice = list.find(v => v.name === name) || voice; try { localStorage.setItem("rosiVoice", voice.name); } catch (e) {} },
     fillSelect,
   };
@@ -90,8 +113,13 @@ const NARRATOR = {
   "Prinzessin Alma": "Da sagte Prinzessin Alma:",
   "Rosi": "Und Rosi sagte:",
 };
+function riddleAsk(r) {
+  if (r.ask) return r.ask;
+  const o = r.options.map(o => lowerArticle(Voice.clean(o)));
+  return `Ist es ${o[0]}, ${o[1]} oder ${o[2]}?`;
+}
 // "Der Mond" → "der Mond", damit die Frage beim Vorlesen natürlich klingt
-const lowerArticle = o => o.replace(/^(\S*\s)?(Der|Die|Das|Ein|Eine) /, (m, e, a) => (e || "") + a.toLowerCase() + " ");
+const lowerArticle = o => o.replace(/^(Der|Die|Das|Ein|Eine) /, a => a.toLowerCase());
 
 const game = { state: "title", t: 0 };   // title → intro → play ⇄ dialog → ending
 
@@ -232,12 +260,11 @@ function showNext() {
   }
   Sound.talk();
   // Erzählerin nennt den Sprecher, wenn ein neuer anfängt
-  const intro = step.name !== dlg.lastSpeaker ? (NARRATOR[step.name] || "") + " " : "";
+  const intro = step.name !== dlg.lastSpeaker ? (NARRATOR[step.name] || "") : "";
   dlg.lastSpeaker = step.name;
   if (step.riddle) {
-    const o = step.riddle.options.map(lowerArticle);
-    Voice.speak(`${intro}Hör gut zu: ${step.riddle.q} ` + (step.riddle.ask || `Ist es ${o[0]}, ${o[1]} oder ${o[2]}?`));
-  } else Voice.speak(intro + step.text);
+    Voice.speak([intro, "Hör gut zu:", step.riddle.q, riddleAsk(step.riddle)]);
+  } else Voice.speak([intro, step.text]);
 }
 function answer(i) {
   const step = dlg.current;
@@ -251,7 +278,7 @@ function answer(i) {
   } else {
     Sound.wrong();
     dlgText.innerHTML = "🤔 Hmm, das stimmt noch nicht ganz. Versuch es einfach noch einmal.<br><br>🧩 " + step.riddle.q;
-    Voice.speak("Hmm, das stimmt noch nicht ganz. Versuch es einfach noch einmal.");
+    Voice.speak(WRONG_TEXT);
     [...dlgOpts.children][i].disabled = true;
   }
 }
@@ -270,6 +297,11 @@ window.addEventListener("keydown", e => {
   else if (["Enter", "Space", "KeyE"].includes(e.code) && !e.repeat) showNext();
 });
 
+const WRONG_TEXT = "Hmm, das stimmt noch nicht ganz. Versuch es einfach noch einmal.";
+const END_TEXT = "Und so feierten Rosi, Prinzessin Alma und die Trolle ein großes Fest. Von nun an waren sie die besten Freunde. Und wenn sie nicht müde geworden sind, dann spielen sie noch heute.";
+const readyText = have => `Oh, du hast schon ${have} Sterne gefunden! Wie schön. Dann stelle ich dir jetzt mein Rätsel.`;
+const waitText = have => `Du hast schon ${have} von ${STARS_NEEDED} Sternen gefunden. Schau dich gut um. Manche Sterne liegen ganz hoch, dorthin musst du springen.`;
+
 function talkTo(n) {
   const sp = { name: n.name, emoji: n.emoji };
   const lines = arr => arr.map(t => typeof t === "string" ? { ...sp, text: t } : t);
@@ -279,10 +311,10 @@ function talkTo(n) {
   if (wasNew) { steps.push(...lines(n.intro)); n.state = "collect"; }
   const have = zoneStars[n.zone];
   if (have >= STARS_NEEDED) {
-    steps.push({ ...sp, text: `Oh, du hast schon ${have} Sterne gefunden! Wie schön. Dann stelle ich dir jetzt mein Rätsel.` });
+    steps.push({ ...sp, text: readyText(have) });
     steps.push({ ...sp, riddle: n.riddle, onCorrect: [...lines(n.solved), { fn: () => { n.state = "done"; n.onSolved(); } }] });
   } else if (!wasNew) {
-    steps.push({ ...sp, text: `Du hast schon ${have} von ${STARS_NEEDED} Sternen gefunden. Schau dich gut um. Manche Sterne liegen ganz hoch, dorthin musst du springen.` });
+    steps.push({ ...sp, text: waitText(have) });
   }
   say(steps);
 }
@@ -476,7 +508,7 @@ function endingUpdate(dt, t) {
   if (endT > 1 && Math.random() < dt * 2.5) firework(uni.pos);
   if (endT > 7 && document.getElementById("end").style.display !== "flex") {
     document.getElementById("endStars").textContent = `Du hast ${starCount} von ${stars.length} Sternen gesammelt! ⭐`;
-    Voice.speak("Und so feierten Rosi, Prinzessin Alma und die Trolle ein großes Fest. Von nun an waren sie die besten Freunde. Und wenn sie nicht müde geworden sind, dann spielen sie noch heute.");
+    Voice.speak(END_TEXT);
     document.getElementById("end").style.display = "flex";
   }
 }
@@ -529,3 +561,18 @@ document.getElementById("start").addEventListener("click", () => {
 });
 document.getElementById("skip").addEventListener("click", () => { if (game.state === "intro") startPlay(); });
 placeIntroStart();
+
+// Liste aller Sätze, die vorgelesen werden (zum Aufnehmen der Märchenstimme)
+function collectVoiceLines() {
+  const out = new Set(), add = t => { const c = Voice.clean(t || ""); if (c) out.add(c); };
+  CAPTIONS.forEach(c => add(c[1]));
+  Object.values(NARRATOR).forEach(add);
+  NPCS.forEach(n => {
+    [...n.intro, ...n.solved, ...n.done].forEach(t => add(typeof t === "string" ? t : t.text));
+    add(n.riddle.q); add(riddleAsk(n.riddle));
+  });
+  ["Hör gut zu:", WRONG_TEXT, END_TEXT, "Es war einmal ein kleines rosa Einhorn.", "Es war einmal ein kleines rosa Einhorn. Es hieß Rosi."].forEach(add);
+  for (let h = 0; h < STARS_NEEDED; h++) add(waitText(h));
+  for (let h = STARS_NEEDED; h <= 10; h++) add(readyText(h));
+  return [...out];
+}

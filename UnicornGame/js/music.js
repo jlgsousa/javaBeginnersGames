@@ -217,11 +217,19 @@ const Sound = (() => {
     bell(freq("G5"), ac.currentTime, 0.08, 0.08, sfxBus);
   }
 
+  // Musik leiser stellen, während die Märchenstimme erzählt
+  let ducked = false;
+  function duck(on) {
+    if (!ac || on === ducked) return;
+    ducked = on;
+    musicBus.gain.setTargetAtTime(on ? 0.1 : 0.32, ac.currentTime, 0.25);
+  }
+
   function toggleMute() {
     muted = !muted;
     if (ac) master.gain.setTargetAtTime(muted ? 0 : 0.9, ac.currentTime, 0.05);
     return muted;
   }
 
-  return { init, play, star, jump, correct, wrong, giggle, magic, splash, talk, toggleMute, get muted() { return muted; } };
+  return { init, play, duck, star, jump, correct, wrong, giggle, magic, splash, talk, toggleMute, get muted() { return muted; } };
 })();
