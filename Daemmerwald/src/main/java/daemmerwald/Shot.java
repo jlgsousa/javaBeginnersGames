@@ -437,6 +437,9 @@ public class Shot {
         step("nflow_name", 3f, () -> { app.core.state = new GameState(); app.core.setScene(new NameScene(app.core, 1)); for (char ch : "JoLu".toCharArray()) app.core.input.typeChar(ch); });
         step("nflow_ok", 6f, () -> press(java.awt.event.KeyEvent.VK_ENTER));
         step("nflow_check", 4f, () -> System.out.println("Szene: " + app.core.scene().getClass().getSimpleName()));
+        step("logic", 2f, () -> { LogicGame lg = new LogicGame(app.core); lg.level = 3; app.core.setScene(lg); });
+        step("logic_play", 2f, () -> press(java.awt.event.KeyEvent.VK_ENTER));
+        step("logic_answer", 2f, () -> press(java.awt.event.KeyEvent.VK_2));
         step("players", 2f, () -> app.core.setScene(new PlayersScene(app.core)));
         step("two_players", 6f, () -> {
             GameState gs = app.core.state;

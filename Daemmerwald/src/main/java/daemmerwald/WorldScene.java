@@ -1500,6 +1500,11 @@ public class WorldScene implements Scene, Main.CameraDirector, Combat.Host {
             if (cs == 1 && d < 4.5f) { palaceLabel = "✦ Drei Siegel am Gemälde – " + Chapters.objective(st)[2]; return; }
             if (cs == 2 && pal.toWorld(Palace.PLAQUE_POS).distance(pos) < 2.4f) { palaceLabel = "[E] Die Tafel der Gründer lesen"; palaceAction = this::readPlaque; return; }
         }
+        if (pal.toWorld(LIBRARIAN).distance(pos) < 3.0f) {
+            palaceLabel = "[E] Denkrätsel bei Ambrosius Kniffel (Stufe " + st.stage("logic") + ")";
+            palaceAction = this::startLogic;
+            return;
+        }
         if (pal.toWorld(Palace.TEACHER_POS).distance(pos) < 3.0f) {
             palaceLabel = "[E] Zauberunterricht bei Professorin Ysmira Funkelstein";
             palaceAction = this::startLesson;
@@ -1529,8 +1534,44 @@ public class WorldScene implements Scene, Main.CameraDirector, Combat.Host {
         }
     }
 
+    static final Vector3f LIBRARIAN = new Vector3f(-14.6f, 0, -5.5f);
+    private static Figure librarian;
+
+    /** Ambrosius Kniffel: Denkrätsel (Logik, Zahlenfolgen, Um-die-Ecke-Denken). */
+    private void startLogic() {
+        LogicGame lg = new LogicGame(game);
+        lg.level = st.stage("logic");
+        in.releaseAll();
+        lg.onDone = r -> {
+            game.setScene(this);
+            in.releaseAll();
+            if (r == MiniGame.Result.WIN) {
+                int lvl = lg.level;
+                st.stages.put("logic", lvl + 1);
+                st.gamesWon++;
+                int coins = st.earn(20 + 10 * lvl);
+                List<String> l = new ArrayList<>(List.of("Ambrosius Kniffel: Wunderbar gedacht! Stufe " + lvl + " gemeistert. Hier, " + coins + " Glimmertaler für deinen klugen Kopf."));
+                l.addAll(st.addXp(lg.xpReward()));
+                if (lvl % 3 == 0) {
+                    Treasure t = randomPrize();
+                    st.addTreasure(t, 1);
+                    l.add("*Ambrosius schiebt dir etwas zu: " + t.title + " (" + Treasure.RARITY[t.rarity] + ")!");
+                }
+                say(null, null, l.toArray(new String[0]), null);
+                saveNow(false);
+            }
+        };
+        game.setScene(lg);
+    }
+
     void enterPalace() {
         Palace pal = world.palace;
+        if (librarian == null) {
+            librarian = new Figure(Look.human(Look.rgb(228, 200, 178), Look.rgb(70, 50, 90), Look.rgb(45, 40, 50), Look.rgb(215, 215, 220), Look.rgb(40, 30, 25), false, Look.BEARD));
+            librarian.node.setLocalTranslation(LIBRARIAN);
+            librarian.node.setLocalRotation(new Quaternion().fromAngleAxis(-FastMath.HALF_PI, Vector3f.UNIT_Y));
+            pal.interior.attachChild(librarian.node);
+        }
         pal.addTeacher(CharacterDef.ALL.get(9).look);
         world.setPalace(true);
         pal.applyOpen(st);
