@@ -30,11 +30,11 @@ public class BookReader {
             if (in.wasPressed(KeyEvent.VK_ENTER, KeyEvent.VK_E, KeyEvent.VK_SPACE)) open(sel);
             return true;
         }
-        if (in.wasPressed(KeyEvent.VK_ESCAPE, KeyEvent.VK_B)) { book = -1; return true; }
+        if (in.wasPressed(KeyEvent.VK_ESCAPE, KeyEvent.VK_B)) { book = -1; Voice.stop(); return true; }
         boolean nextP = in.wasPressed(KeyEvent.VK_RIGHT, KeyEvent.VK_D, KeyEvent.VK_SPACE, KeyEvent.VK_PAGE_DOWN) || (in.mouseClicked && in.mouseX > 640);
         boolean prevP = in.wasPressed(KeyEvent.VK_LEFT, KeyEvent.VK_A, KeyEvent.VK_PAGE_UP) || (in.mouseClicked && in.mouseX <= 640);
         if (nextP && page + 2 < pages.size()) page += 2;
-        else if (nextP && page + 2 >= pages.size()) book = -1;
+        else if (nextP && page + 2 >= pages.size()) { book = -1; Voice.stop(); }
         if (prevP && page >= 2) page -= 2;
         return true;
     }
@@ -55,6 +55,11 @@ public class BookReader {
         }
         g.dispose();
         for (int k = 0; k < lines.size(); k += LINES) pages.add(lines.subList(k, Math.min(lines.size(), k + LINES)));
+        // Die Erzählerin liest das ganze Buch vor
+        List<String> keys = new ArrayList<>();
+        keys.add(Stories.BOOKS[i][0]);
+        for (String para : Stories.BOOKS[i][2].split("\n\n")) if (!para.isBlank()) keys.add(para.trim());
+        Voice.narrateAll(keys);
     }
 
     public void render(Graphics2D g) {

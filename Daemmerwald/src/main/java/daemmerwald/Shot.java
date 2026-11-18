@@ -405,6 +405,18 @@ public class Shot {
             app.world.dayNight.time = Float.parseFloat(System.getProperty("dw.daytime", "0.78"));
             teleport(-64, -95, -FastMath.HALF_PI);
         });
+        step("hall", 3f, () -> {
+            WorldScene ws = (WorldScene) app.core.scene();
+            ws.enterPalace();
+            skipDialog();
+            ws.clearOverlays();
+            ws.teleportTo(app.world.palace.toWorld(new Vector3f(3, 0, 15)), FastMath.PI);
+            try {
+                java.lang.reflect.Field p = WorldScene.class.getDeclaredField("camPitch");
+                p.setAccessible(true);
+                p.setFloat(ws, -0.2f);
+            } catch (Exception e) { }
+        });
         step("players", 2f, () -> app.core.setScene(new PlayersScene(app.core)));
         step("two_players", 6f, () -> {
             GameState gs = app.core.state;

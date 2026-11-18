@@ -73,8 +73,17 @@ public class Music {
     private void installVoice() {
         Voice.player = new Voice.Player() {
             @Override
-            public void play(String asset, float pitch) {
+            public void play(java.util.List<String> assets, float pitch) {
                 stop();
+                voiceQueue.addAll(assets);
+                voicePitch = pitch;
+                next();
+            }
+
+            private void next() {
+                if (voiceQueue.isEmpty()) return;
+                String asset = voiceQueue.remove(0);
+                float pitch = voicePitch;
                 try {
                     AudioKey key = new AudioKey(asset, false, false);
                     AudioNode n = new AudioNode((AudioData) app.getAssetManager().loadAsset(key), key);
@@ -92,6 +101,7 @@ public class Music {
 
             @Override
             public void stop() {
+                voiceQueue.clear();
                 if (voiceNode != null) {
                     voiceNode.stop();
                     app.getRootNode().detachChild(voiceNode);
@@ -101,7 +111,22 @@ public class Music {
         };
     }
 
-    private boolean speaking() { return voiceNode != null && voiceNode.getStatus() == com.jme3.audio.AudioSource.Status.Playing; }
+    private final java.util.List<String> voiceQueue = new java.util.ArrayList<>();
+    private float voicePitch = 1;
+
+    /** Nächstes Stück eines zusammengesetzten Satzes abspielen, wenn das vorige fertig ist. */
+    private void voiceTick() {
+        if (voiceNode != null && voiceNode.getStatus() == com.jme3.audio.AudioSource.Status.Stopped) {
+            app.getRootNode().detachChild(voiceNode);
+            voiceNode = null;
+            if (!voiceQueue.isEmpty()) {
+                java.util.List<String> rest = new java.util.ArrayList<>(voiceQueue);
+                Voice.player.play(rest, voicePitch);
+            }
+        }
+    }
+
+    private boolean speaking() { return (voiceNode != null && voiceNode.getStatus() == com.jme3.audio.AudioSource.Status.Playing) || !voiceQueue.isEmpty(); }
 
     public void sfx(String name) { sfx(name, 1f); }
 
@@ -153,6 +178,7 @@ public class Music {
         } else if (s instanceof EndingScene) mood = "epic";
         else mood = "title";
         orchestra(dt, mood);
+        voiceTick();
         owlT -= dt;
         if (owlT <= 0) {
             owlT = 25 + rnd.nextFloat() * 40;

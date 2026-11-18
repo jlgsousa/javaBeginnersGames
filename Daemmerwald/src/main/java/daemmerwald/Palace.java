@@ -741,7 +741,46 @@ public final class Palace {
             Geometry b = box(n, G3.lit(new ColorRGBA(0.22f, 0.2f, 0.6f, 1)), 0.9f, 2.8f, 0.03f, s * 6, 7.5f, -17.6f, 0);
             b.setShadowMode(ShadowMode.Off);
         }
-        // Roter Teppich vom Tor zum Kamin
+        // Prunk: Holzvertäfelung mit Goldleisten, hohe Buntglasfenster, Banner, weitere Kronleuchter
+        Material panel = G3.ph("brown_planks_05", new ColorRGBA(0.55f, 0.36f, 0.24f, 1));
+        for (int s = -1; s <= 1; s += 2) {
+            float wx = s * 11.62f;
+            float[][] spans = {{-17.6f, -15.2f}, {-12.8f, -2.4f}, {2.4f, 13.0f}, {16.4f, 18.2f}};
+            for (float[] sp : spans) {
+                if (s > 0 && sp[1] > -11 && sp[0] < -9) continue;
+                float cz = (sp[0] + sp[1]) / 2, hz = (sp[1] - sp[0]) / 2;
+                box(n, panel, 0.06f, 1.1f, hz, wx, 1.1f, cz, 0.8f);
+                box(n, gold, 0.08f, 0.05f, hz, wx - s * 0.03f, 2.24f, cz, 0);
+            }
+            box(n, gold, 0.06f, 0.08f, 18.2f, wx, 6.2f, 0.25f, 0);
+            for (int k = 0; k < 3; k++) {
+                float z = -8 + k * 8;
+                stainedGlass(n, wx - s * 0.02f, 8.6f, z, s);
+            }
+        }
+        // Banner an den Säulen (Blau-Gold, Rot-Gold, Grün-Silber, Violett-Gold)
+        ColorRGBA[] bc = {new ColorRGBA(0.18f, 0.2f, 0.55f, 1), new ColorRGBA(0.55f, 0.1f, 0.12f, 1), new ColorRGBA(0.1f, 0.38f, 0.22f, 1), new ColorRGBA(0.35f, 0.15f, 0.5f, 1)};
+        for (int s = -1; s <= 1; s += 2) {
+            for (int i = 0; i < 4; i++) {
+                float z = -10.5f + i * 7;
+                Geometry b = box(n, G3.lit(bc[i]), 0.02f, 2.1f, 0.6f, s * 9.5f - s * 0.62f, 7.6f, z, 0);
+                b.setShadowMode(ShadowMode.Off);
+                box(n, gold, 0.03f, 0.06f, 0.65f, s * 9.5f - s * 0.64f, 9.75f, z, 0);
+                Geometry emb = new Geometry("bannerStar", new Sphere(6, 6, 0.28f));
+                emb.setMaterial(G3.litGlow(new ColorRGBA(1f, 0.85f, 0.4f, 1), new ColorRGBA(0.5f, 0.35f, 0.1f, 1)));
+                emb.setLocalScale(0.15f, 1, 1);
+                emb.setLocalTranslation(s * 9.5f - s * 0.66f, 8.0f, z);
+                n.attachChild(emb);
+            }
+        }
+        for (int k = -1; k <= 1; k += 2) {
+            Spatial ch2 = G3.model("lantern_chandelier_01");
+            ch2.setLocalScale(2.6f);
+            ch2.setLocalTranslation(0, r.h() - 0.2f, k * 10);
+            n.attachChild(ch2);
+        }
+        // Roter Teppich vom Tor zum Kamin, mit goldener Borte
+        for (int s = -1; s <= 1; s += 2) box(n, gold, 0.06f, 0.025f, 16, s * 1.62f, 0.025f, 1, 0);
         Box rb = new Box(1.6f, 0.02f, 16);
         Geometry rug = new Geometry("rug", rb);
         rug.setMaterial(red);
@@ -775,6 +814,42 @@ public final class Palace {
             box(n, stone, 0.45f, 3.4f, 0.45f, sd * 3.0f, 3.4f, 18.0f, 0.6f);
         }
         box(n, stone, 3.45f, 0.45f, 0.5f, 0, 6.6f, 18.0f, 0.6f);
+    }
+
+    /** Hohes Buntglasfenster mit Spitzbogen und Bleiruten. */
+    private void stainedGlass(Node n, float x, float y, float z, int side) {
+        BufferedImage img = new BufferedImage(128, 320, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g = img.createGraphics();
+        Random r = new Random((long) (z * 13 + side));
+        Color[] cs = {new Color(40, 70, 170), new Color(160, 30, 50), new Color(220, 170, 40), new Color(40, 130, 80), new Color(110, 50, 150), new Color(90, 150, 220)};
+        for (int yy = 0; yy < 320; yy += 32) for (int xx = 0; xx < 128; xx += 32) {
+            g.setColor(cs[r.nextInt(cs.length)]);
+            g.fillRect(xx, yy, 32, 32);
+        }
+        g.setColor(new Color(250, 230, 160));
+        g.fillOval(34, 50, 60, 60);
+        g.setColor(new Color(25, 20, 20));
+        g.setStroke(new BasicStroke(4));
+        for (int yy = 0; yy <= 320; yy += 32) g.drawLine(0, yy, 128, yy);
+        for (int xx = 0; xx <= 128; xx += 32) g.drawLine(xx, 0, xx, 320);
+        g.drawOval(34, 50, 60, 60);
+        g.dispose();
+        Material m = G3.emissive(ColorRGBA.White);
+        m.setTexture("ColorMap", G3.tex(img));
+        m.setColor("GlowColor", new ColorRGBA(0.25f, 0.2f, 0.3f, 1));
+        Geometry q = new Geometry("stainedGlass", new Quad(1.6f, 4f));
+        q.setMaterial(m);
+        q.setLocalRotation(new Quaternion().fromAngleAxis(side < 0 ? FastMath.HALF_PI : -FastMath.HALF_PI, Vector3f.UNIT_Y));
+        q.setLocalTranslation(x, y - 2, z + (side < 0 ? 0.8f : -0.8f));
+        q.setShadowMode(ShadowMode.Off);
+        n.attachChild(q);
+        Geometry arch = new Geometry("glassArch", new Cylinder(2, 16, 0.8f, 0.05f, true));
+        arch.setMaterial(m);
+        arch.setLocalRotation(new Quaternion().fromAngleAxis(FastMath.HALF_PI, Vector3f.UNIT_Y));
+        arch.setLocalTranslation(x, y + 2, z);
+        n.attachChild(arch);
+        box(n, gold, 0.05f, 2.1f, 0.06f, x, y, z - 0.86f, 0);
+        box(n, gold, 0.05f, 2.1f, 0.06f, x, y, z + 0.86f, 0);
     }
 
     private static Material tapestryMat() {

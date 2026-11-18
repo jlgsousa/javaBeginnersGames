@@ -68,7 +68,7 @@ public class DialogBox {
                 who = text.substring(0, c);
                 female = who.startsWith("Hedda") || who.startsWith("Die Fünf") || who.startsWith("Professorin");
             } else {
-                Voice.stop();
+                Voice.narrate(l.key);
                 return;
             }
         }
