@@ -143,6 +143,9 @@ public class Weather {
         return cover > 0.3f ? "Heiter" : "Klar";
     }
 
+    /** Geschlossene Räume (Schloss, Tiefen): kein Regen. */
+    public boolean sealed;
+
     public void update(float tpf, Camera cam, DayNight dn, boolean indoors) {
         timer -= tpf * speed;
         if (forced != null) {
@@ -195,7 +198,7 @@ public class Weather {
         }
 
         // Regen
-        boolean showRain = rain > 0.03f;
+        boolean showRain = rain > 0.03f && !sealed;
         Vector3f rc = c;
         if (indoors) {
             Vector3f fd = cam.getDirection().clone().setY(0).normalizeLocal();

@@ -600,14 +600,27 @@ public final class Palace {
         n.attachChild(ch);
         lights.add(new PointLight(new Vector3f(PX, baseY + 8, PZ - 8), new ColorRGBA(1f, 0.8f, 0.55f, 1).mult(0.8f), 20));
         lights.add(new PointLight(new Vector3f(PX, baseY + 8, PZ + 9), new ColorRGBA(1f, 0.8f, 0.55f, 1).mult(0.8f), 20));
-        // Schild über dem Ausgang
-        Geometry sign = new Geometry("exitSign", new Quad(4, 0.8f));
-        sign.setMaterial(signMat("Zum Tor"));
-        sign.setLocalTranslation(-2, 4.6f, 18.1f);
-        sign.setLocalRotation(new Quaternion().fromAngleAxis(FastMath.PI, Vector3f.UNIT_Y));
-        sign.setLocalTranslation(2, 4.6f, 18.1f);
-        n.attachChild(sign);
-        box(n, G3.litGlow(new ColorRGBA(1f, 0.8f, 0.5f, 1), new ColorRGBA(0.8f, 0.55f, 0.2f, 1)), 2.0f, 2.9f, 0.05f, 0, 2.9f, 18.25f, 0);
+        // Großes altes Eichentor mit Eisenbeschlägen
+        Material oak = G3.ph("brown_planks_05", new ColorRGBA(0.62f, 0.48f, 0.36f, 1));
+        Material iron = G3.lit(new ColorRGBA(0.12f, 0.11f, 0.12f, 1));
+        iron.setColor("Specular", new ColorRGBA(0.4f, 0.4f, 0.4f, 1));
+        iron.setFloat("Shininess", 30);
+        for (int sd = -1; sd <= 1; sd += 2) {
+            box(n, oak, 1.28f, 3.0f, 0.12f, sd * 1.3f, 3.0f, 18.05f, 0.7f);
+            for (float by : new float[]{0.9f, 3.0f, 5.1f}) box(n, iron, 1.22f, 0.07f, 0.03f, sd * 1.3f, by, 17.9f, 0);
+            for (int k = 0; k < 4; k++) {
+                Geometry rivet = new Geometry("rivet", new Sphere(5, 5, 0.05f));
+                rivet.setMaterial(iron);
+                rivet.setLocalTranslation(sd * (0.3f + k * 0.6f), 3.0f, 17.86f);
+                n.attachChild(rivet);
+            }
+            Geometry ring = new Geometry("doorRing", new com.jme3.scene.shape.Torus(16, 6, 0.03f, 0.16f));
+            ring.setMaterial(iron);
+            ring.setLocalTranslation(sd * 0.35f, 2.6f, 17.86f);
+            n.attachChild(ring);
+            box(n, stone, 0.45f, 3.4f, 0.45f, sd * 3.0f, 3.4f, 18.0f, 0.6f);
+        }
+        box(n, stone, 3.45f, 0.45f, 0.5f, 0, 6.6f, 18.0f, 0.6f);
     }
 
     private static Material tapestryMat() {

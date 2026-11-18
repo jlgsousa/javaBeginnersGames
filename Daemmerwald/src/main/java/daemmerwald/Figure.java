@@ -71,6 +71,7 @@ public class Figure {
             default -> { height = 2.1f; buildWraith(); }
         }
         accessory(acc);
+        if (mixamo) setupWand();
         node.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
         play(Anim.IDLE);
     }
@@ -528,6 +529,95 @@ public class Figure {
         castT = troll ? 0.75f : 0.8f;
         play(Anim.CAST);
     }
+
+    // ---------------------------------------------------------------- Zauberstab und Zauberschwung
+
+    private com.jme3.anim.Joint armJ, foreJ;
+    private Vector3f sideAxis;
+    private Node wand;
+    private Geometry wandTip;
+    private boolean wandScaled;
+    /** Aufladen (0–1): Stab erhoben, Spitze glüht stärker. */
+    public float charge = -1;
+
+    private void setupWand() {
+        SkinningControl sk = null;
+        Spatial holder = null;
+        for (Spatial sp : model.getChildren()) {
+            SkinningControl c = Mixamo.skin(sp);
+            if (c != null) { sk = c; holder = sp; break; }
+        }
+        if (sk == null) return;
+        com.jme3.anim.Armature a = sk.getArmature();
+        armJ = Mixamo.find(a, "RightArm");
+        foreJ = Mixamo.find(a, "RightForeArm");
+        com.jme3.anim.Joint hand = Mixamo.find(a, "RightHand");
+        if (armJ == null || hand == null) return;
+        Quaternion fr = Mixamo.frame(a);
+        sideAxis = fr.getRotationColumn(0);
+        wand = new Node("wand");
+        Geometry stick = G3.geom("wandStick", new Cylinder(2, 10, 0.016f, 0.011f, 0.42f, true, false), G3.lit(new ColorRGBA(0.28f, 0.17f, 0.09f, 1)));
+        stick.setLocalTranslation(0, 0, 0.15f);
+        wand.attachChild(stick);
+        wandTip = G3.geom("wandTip", new Sphere(8, 8, 0.016f), G3.emissive(new ColorRGBA(1f, 0.9f, 0.6f, 1)));
+        wandTip.setLocalTranslation(0, 0, 0.36f);
+        wand.attachChild(wandTip);
+        Node att = sk.getAttachmentsNode(hand.getName());
+        // Stab entlang der Handrichtung (Knochenachse Y) in der Faust
+        Node holderN = new Node("wandHolder");
+        holderN.setLocalRotation(new Quaternion().fromAngleAxis(-FastMath.HALF_PI, Vector3f.UNIT_X));
+        holderN.attachChild(wand);
+        att.attachChild(holderN);
+        AnimComposer comp = Mixamo.composer(holder);
+        Spatial ctlHost = comp != null && comp.getSpatial() != null ? comp.getSpatial() : holder;
+        com.jme3.scene.control.Control pose = new com.jme3.scene.control.AbstractControl() {
+            @Override protected void controlUpdate(float tpf) { poseArm(); }
+            @Override protected void controlRender(com.jme3.renderer.RenderManager rm, com.jme3.renderer.ViewPort vp) { }
+        };
+        // direkt nach der Animation, aber vor dem Skinning einreihen
+        int idx = ctlHost.getNumControls();
+        for (int i = 0; i < ctlHost.getNumControls(); i++) if (ctlHost.getControl(i) == comp) idx = i + 1;
+        ctlHost.addControlAt(idx, pose);
+    }
+
+    /** Arm-Schwung über die Animation legen: Stab heben, nach vorn schwingen, zurück. */
+    private void poseArm() {
+        if (armJ == null || armJ.getParent() == null) return;
+        if (!wandScaled && wand != null) {
+            Vector3f ws = wand.getParent().getWorldScale();
+            if (ws.x > 1e-5f) { wand.setLocalScale(1f / ws.x * node.getWorldScale().x); wandScaled = true; }
+        }
+        float ang = 0;
+        if (castT > 0) {
+            float p = 1 - castT / 0.8f;
+            if (p < 0.3f) ang = -2.5f * (p / 0.3f);
+            else if (p < 0.5f) ang = -2.5f + 1.2f * ((p - 0.3f) / 0.2f);
+            else ang = -1.3f * (1 - (p - 0.5f) / 0.5f);
+        } else if (charge >= 0) {
+            ang = -1.4f - 0.9f * charge;
+        }
+        if (Math.abs(ang) < 1e-3f) return;
+        Quaternion r = new Quaternion().fromAngleAxis(ang, sideAxis);
+        Quaternion parentModel = armJ.getParent().getModelTransform().getRotation();
+        Quaternion model = parentModel.mult(armJ.getLocalRotation());
+        Quaternion nl = parentModel.inverse().mult(r.mult(model));
+        armJ.setLocalRotation(nl.normalizeLocal());
+        if (foreJ != null && castT > 0) {
+            // Unterarm leicht strecken
+            Quaternion straight = new Quaternion().slerp(foreJ.getLocalRotation(), foreJ.getInitialTransform().getRotation(), 0.6f);
+            foreJ.setLocalRotation(straight);
+        }
+    }
+
+    /** Glühen der Stabspitze (beim Zaubern und Aufladen). */
+    public void wandGlow(ColorRGBA c, float strength) {
+        if (wandTip == null) return;
+        wandTip.getMaterial().setColor("Color", c.mult(0.6f + strength));
+        wandTip.getMaterial().setColor("GlowColor", c.mult(strength));
+        wandTip.setLocalScale(1 + strength * 2.5f);
+    }
+
+    public Vector3f wandTipWorld() { return wandTip != null ? wandTip.getWorldTranslation() : null; }
 
     public boolean casting() { return castT > 0; }
 

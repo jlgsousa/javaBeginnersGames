@@ -366,7 +366,7 @@ public class WorldScene implements Scene, Main.CameraDirector, Combat.Host {
             if (castT <= 0) releaseSpell();
         }
         updateBolts(dt);
-        if ((in.mouseClicked || in.wasPressed(KeyEvent.VK_Q, KeyEvent.VK_F)) && castT <= 0 && !fig.casting()) castSpell();
+        updateCharge(dt);
         if (p2 != null && p2.castNow) {
             if (p2.mana < 16) floatText("Zu wenig Mana", p2.pos.add(0, p2.fig.height + 0.8f, 0), Art.DANGER);
             else {
@@ -601,9 +601,44 @@ public class WorldScene implements Scene, Main.CameraDirector, Combat.Host {
 
     // ---------------------------------------------------------------- Zauber
 
-    private void castSpell() {
-        float cost = 16;
-        if (mana < cost) { floatText("Zu wenig Mana", pos.add(0, fig.height + 0.8f, 0), Art.DANGER); return; }
+    /** Klick/Q antippen = normaler Zauber; gedrückt halten = aufladen (bis doppelte Kraft). */
+    private float charging = -1, chargeNow;
+    private boolean chargeFull;
+
+    private void updateCharge(float dt) {
+        boolean start = in.mouseClicked || in.wasPressed(KeyEvent.VK_Q, KeyEvent.VK_F);
+        if (charging < 0 && start && castT <= 0 && !fig.casting()) { charging = 0; chargeFull = false; }
+        ColorRGBA sc = G3.rgb(st.spell.color);
+        if (charging < 0) { fig.wandGlow(sc, 0.25f); return; }
+        boolean hold = in.mouseDown || in.isDown(KeyEvent.VK_Q) || in.isDown(KeyEvent.VK_F);
+        charging += dt;
+        float c = FastMath.clamp((charging - 0.3f) / 1.1f, 0, 1);
+        fig.charge = charging > 0.3f ? c : -1;
+        fig.wandGlow(sc, 0.3f + c * 1.6f);
+        if (c >= 1 && !chargeFull) {
+            chargeFull = true;
+            floatText("Voll aufgeladen!", pos.add(0, fig.height + 1f, 0), st.spell.color);
+            if (game.app.music != null) game.app.music.sfx("chime", 1.5f);
+        }
+        if (charging > 0.3f && FastMath.nextRandomFloat() < dt * 12) {
+            Vector3f tip = fig.wandTipWorld();
+            if (tip != null) world.burst(tip, sc, 4);
+        }
+        if (!hold || charging > 5) {
+            fig.charge = -1;
+            charging = -1;
+            castSpell(c);
+        }
+    }
+
+    private void castSpell(float charge) {
+        float cost = 16 * (1 + charge * 0.8f);
+        if (mana < cost) {
+            if (mana >= 16) { charge = 0; cost = 16; }
+            else { floatText("Zu wenig Mana", pos.add(0, fig.height + 0.8f, 0), Art.DANGER); return; }
+        }
+        chargeNow = charge;
+        if (charge > 0.5f) floatText(charge >= 1 ? "✦ Verstärkter Zauber! ✦" : "Aufgeladener Zauber", pos.add(0, fig.height + 1.2f, 0), st.spell.color);
         mana -= cost;
         fig.cast();
         if (game.app.music != null) game.app.music.sfx("spell", spellPitch(st.spell));
@@ -622,6 +657,7 @@ public class WorldScene implements Scene, Main.CameraDirector, Combat.Host {
         final Spell spell;
         Combat.Foe homing;
         Combat.Combo combo;
+        float power = 1;
 
         Bolt(Vector3f from, Vector3f to, Spell spell) {
             p = from.clone();
@@ -667,11 +703,12 @@ public class WorldScene implements Scene, Main.CameraDirector, Combat.Host {
     }
 
     private final List<Bolt> bolts = new ArrayList<>();
+    private float impactPower = 1;
 
     private void updateBolts(float dt) {
         for (Iterator<Bolt> it = bolts.iterator(); it.hasNext(); ) {
             Bolt b = it.next();
-            if (b.fly(dt)) spellImpact(b.target, b.spell, b.combo, b.homing);
+            if (b.fly(dt)) { impactPower = b.power; spellImpact(b.target, b.spell, b.combo, b.homing); impactPower = 1; }
             if (b.trailLife < 0 && b.node.getParent() == null) it.remove();
         }
     }
@@ -686,7 +723,7 @@ public class WorldScene implements Scene, Main.CameraDirector, Combat.Host {
 
     /** Protego: schimmernde Schutzkugel, hält Angriffe ab und stößt Schattenwesen zurück. */
     private void raiseShield() {
-        shieldT = 4f + 1.5f * (spellLevel(Spell.SCHILD) - 1);
+        shieldT = (4f + 1.5f * (spellLevel(Spell.SCHILD) - 1)) * (1 + chargeNow);
         if (shieldGeo == null) {
             com.jme3.material.Material m = new com.jme3.material.Material(G3.am, "Common/MatDefs/Misc/Unshaded.j3md");
             m.setColor("Color", new ColorRGBA(0.45f, 1f, 0.8f, 0.17f));
@@ -706,10 +743,12 @@ public class WorldScene implements Scene, Main.CameraDirector, Combat.Host {
     int spellLevel(Spell s) { return Math.max(1, Math.min(3, st.stage("spell:" + s.name()))); }
 
     private void releaseSpell(Vector3f pos, float yaw, float figH) {
-        float reach = (st.has(Ability.LANZE) ? 9 : 5) + (spellLevel(st.spell) - 1) * 2 + (st.flags.contains("equip:stab") ? 2 : 0);
+        float boost = pos == this.pos ? chargeNow : 0;
+        float reach = (st.has(Ability.LANZE) ? 9 : 5) + (spellLevel(st.spell) - 1) * 2 + (st.flags.contains("equip:stab") ? 2 : 0) + boost * 4;
         Vector3f fwd = new Vector3f(FastMath.sin(yaw), 0, FastMath.cos(yaw));
         Vector3f target = pos.add(fwd.mult(reach)).addLocal(0, 1.2f, 0);
         Vector3f hand = pos.add(fwd.mult(0.7f)).addLocal(0, figH * 0.72f, 0);
+        if (pos == this.pos && fig.wandTipWorld() != null) hand = fig.wandTipWorld().clone();
         // Kombination: zwei Zauber kurz nacheinander
         Combat.Combo combo = null;
         if (pos == this.pos) {
@@ -738,7 +777,9 @@ public class WorldScene implements Scene, Main.CameraDirector, Combat.Host {
         Bolt b = new Bolt(hand, target, st.spell);
         b.homing = homing;
         b.combo = combo;
+        b.power = 1 + boost;
         if (combo != null) b.node.setLocalScale(2.2f);
+        else if (boost > 0.3f) b.node.setLocalScale(1 + boost * 1.4f);
         bolts.add(b);
         lightBoost = 3;
     }
@@ -923,7 +964,8 @@ public class WorldScene implements Scene, Main.CameraDirector, Combat.Host {
             spellEffect(target, combo.first);
             world.burst(target, G3.rgb(combo.first.color), 120);
         }
-        float power = 1 + 0.35f * (spellLevel(spell) - 1);
+        float power = (1 + 0.35f * (spellLevel(spell) - 1)) * impactPower;
+        if (impactPower > 1.3f) world.burst(target, G3.rgb(spell.color), (int) (80 * impactPower));
         if (saga.spell(target, spell, combo, power, homing)) return;
         if (palaceSpell(target, spell)) return;
         world.burst(target, G3.rgb(spell.color), 70);
@@ -2361,6 +2403,7 @@ public class WorldScene implements Scene, Main.CameraDirector, Combat.Host {
         }
         if (menuTab == 1) for (int i = 0; i < 4; i++) if (in.wasPressed(KeyEvent.VK_1 + i)) drink(Potion.values()[i]);
         if (menuTab == 9 && in.mouseClicked && hitButton(0)) saveFromScroll();
+        if (menuTab == 9 && in.wasPressed(KeyEvent.VK_V)) { st.voices = !st.voices; Voice.enabled = st.voices; if (!st.voices) Voice.stop(); }
         if (menuTab == 9) {
             if (in.wasPressed(KeyEvent.VK_Q) || (in.mouseClicked && hitButton(1))) {
                 fig.node.removeFromParent();
@@ -3453,6 +3496,7 @@ public class WorldScene implements Scene, Main.CameraDirector, Combat.Host {
         g.setColor(new Color(180, 180, 200));
         Art.centered(g, "Speichern geht jederzeit: hier, mit dem Siegel „Speichern“ unten auf der Schriftrolle oder mit S, solange sie offen ist.", 640, 420);
         Art.centered(g, "Zum Titelbild: Fortschritt seit dem letzten Speichern geht verloren.", 640, 466);
+        Art.centered(g, "[V] Stimmen der Figuren: " + (st.voices ? "an" : "aus") + "  (Stimmen deines Computers)", 640, 500);
         Art.centered(g, "Spielstand: " + GameState.saveFile(), 640, 444);
     }
 }

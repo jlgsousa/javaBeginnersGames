@@ -106,7 +106,11 @@ public final class Mixamo {
         return o[0];
     }
 
-    /** Überträgt Idle/Walk/Run von Soldier.glb auf das Skelett der Figur (relativ zur Ruhepose). */
+    /**
+     * Überträgt Idle/Walk/Run von Soldier.glb auf das Skelett der Figur.
+     * Übertragen wird die Welt-Ausrichtung jedes Knochens; dabei werden unterschiedliche Ruhehaltungen
+     * (T-Pose der Quelle, A-Pose der Figur) über die Knochenrichtungen ausgeglichen – sonst verdrehen sich die Arme.
+     */
     private static boolean retarget(Spatial target) {
         // Der glTF-Lader verliert beim ersten Laden gelegentlich die Animationen – dann frisch nachladen.
         for (int i = 0; i < 4 && (animSource == null || composer(animSource) == null || composer(animSource).getAnimClip("Walk") == null); i++) {
@@ -116,45 +120,96 @@ public final class Mixamo {
         AnimComposer src = composer(animSource), dst = composer(target);
         SkinningControl sk = skin(target);
         if (src == null || dst == null || sk == null) return false;
-        Armature arm = sk.getArmature();
-        // Grunddrehung der beiden Skelette (z. B. ein gedrehter "Armature"-Knoten in der Datei) ausgleichen
-        // M: dreht den Skelettraum der Quelle in den des Ziels (aus Körperachsen: Hüfte→Kopf, rechte→linke Schulter)
-        Quaternion conv = frame(sk.getArmature()).mult(frame(skin(animSource).getArmature()).inverse());
+        Armature arm = sk.getArmature(), sarm = skin(animSource).getArmature();
+        Quaternion conv = frame(arm).mult(frame(sarm).inverse());
         Quaternion convInv = conv.inverse();
+        // Zuordnung Quelle -> Ziel
+        java.util.Map<Joint, Joint> map = new java.util.LinkedHashMap<>();
+        for (Joint sj : sarm.getJointList()) {
+            String jn = sj.getName();
+            Joint mj = arm.getJoint(jn);
+            if (mj == null) mj = arm.getJoint(jn.replace("mixamorig:", "mixamorig"));
+            if (mj == null) mj = arm.getJoint(jn.replace("mixamorig:", ""));
+            if (mj != null) map.put(sj, mj);
+        }
+        // Ausgleich der Ruhehaltung je Knochen: dreht die (umgerechnete) Knochenrichtung der Quelle auf die des Ziels
+        java.util.Map<Joint, Quaternion> align = new java.util.HashMap<>();
+        for (java.util.Map.Entry<Joint, Joint> e : map.entrySet()) {
+            Joint sj = e.getKey(), tj = e.getValue();
+            Joint sc = null;
+            for (Joint c : sj.getChildren()) if (map.containsKey(c)) { sc = c; break; }
+            Quaternion q = new Quaternion();
+            if (sc != null) {
+                Vector3f ds = conv.mult(bindPos(sc).subtract(bindPos(sj)));
+                Vector3f dt = bindPos(map.get(sc)).subtract(bindPos(tj));
+                if (ds.lengthSquared() > 1e-8f && dt.lengthSquared() > 1e-8f && !sj.getName().endsWith("Hips")) q = arc(ds.normalize(), dt.normalize());
+            }
+            align.put(sj, q);
+        }
         for (String name : new String[]{"Idle", "Walk", "Run"}) {
             AnimClip clip = src.getAnimClip(name);
             if (clip == null) return false;
-            List<AnimTrack> out = new ArrayList<>();
+            java.util.Map<Joint, TransformTrack> tracks = new java.util.HashMap<>();
+            float[] times = null;
             for (AnimTrack tr : clip.getTracks()) {
-                if (!(tr instanceof TransformTrack tt) || !(tt.getTarget() instanceof Joint sj)) continue;
-                String jn = sj.getName();
-                Joint mj = arm.getJoint(jn);
-                if (mj == null) mj = arm.getJoint(jn.replace("mixamorig:", "mixamorig"));
-                if (mj == null) mj = arm.getJoint(jn.replace("mixamorig:", ""));
-                if (mj == null) continue;
-                Transform sb = sj.getInitialTransform(), tb = mj.getInitialTransform();
-                Quaternion ws = bindWorld(sj), wt = bindWorld(mj);
-                Quaternion wsp = sj.getParent() != null ? bindWorld(sj.getParent()) : new Quaternion();
-                Quaternion wtpInv = (mj.getParent() != null ? bindWorld(mj.getParent()) : new Quaternion()).inverse();
-                Quaternion wsInv = ws.inverse();
-                Quaternion[] srq = tt.getRotations();
-                Vector3f[] srt = tt.getTranslations();
-                int n = tt.getTimes().length;
-                Quaternion[] rots = new Quaternion[n];
-                Vector3f[] trs = new Vector3f[n];
-                float ratio = sb.getTranslation().length() > 1e-4f ? tb.getTranslation().length() / sb.getTranslation().length() : 1;
-                for (int i = 0; i < n; i++) {
-                    Quaternion r = srq != null ? srq[i] : sb.getRotation();
-                    // Rotation über die Ruhepose im Weltraum übertragen: inv(Wt_parent) * Ws_parent * r * inv(Ws) * Wt
-                    // Änderung D = Wsp*r*inv(Ws) im Quellraum; Ziel x = inv(Wtp)*M*D*inv(M)*Wt
-                    Quaternion d = wsp.mult(r).multLocal(wsInv);
-                    rots[i] = wtpInv.mult(conv).multLocal(d).multLocal(convInv).multLocal(wt).normalizeLocal();
-                    trs[i] = jn.endsWith("Hips") && srt != null
-                        ? tb.getTranslation().add(conv.mult(srt[i].subtract(sb.getTranslation())).multLocal(ratio))
-                        : tb.getTranslation().clone();
+                if (tr instanceof TransformTrack tt && tt.getTarget() instanceof Joint sj) {
+                    tracks.put(sj, tt);
+                    if (sj.getName().endsWith("Hips") || times == null) times = tt.getTimes();
                 }
-                out.add(new TransformTrack(mj, tt.getTimes(), trs, rots, null));
             }
+            if (times == null) return false;
+            int n = times.length;
+            java.util.Map<Joint, Quaternion[]> outRot = new java.util.HashMap<>();
+            java.util.Map<Joint, Vector3f[]> outTr = new java.util.HashMap<>();
+            for (Joint tj : map.values()) { outRot.put(tj, new Quaternion[n]); outTr.put(tj, new Vector3f[n]); }
+            Transform tmp = new Transform();
+            for (int i = 0; i < n; i++) {
+                double t = times[i];
+                // Welt-Rotation der Quelle (animiert) über die Hierarchie
+                java.util.Map<Joint, Quaternion> sw = new java.util.HashMap<>();
+                java.util.Map<Joint, Vector3f> sLocT = new java.util.HashMap<>();
+                for (Joint sj : ordered(sarm)) {
+                    TransformTrack tt = tracks.get(sj);
+                    Quaternion lr = sj.getInitialTransform().getRotation().clone();
+                    Vector3f lt = sj.getInitialTransform().getTranslation().clone();
+                    if (tt != null) {
+                        tmp.loadIdentity();
+                        tmp.setRotation(lr);
+                        tmp.setTranslation(lt);
+                        tt.getDataAtTime(t, tmp);
+                        if (tt.getRotations() != null) lr = tmp.getRotation().clone();
+                        if (tt.getTranslations() != null) lt = tmp.getTranslation().clone();
+                    }
+                    sLocT.put(sj, lt);
+                    sw.put(sj, worldRot(sj, lr, sw));
+                }
+                // Ziel-Weltrotationen
+                java.util.Map<Joint, Quaternion> tw = new java.util.HashMap<>();
+                for (Joint tj : ordered(arm)) {
+                    Joint sj = null;
+                    for (java.util.Map.Entry<Joint, Joint> e : map.entrySet()) if (e.getValue() == tj) { sj = e.getKey(); break; }
+                    Quaternion parentW = tj.getParent() != null ? tw.get(tj.getParent()) : new Quaternion();
+                    if (parentW == null) parentW = bindWorld(tj.getParent());
+                    Quaternion world;
+                    if (sj != null) {
+                        Quaternion delta = sw.get(sj).mult(bindWorld(sj).inverse());
+                        world = conv.mult(delta).multLocal(convInv).multLocal(align.get(sj).inverse()).multLocal(bindWorld(tj));
+                    } else {
+                        world = parentW.mult(tj.getInitialTransform().getRotation());
+                    }
+                    tw.put(tj, world.normalizeLocal());
+                    if (sj != null) {
+                        outRot.get(tj)[i] = parentW.inverse().mult(world).normalizeLocal();
+                        Transform sb = sj.getInitialTransform(), tb = tj.getInitialTransform();
+                        float ratio = sb.getTranslation().length() > 1e-4f ? tb.getTranslation().length() / sb.getTranslation().length() : 1;
+                        outTr.get(tj)[i] = sj.getName().endsWith("Hips")
+                            ? tb.getTranslation().add(conv.mult(sLocT.get(sj).subtract(sb.getTranslation())).multLocal(ratio))
+                            : tb.getTranslation().clone();
+                    }
+                }
+            }
+            List<AnimTrack> out = new ArrayList<>();
+            for (Joint tj : map.values()) out.add(new TransformTrack(tj, times.clone(), outTr.get(tj), outRot.get(tj), null));
             AnimClip c = new AnimClip(name);
             c.setTracks(out.toArray(new AnimTrack[0]));
             dst.addAnimClip(c);
@@ -163,8 +218,39 @@ public final class Mixamo {
         return true;
     }
 
+    private static Quaternion worldRot(Joint j, Quaternion local, java.util.Map<Joint, Quaternion> done) {
+        if (j.getParent() == null) return local.clone();
+        Quaternion pw = done.get(j.getParent());
+        return (pw != null ? pw : bindWorld(j.getParent())).mult(local);
+    }
+
+    /** Gelenke so sortiert, dass Eltern vor ihren Kindern kommen. */
+    private static List<Joint> ordered(Armature a) {
+        List<Joint> out = new ArrayList<>();
+        for (Joint r : a.getRoots()) collect(r, out);
+        return out;
+    }
+
+    private static void collect(Joint j, List<Joint> out) {
+        out.add(j);
+        for (Joint c : j.getChildren()) collect(c, out);
+    }
+
+    /** Kürzeste Drehung, die a auf b dreht. */
+    private static Quaternion arc(Vector3f a, Vector3f b) {
+        float d = a.dot(b);
+        if (d > 0.99999f) return new Quaternion();
+        if (d < -0.99999f) {
+            Vector3f ax = Vector3f.UNIT_X.cross(a);
+            if (ax.lengthSquared() < 1e-6f) ax = Vector3f.UNIT_Y.cross(a);
+            return new Quaternion().fromAngleAxis(com.jme3.math.FastMath.PI, ax.normalizeLocal());
+        }
+        Vector3f c = a.cross(b);
+        return new Quaternion(c.x, c.y, c.z, 1 + d).normalizeLocal();
+    }
+
     /** Körper-Koordinatensystem eines Skeletts in Ruhehaltung (seitlich, oben, vorn). */
-    private static Quaternion frame(Armature a) {
+    static Quaternion frame(Armature a) {
         Vector3f hips = bindPos(find(a, "Hips")), head = bindPos(find(a, "Head")), l = bindPos(find(a, "LeftArm")), r = bindPos(find(a, "RightArm"));
         Vector3f up = head.subtract(hips).normalizeLocal();
         Vector3f side = l.subtract(r).normalizeLocal();
@@ -175,7 +261,7 @@ public final class Mixamo {
         return q;
     }
 
-    private static Joint find(Armature a, String n) {
+    static Joint find(Armature a, String n) {
         Joint j = a.getJoint("mixamorig:" + n);
         if (j == null) j = a.getJoint("mixamorig" + n);
         if (j == null) j = a.getJoint(n);

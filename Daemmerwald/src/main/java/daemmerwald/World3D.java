@@ -1171,6 +1171,7 @@ public class World3D {
         chunks.update(focus.x, focus.z);
         dayNight.overcast = weather.cover;
         dayNight.update(tpf, cam, zoneDark, zoneBright);
+        weather.sealed = inPalace;
         weather.update(tpf, cam, dayNight, indoors);
         vista.update(tpf, cam, dayNight);
         ambience.update(tpf, focus, dayNight, weather);

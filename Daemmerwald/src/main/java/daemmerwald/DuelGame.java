@@ -15,8 +15,14 @@ public class DuelGame extends MiniGame {
     private int ci, rounds;
     private boolean blocked;
 
-    public DuelGame(GamePanel g, String enemyName, Look enemyLook) {
+    /** Gewonnen nach so vielen geschafften Kombinationen (0 = nur über den Strahl). */
+    private final int winRounds;
+
+    public DuelGame(GamePanel g, String enemyName, Look enemyLook) { this(g, enemyName, enemyLook, 0); }
+
+    public DuelGame(GamePanel g, String enemyName, Look enemyLook, int winRounds) {
         super(g);
+        this.winRounds = winRounds;
         this.enemyName = enemyName;
         this.enemyLook = enemyLook;
     }
@@ -30,7 +36,7 @@ public class DuelGame extends MiniGame {
             "Die Strahlen prallen aufeinander. Tippe die angezeigten Pfeile (Pfeiltasten oder WASD), um deinen Strahl vorzuschieben.",
             "Ein falscher Pfeil wirft dich zurück, und die Folge beginnt neu.",
             "Erscheint »SCHILD!«, drücke sofort die [Leertaste], sonst trifft dich die Welle.",
-            "Schiebe den Strahl ganz bis zu deinem Gegenüber."
+            winRounds > 0 ? "Schaffe " + winRounds + " Pfeil-Kombinationen – dann hast du gewonnen!" : "Schiebe den Strahl ganz bis zu deinem Gegenüber."
         };
     }
 
@@ -48,7 +54,7 @@ public class DuelGame extends MiniGame {
     }
 
     private void newCombo() {
-        int len = Math.min(9, 4 + rounds / 2 + (level - 1) / 2);
+        int len = winRounds > 0 ? Math.min(6, 3 + rounds / 5) : Math.min(9, 4 + rounds / 2 + (level - 1) / 2);
         combo = new int[len];
         for (int i = 0; i < len; i++) combo[i] = rnd.nextInt(4);
         ci = 0;
@@ -68,7 +74,7 @@ public class DuelGame extends MiniGame {
         flash = Math.max(0, flash - dt);
         shield = Math.max(0, shield - dt);
         hitFx = Math.max(0, hitFx - dt);
-        double drain = 0.035 + level * 0.01 + elapsed * 0.0012;
+        double drain = (0.035 + level * 0.01 + elapsed * 0.0012) * (winRounds > 0 ? 0.55 : 1);
         p -= drain * dt;
 
         double power = (1 + (hero.macht - 3) * 0.08) * (game.state.has(Ability.STERN) ? 1.3 : 1.0);
@@ -96,11 +102,11 @@ public class DuelGame extends MiniGame {
             shield = 0.6;
         }
         if (waveT <= 0) {
-            if (!blocked) { p -= 0.15 + level * 0.01; flash = 0.6; }
+            if (!blocked) { p -= (0.15 + level * 0.01) * (winRounds > 0 ? 0.6 : 1); flash = 0.6; }
             blocked = false;
             waveT = Math.max(3.5, 6.5 - level * 0.3) + rnd.nextDouble() * 2;
         }
-        if (p >= 1) end(true);
+        if (p >= 1 || (winRounds > 0 && rounds >= winRounds)) end(true);
         else if (p <= -1) end(false);
     }
 
@@ -177,6 +183,6 @@ public class DuelGame extends MiniGame {
         Art.shadowText(g, hero.name, 80, 120, Art.MAGIC);
         FontMetrics fm = g.getFontMetrics();
         Art.shadowText(g, enemyName, 1200 - fm.stringWidth(enemyName), 120, Art.BLIGHT);
-        topBar(g, "Willenskraft", "Stufe " + level, f, Art.MAGIC);
+        topBar(g, "Willenskraft", winRounds > 0 ? "Kombinationen " + rounds + " / " + winRounds : "Stufe " + level, f, Art.MAGIC);
     }
 }

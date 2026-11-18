@@ -29,7 +29,6 @@ public class Music {
             gen.put("spell", MusicSynth::spell);
             gen.put("chime", MusicSynth::chime);
             gen.put("wind", MusicSynth::wind);
-            gen.put("birds", MusicSynth::birds);
             gen.put("crickets", MusicSynth::crickets);
             gen.put("rain", MusicSynth::rain);
             gen.put("step", MusicSynth::step);
@@ -122,7 +121,7 @@ public class Music {
             if (s instanceof WorldScene && !world.inPalace && world.dayNight.night > 0.6f) sfx("owl", 0.9f + rnd.nextFloat() * 0.2f, 0.25f);
         }
 
-        boolean outdoors = s instanceof WorldScene;
+        boolean outdoors = s instanceof WorldScene && !world.inPalace;
         boolean cafe = s instanceof CafeScene;
         float rain = world.weather.rain;
         for (Map.Entry<String, AudioNode> e : tracks.entrySet()) {
@@ -130,10 +129,10 @@ public class Music {
             if (SFX.contains(k)) continue;
             float target = 0;
             switch (k) {
-                case "rain" -> target = (outdoors ? 0.55f : cafe ? 0.25f : 0) * rain;
+                case "rain" -> target = (outdoors ? 0.2f : cafe ? 0.1f : 0) * rain;
                 case "wind" -> target = outdoors ? 0.18f + world.zoneDark() * 0.2f + rain * 0.15f : cafe ? 0.06f : 0;
                 case "birds" -> target = outdoors ? 0.35f * (1 - world.dayNight.night) * (1 - rain) * (1 - world.zoneDark()) : 0;
-                case "crickets" -> target = outdoors ? 0.3f * world.dayNight.night * (1 - rain) : 0;
+                case "crickets" -> target = outdoors ? 0.12f * world.dayNight.night * (1 - rain) : 0;
                 default -> target = 0;
             }
             float v = vol.getOrDefault(k, 0f);
@@ -169,8 +168,10 @@ public class Music {
         // kurze Stimmungswechsel (z. B. ein Wolf huscht vorbei) nicht sofort umschalten
         if (!mood.equals(currentMood)) {
             moodHold += dt;
-            boolean urgent = mood.equals("drama") || mood.equals("boss") || currentMood.isEmpty();
-            if (moodHold > (urgent ? 0.6f : 4f)) {
+            boolean urgent = mood.equals("boss") || currentMood.isEmpty() || (mood.equals("drama") && !currentMood.equals("boss"));
+            // ein Stück nicht nach wenigen Sekunden wieder abwürgen (sonst laufen ständig zwei Stücke übereinander)
+            float need = urgent ? 1.2f : trackTime < 20 ? 12f : 5f;
+            if (moodHold > need) {
                 moodHold = 0;
                 currentMood = mood;
                 startTrack(mood);
@@ -187,7 +188,7 @@ public class Music {
         if (currentVol > target) currentVol = target;
         if (current != null) current.setVolume(currentVol);
         if (fading != null) {
-            fadingVol -= dt * 0.4f;
+            fadingVol -= dt * 1.2f;
             if (fadingVol <= 0) {
                 fading.stop();
                 app.getRootNode().detachChild(fading);

@@ -11,6 +11,9 @@ public class GameState {
     public String playerName = "";
     /** Zwei Spieler am geteilten Bildschirm. Spieler 2 teilt Taler, Gepäck und Missionen. */
     public boolean twoPlayers;
+    /** Sprache der Stimmen: de, pt (Portugal), en. */
+    public String lang = "de";
+    public boolean voices = true;
     public CharacterDef hero2 = CharacterDef.ALL.get(5);
     public String player2Name = "";
     public final EnumSet<Shard> shards = EnumSet.noneOf(Shard.class);
@@ -119,6 +122,8 @@ public class GameState {
         p.setProperty("hero", String.valueOf(CharacterDef.ALL.indexOf(hero)));
         p.setProperty("name", playerName);
         p.setProperty("two", String.valueOf(twoPlayers));
+        p.setProperty("lang", lang);
+        p.setProperty("voices", String.valueOf(voices));
         p.setProperty("hero2", String.valueOf(CharacterDef.ALL.indexOf(hero2)));
         p.setProperty("name2", player2Name);
         p.setProperty("shards", join(shards.stream().map(Enum::name).toList()));
@@ -174,6 +179,10 @@ public class GameState {
             s.hero = CharacterDef.ALL.get(Integer.parseInt(p.getProperty("hero", "0")));
             s.playerName = p.getProperty("name", "");
             s.twoPlayers = Boolean.parseBoolean(p.getProperty("two", "false"));
+            s.lang = p.getProperty("lang", "de");
+            s.voices = Boolean.parseBoolean(p.getProperty("voices", "true"));
+            Voice.lang = s.lang;
+            Voice.enabled = s.voices;
             s.hero2 = CharacterDef.ALL.get(Integer.parseInt(p.getProperty("hero2", "5")));
             s.player2Name = p.getProperty("name2", "");
             for (String x : split(p.getProperty("shards"))) s.shards.add(Shard.valueOf(x));

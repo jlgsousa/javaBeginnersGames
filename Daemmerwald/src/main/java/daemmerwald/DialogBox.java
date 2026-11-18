@@ -48,8 +48,33 @@ public class DialogBox {
         if (lines.isEmpty()) done = true;
     }
 
+    private int spoken = -1;
+
+    /** Spricht die aktuelle Zeile laut, wenn eine Figur redet (Erzähltext bleibt stumm). */
+    private void voice() {
+        if (spoken == idx || done) return;
+        spoken = idx;
+        Line l = lines.get(idx);
+        String who = l.speaker, text = l.text;
+        boolean female = l.look != null && l.look.female;
+        if (who == null) {
+            // „Aschfell: …“ – Name vor dem Doppelpunkt
+            int c = text.indexOf(": ");
+            if (c > 0 && c < 28 && Character.isUpperCase(text.charAt(0))) {
+                who = text.substring(0, c);
+                text = text.substring(c + 2);
+                female = who.startsWith("Hedda") || who.startsWith("Die Fünf") || who.startsWith("Professorin");
+            } else {
+                Voice.stop();
+                return;
+            }
+        }
+        Voice.say(text, female, who);
+    }
+
     public void update(double dt, Input in) {
         if (done) return;
+        voice();
         Line l = lines.get(idx);
         chars += dt * 60;
         if (in.confirm() || in.mouseClicked) {
@@ -58,7 +83,7 @@ public class DialogBox {
             } else {
                 idx++;
                 chars = 0;
-                if (idx >= lines.size()) done = true;
+                if (idx >= lines.size()) { done = true; Voice.stop(); }
             }
         }
     }

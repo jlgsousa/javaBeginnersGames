@@ -317,6 +317,48 @@ public class Shot {
             ws.teleportTo(ws.saga.dw(new Vector3f(118, Depths.LY, 15)), FastMath.PI);
             press(java.awt.event.KeyEvent.VK_TAB);
         });
+        step("male_walk", 3f, () -> {
+            WorldScene ws = (WorldScene) app.core.scene();
+            skipDialog();
+            ws.clearOverlays();
+            app.core.state.hero = CharacterDef.ALL.get(Integer.getInteger("dw.hero", 0));
+            ws.rebuildFigure();
+            teleport(0, -60, FastMath.HALF_PI);
+            app.world.dayNight.time = 0.5f;
+            try {
+                java.lang.reflect.Field z = WorldScene.class.getDeclaredField("zoom");
+                z.setAccessible(true);
+                z.setFloat(ws, 0.5f);
+            } catch (Exception e) { }
+            app.core.input.keyDown(java.awt.event.KeyEvent.VK_W);
+        });
+        step("male_walk2", 0.7f, () -> { });
+        step("male_side", 1.5f, () -> {
+            try {
+                java.lang.reflect.Field f = WorldScene.class.getDeclaredField("camYaw");
+                f.setAccessible(true);
+                f.setFloat(app.core.scene(), FastMath.PI);
+            } catch (Exception e) { }
+        });
+        step("male_stop", 2f, () -> app.core.input.keyUp(java.awt.event.KeyEvent.VK_W));
+        step("cast_charge", 1.6f, () -> {
+            app.core.input.keyUp(java.awt.event.KeyEvent.VK_W);
+            try {
+                java.lang.reflect.Field f = WorldScene.class.getDeclaredField("camYaw");
+                f.setAccessible(true);
+                f.setFloat(app.core.scene(), FastMath.HALF_PI + 1.2f);
+            } catch (Exception e) { }
+            app.core.input.keyDown(java.awt.event.KeyEvent.VK_Q);
+        });
+        step("cast_swing", 0.25f, () -> app.core.input.keyUp(java.awt.event.KeyEvent.VK_Q));
+        step("cast_after", 1.5f, () -> { });
+        step("palace_gate", 3f, () -> {
+            WorldScene ws = (WorldScene) app.core.scene();
+            ws.enterPalace();
+            skipDialog();
+            ws.clearOverlays();
+            ws.teleportTo(app.world.palace.toWorld(new Vector3f(0, 0, 9)), 0);
+        });
         step("players", 2f, () -> app.core.setScene(new PlayersScene(app.core)));
         step("two_players", 6f, () -> {
             GameState gs = app.core.state;

@@ -16,6 +16,12 @@ public class PlayersScene implements Scene {
         this.in = game.input;
     }
 
+    static final String[][] LANGS = {{"de", "Deutsch"}, {"pt", "Português (Portugal)"}, {"en", "English"}};
+
+    private RoundRectangle2D langBtn(int i) { return new RoundRectangle2D.Double(300 + i * 230, 570, 220, 40, 16, 16); }
+
+    private RoundRectangle2D voiceBtn() { return new RoundRectangle2D.Double(1000, 570, 150, 40, 16, 16); }
+
     private RoundRectangle2D card(int i) { return new RoundRectangle2D.Double(i == 0 ? 250 : 670, 250, 360, 300, 30, 30); }
 
     @Override
@@ -23,6 +29,17 @@ public class PlayersScene implements Scene {
         t += dt;
         if (in.wasPressed(KeyEvent.VK_LEFT, KeyEvent.VK_A, KeyEvent.VK_1, KeyEvent.VK_NUMPAD1)) sel = 0;
         if (in.wasPressed(KeyEvent.VK_RIGHT, KeyEvent.VK_D, KeyEvent.VK_2, KeyEvent.VK_NUMPAD2)) sel = 1;
+        for (int i = 0; i < LANGS.length; i++) {
+            if (in.mouseClicked && langBtn(i).contains(in.mouseX, in.mouseY)) {
+                if (i == 0) { game.state.lang = "de"; Voice.lang = "de"; Voice.say("Willkommen in Sternenhall!", true, "Ysmira"); }
+                return;
+            }
+        }
+        if (in.mouseClicked && voiceBtn().contains(in.mouseX, in.mouseY)) {
+            game.state.voices = !game.state.voices;
+            Voice.enabled = game.state.voices;
+            return;
+        }
         for (int i = 0; i < 2; i++) {
             if (card(i).contains(in.mouseX, in.mouseY)) {
                 sel = i;
@@ -83,6 +100,28 @@ public class PlayersScene implements Scene {
         }
         g.setFont(Art.SMALL);
         g.setColor(new Color(190, 185, 210));
-        Art.centered(g, "← → wählen · Enter bestätigen · Esc zurück", 640, 620);
+        // Sprache der Stimmen
+        g.setFont(Art.SMALL);
+        Art.shadowText(g, "Sprache:", 200, 596, Art.PARCH);
+        for (int i = 0; i < LANGS.length; i++) {
+            RoundRectangle2D b = langBtn(i);
+            boolean on = LANGS[i][0].equals(game.state.lang), avail = i == 0;
+            g.setColor(on ? new Color(110, 60, 120, 230) : new Color(20, 22, 36, 200));
+            g.fill(b);
+            g.setColor(avail ? Art.GOLD : new Color(110, 105, 120));
+            g.draw(b);
+            g.setFont(Art.UI);
+            Art.shadowCentered(g, LANGS[i][1] + (avail ? "" : " – bald"), b.getCenterX(), b.getY() + 27, avail ? Color.WHITE : new Color(130, 125, 140));
+        }
+        RoundRectangle2D vb = voiceBtn();
+        g.setColor(game.state.voices ? new Color(40, 90, 60, 230) : new Color(60, 30, 30, 220));
+        g.fill(vb);
+        g.setColor(Art.GOLD);
+        g.draw(vb);
+        g.setFont(Art.UI);
+        Art.shadowCentered(g, game.state.voices ? "Stimmen: an" : "Stimmen: aus", vb.getCenterX(), vb.getY() + 27, Color.WHITE);
+        g.setFont(Art.SMALL);
+        g.setColor(new Color(190, 185, 210));
+        Art.centered(g, "← → wählen · Enter bestätigen · Esc zurück · Figuren sprechen mit den Stimmen deines Computers", 640, 650);
     }
 }

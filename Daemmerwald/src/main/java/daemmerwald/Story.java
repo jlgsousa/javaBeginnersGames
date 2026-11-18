@@ -205,7 +205,7 @@ public final class Story {
         l.add(kes);
 
         Npc vex = new Npc("vex", "Nachtmahr Vex", VEX, 14, 15);
-        vex.game = g -> new DuelGame(g, "Nachtmahr Vex", VEX);
+        vex.game = g -> new DuelGame(g, "Nachtmahr Vex", VEX, 15);
         vex.before = new String[]{
             "*Zwischen den toten Bäumen steht eine Gestalt, die keinen Schatten wirft – weil sie selbst einer ist.",
             "Ein Lichtkind im Schattenhain. Wie erfrischend. Die meisten trauen sich nur bis zum Waldrand.",

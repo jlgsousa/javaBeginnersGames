@@ -336,11 +336,6 @@ public final class MusicSynth {
             double t = m.rnd.nextDouble() * 12;
             for (int k = 0; k < 3; k++) m.pluck(102 + m.rnd.nextInt(3), t + k * 0.045, 0.03, 0.012, m.rnd.nextDouble(), false);
         }
-        for (int i = 0; i < 3; i++) {
-            double t = m.rnd.nextDouble() * 11;
-            m.pluck(72, t, 0.05, 0.25, 0.3, false);
-            m.pluck(69, t + 0.35, 0.05, 0.3, 0.3, false);
-        }
         return m.finish(0.2, 0.4);
     }
 
