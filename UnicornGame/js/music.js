@@ -95,6 +95,12 @@ const Sound = (() => {
     zauber: { bpm: 138, bar: 3, chords: ["D", "D", "G", "A", "G", "D", "A", "D"],
       melody: [["F#4",1],["A4",1],["D5",1], ["F#5",2],["E5",1], ["D5",1],["B4",1],["G4",1], ["A4",3],
                ["B4",1],["D5",1],["G5",1], ["F#5",2],["D5",1], ["E5",1],["C#5",1],["A4",1], ["D5",3]] },
+    // "Schlittenflug" – Flug durch den Winterabend, mit Schlittenglöckchen (C-Dur)
+    schlitten: { bpm: 120, bar: 4, jingle: true, chords: ["C", "Am", "F", "G", "C", "Am", "Dm", "G"],
+      melody: [["G4",.5],["C5",.5],["E5",1],["D5",.5],["C5",.5],["G4",1], ["A4",.5],["C5",.5],["E5",1],["A5",2],
+               ["F5",1],["E5",.5],["D5",.5],["C5",1],["A4",1], ["B4",1],["D5",1],["G5",2],
+               ["E5",.5],["G5",.5],["E5",1],["C5",1],["E5",1], ["A5",1],["G5",.5],["E5",.5],["C5",2],
+               ["D5",.5],["F5",.5],["A5",1],["G5",.5],["F5",.5],["E5",1], ["D5",1],["B4",1],["C5",2]] },
     // "Fest" – Feier am Ende (F-Dur)
     fest: { bpm: 132, bar: 4, chords: ["F", "Bb", "C", "F", "F", "Bb", "C", "F"],
       melody: [["F4",.5],["F4",.5],["A4",1],["C5",1],["A4",1], ["Bb4",1],["A4",.5],["G4",.5],["F4",2],
@@ -124,6 +130,7 @@ const Sound = (() => {
         ev.push({ b: start, type: "kick" }, { b: start + 2, type: "kick" });
         for (let j = 0; j < 8; j++) ev.push({ b: start + j * 0.5, type: "hat", acc: j % 2 });
         ev.push({ b: start + 1, type: "clap" }, { b: start + 3, type: "clap" });
+        if (s.jingle) for (let j = 0; j < 8; j++) ev.push({ b: start + j * 0.5, type: "jingle", acc: j % 2 });
       }
     });
     ev.sort((a, c) => a.b - c.b);
@@ -161,6 +168,11 @@ const Sound = (() => {
           case "kick": kick(t); break;
           case "hat": noise(t, 0.04, e.acc ? 0.03 : 0.05, 7000); break;
           case "clap": noise(t, 0.09, 0.06, 1500); break;
+          case "jingle":   // Schlittenglöckchen: helles Klingeln
+            noise(t, 0.07, e.acc ? 0.025 : 0.04, 9000);
+            osc("sine", 2637 * (1 + Math.random() * 0.02), t, 0.09, 0.012, musicBus, false);
+            osc("sine", 3520 * (1 + Math.random() * 0.02), t + 0.01, 0.07, 0.008, musicBus, false);
+            break;
         }
       }
       evIndex++;

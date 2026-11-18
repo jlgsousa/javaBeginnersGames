@@ -36,6 +36,12 @@ Ein kindgerechtes 3D-Abenteuer: Die frechen Trolle haben Prinzessin Alma mitgeno
 Blumenwiese, Regenbogen-Berge, Süßigkeiten-Fluss, Schlösser-Tal und Trolldorf, sammelt Sterne, trifft Hoppel, Funki,
 Quaki, Fee Funkel und Trollo und löst ihre Rätsel. Mit Intro-Film, fröhlicher Musik (live im Browser erzeugt) und Happy End.
 
+**Kapitel 2 – Mit Sven zum Nordpol:** Nach der Rettung reitet Alma auf dem Rentier Sven durch den Abendhimmel, sammelt die
+goldenen Buchstaben des Weihnachtsgrußes „WIR WÜNSCHEN FROHE WEIHNACHTEN“, hilft am Nordpol den Elfen mit Rätseln beim
+Einpacken der Geschenke und bekommt vom Weihnachtsmann ein Malbuch (6 Bilder, 10 Farben, Farbeimer & Pinsel).
+
+Alle Texte werden von einer offline aufgenommenen deutschen Märchenstimme vorgelesen (`tools/make_voice.py`, Piper).
+
 Starten: `UnicornGame/index.html` im Browser öffnen (läuft auch offline).
 
 Steuerung: W A S D / Pfeile laufen · Shift rennen · Leertaste springen · Maus ziehen Kamera · Mausrad Zoom · E umschauen · M Musik an/aus.

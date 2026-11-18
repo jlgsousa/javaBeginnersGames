@@ -73,6 +73,42 @@
   #end p { font-size: 22px; color: #8a3d78; background: rgba(255,255,255,.8); border-radius: 16px; padding: 10px 18px; }
   #again { font-size: 26px; padding: 12px 36px; border: none; border-radius: 30px; color: #fff; background: var(--pink); box-shadow: 0 6px 0 var(--pink-dark); }
 
+  /* ---- Kapitel 2: Lösungssatz ---- */
+  #ch2Hud { display: none; position: absolute; top: 10px; left: 50%; transform: translateX(-50%); text-align: center; width: 96vw; pointer-events: none; }
+  #sentence { display: inline-flex; flex-wrap: wrap; justify-content: center; gap: 6px 18px; padding: 10px 16px; background: rgba(40,20,80,.45); border-radius: 18px; }
+  #sentence .word { display: flex; gap: 4px; }
+  #sentence span { width: clamp(20px, 3.2vw, 38px); height: clamp(28px, 4.4vw, 50px); border-radius: 8px; background: rgba(255,255,255,.25);
+    border: 2px dashed rgba(255,255,255,.7); color: #fff3a0; font-size: clamp(18px, 3vw, 34px); font-weight: bold; display: flex; align-items: center; justify-content: center;
+    text-shadow: 0 0 8px #ff9f1c, 2px 2px 0 #ff5fa2; }
+  #sentence span.got { background: rgba(255,200,60,.35); border: 2px solid #ffd34d; animation: pop .4s; }
+  @keyframes pop { 50% { transform: scale(1.4); } }
+  #ch2Help { margin-top: 6px; color: #fff; font-size: 14px; text-shadow: 1px 1px 2px #000; }
+  #fade { position: absolute; inset: 0; background: #fff; opacity: 0; pointer-events: none; transition: opacity 1s; }
+  .titleBtns { display: flex; gap: 12px; margin-top: 16px; flex-wrap: wrap; justify-content: center; }
+  .titleBtns button, #end button, #final button { font-size: 20px; padding: 10px 22px; border: none; border-radius: 24px; color: #fff; background: #7e57c2; box-shadow: 0 5px 0 #4527a0; }
+  #end .row, #final .row { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
+
+  /* ---- Malbuch ---- */
+  #paint { position: absolute; inset: 0; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+    background: linear-gradient(135deg, #ffe3f1, #e8dcff); padding: 8px; box-sizing: border-box; }
+  #paint h2 { margin: 0; color: var(--pink); font-size: clamp(20px, 3vw, 30px); }
+  #paintMain { display: flex; gap: 10px; align-items: center; max-width: 100%; }
+  #pictures { display: flex; flex-direction: column; gap: 8px; }
+  #pictures button, #tools button { font-size: 26px; width: 54px; height: 54px; border-radius: 14px; border: 3px solid #fff; background: #fff; box-shadow: 0 3px 8px rgba(0,0,0,.12); }
+  #pictures button.on, #tools button.on { border-color: var(--pink); background: #fff0f7; }
+  #paintCanvas { background: #fff; border-radius: 16px; box-shadow: 0 6px 20px rgba(0,0,0,.15); touch-action: none;
+    width: min(calc(100vw - 100px), calc((100vh - 190px) * 900 / 650)); height: auto; cursor: crosshair; }
+  #paintBar { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; justify-content: center; }
+  #colors { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
+  #colors button { width: 44px; height: 44px; border-radius: 50%; border: 4px solid #fff; box-shadow: 0 2px 6px rgba(0,0,0,.25); }
+  #colors button.on { transform: scale(1.2); border-color: #333; }
+  #tools { display: flex; gap: 6px; }
+  #tools .dot { display: inline-block; background: #333; border-radius: 50%; }
+  #pDone { font-size: 20px; padding: 10px 20px; border: none; border-radius: 20px; color: #fff; background: #3ddc84; box-shadow: 0 4px 0 #1b9e5a; }
+  #final { position: absolute; inset: 0; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; background: rgba(40,20,80,.35); padding: 16px; }
+  #final h1 { font-size: clamp(32px, 6vw, 64px); color: #fff3a0; margin: 0; text-shadow: 3px 3px 0 #ff5fa2; animation: bob 2s ease-in-out infinite; }
+  #final p { font-size: 22px; color: #8a3d78; background: rgba(255,255,255,.85); border-radius: 16px; padding: 10px 18px; }
+
   /* ---- Touch ---- */
   #touch { position: absolute; right: 16px; bottom: 60px; display: none; gap: 12px; }
   #touch button { width: 76px; height: 76px; border-radius: 50%; border: 3px solid #fff;
@@ -106,6 +142,7 @@
   <h1>🦄 Rosi rettet<br>Prinzessin Alma 👑</h1>
   <p>Drei kleine Trolle haben Prinzessin Alma mitgenommen.<br>Hilf dem Einhorn Rosi, Sterne zu sammeln, Rätsel zu lösen und seine beste Freundin wiederzufinden.</p>
   <button id="start">▶ Los geht's!</button>
+  <div class="titleBtns"><button id="ch2Direct">❄️ Kapitel 2: Zum Nordpol</button><button id="paintFromTitle">🎨 Malbuch</button></div>
   <div id="voiceRow"><span>🗣️ Vorlesestimme:</span><select id="voiceSel"></select><button id="voiceTest">▶ Probe hören</button></div>
   <div id="voiceInfo">Auf diesem Computer ist keine deutsche Vorlesestimme installiert, darum bleibt die Erzählerin still.<br>
     Tipp: Öffne das Spiel in <b>Microsoft Edge</b> oder <b>Google Chrome</b>, dort gibt es schöne deutsche Stimmen.</div>
@@ -115,8 +152,39 @@
   <h1>🎉 Alma ist gerettet! 🎉</h1>
   <p>Und so feierten Rosi, Prinzessin Alma und die Trolle ein großes Fest.<br>Von nun an waren sie die besten Freunde. 💖<br>
     <i>Und wenn sie nicht müde geworden sind, dann spielen sie noch heute.</i><br><span id="endStars"></span></p>
-  <button id="again">Nochmal spielen 🌈</button>
+  <div class="row"><button id="ch2Btn">Weiter zum Nordpol ❄️</button><button id="again">Nochmal spielen 🌈</button></div>
 </div>
+
+<div id="ch2Hud">
+  <div id="sentence"></div>
+  <div id="ch2Help">← → / A D: lenken · ↑ ↓ / W S: hoch & runter · Shift: schneller · M: Ton</div>
+</div>
+
+<div id="paint">
+  <h2>🎨 Das Malbuch vom Weihnachtsmann</h2>
+  <div id="paintMain"><div id="pictures"></div><canvas id="paintCanvas"></canvas></div>
+  <div id="paintBar">
+    <div id="colors"></div>
+    <div id="tools">
+      <button data-tool="fill" title="Farbeimer: Fläche ausmalen">🪣</button>
+      <button data-tool="brush" data-size="8" title="Pinsel klein"><span class="dot" style="width:8px;height:8px"></span></button>
+      <button data-tool="brush" data-size="18" title="Pinsel mittel"><span class="dot" style="width:16px;height:16px"></span></button>
+      <button data-tool="brush" data-size="34" title="Pinsel groß"><span class="dot" style="width:26px;height:26px"></span></button>
+      <button data-tool="erase" data-size="26" title="Radiergummi">🧽</button>
+      <button id="pUndo" title="Rückgängig">↩️</button>
+      <button id="pClear" title="Alles neu">🗑️</button>
+      <button id="pSave" title="Bild speichern">💾</button>
+    </div>
+    <button id="pDone">Fertig ✔</button>
+  </div>
+</div>
+
+<div id="final">
+  <h1>🎄 Frohe Weihnachten! 🎄</h1>
+  <p>Weihnachten ist gerettet! Alma, Sven, Rosi und alle ihre Freunde<br>wünschen dir ein wunderschönes Weihnachtsfest. 💖</p>
+  <div class="row"><button id="paintMore">Weiter malen 🎨</button><button onclick="location.reload()">Nochmal spielen 🌈</button></div>
+</div>
+<div id="fade"></div>
 
 <!-- Three.js liegt lokal im Ordner lib/, damit das Spiel auch ohne Internet läuft -->
 <script src="lib/three.min.js"></script>
@@ -129,6 +197,8 @@
 <script src="js/stars.js"></script>       <!-- Sterne zum Sammeln -->
 <script src="js/voice-clips.js"></script> <!-- Liste der aufgenommenen Märchenstimme -->
 <script src="js/story.js"></script>       <!-- Intro, Dialoge, Rätsel, Ende -->
+<script src="js/chapter2.js"></script>    <!-- Kapitel 2: mit Sven zum Nordpol -->
+<script src="js/paint.js"></script>       <!-- das Malbuch -->
 <script src="js/game.js"></script>        <!-- Steuerung, Physik, Kamera -->
 </body>
 </html>

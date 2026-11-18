@@ -231,7 +231,9 @@ const dlgEl = document.getElementById("dialog"), dlgAvatar = document.getElement
       dlgOpts = document.getElementById("dOpts"), dlgNext = document.getElementById("dNext");
 const dlg = { queue: [], current: null };
 
-function say(steps) {
+function say(steps, onDone) {
+  if (game.state !== "dialog") dlg.returnState = game.state;   // nach dem Gespräch dorthin zurück
+  dlg.onDone = onDone;
   dlg.queue = steps.slice();
   dlg.lastSpeaker = null;
   game.state = "dialog";
@@ -271,7 +273,8 @@ function answer(i) {
   if (!step || !step.riddle) return;
   if (i === step.riddle.answer) {
     Sound.correct();
-    for (let k = 0; k < 30; k++) spawnParticle(uni.pos.clone().setY(2), RAINBOW[k % 7],
+    const at = game.chapter === 2 ? alma.root.getWorldPosition(new THREE.Vector3()).setY(2) : uni.pos.clone().setY(2);
+    for (let k = 0; k < 30; k++) spawnParticle(at, RAINBOW[k % 7],
       new THREE.Vector3(rand(-3, 3), rand(2, 5), rand(-3, 3)), 1.2, 1.6, 6);
     dlg.queue = step.onCorrect.concat(dlg.queue);
     showNext();
@@ -283,10 +286,12 @@ function answer(i) {
   }
 }
 function closeDialog() {
-  if (game.state !== "ending") Voice.stop();
+  if (game.state !== "ending" && !dlg.onDone) Voice.stop();
   dlgEl.style.display = "none";
   dlg.current = null;
-  if (game.state === "dialog") game.state = "play";
+  if (game.state === "dialog") game.state = dlg.returnState || "play";
+  const done = dlg.onDone; dlg.onDone = null;
+  if (done) done();
   uni.jumpHeld = true;            // Leertaste vom Weiterklicken soll keinen Sprung auslösen
   updateQuestHud();
 }
@@ -574,5 +579,7 @@ function collectVoiceLines() {
   ["Hör gut zu:", WRONG_TEXT, END_TEXT, "Es war einmal ein kleines rosa Einhorn.", "Es war einmal ein kleines rosa Einhorn. Es hieß Rosi."].forEach(add);
   for (let h = 0; h < STARS_NEEDED; h++) add(waitText(h));
   for (let h = STARS_NEEDED; h <= 10; h++) add(readyText(h));
+  if (typeof CH2_VOICE_LINES !== "undefined") CH2_VOICE_LINES.forEach(add);
+  if (typeof PAINT_VOICE_LINES !== "undefined") PAINT_VOICE_LINES.forEach(add);
   return [...out];
 }

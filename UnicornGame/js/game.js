@@ -39,7 +39,7 @@ if ("ontouchstart" in window || navigator.maxTouchPoints > 0) {
   let stickId = null, camId = null, sx = 0, sy = 0;
   renderer.domElement.addEventListener("touchstart", e => {
     for (const t of e.changedTouches) {
-      if (game.state !== "play") continue;
+      if (game.state !== "play" && ch2.state !== "flight") continue;
       if (t.clientX < window.innerWidth / 2 && stickId === null) {
         stickId = t.identifier; sx = t.clientX; sy = t.clientY;
         stick.style.left = sx + "px"; stick.style.top = sy + "px"; stick.style.display = "block";
@@ -149,6 +149,7 @@ function update(dt, t) {
   sun.target.position.copy(uni.pos);
   if (game.state === "title") { animateUnicorn(dt, t); return; }
   if (game.state === "intro") { game.t += dt; introUpdate(dt); animateUnicorn(dt, t); return; }
+  if (game.chapter === 2) { updateChapter2(dt, t); return; }    // Kapitel 2: Flug zum Nordpol
 
   const u = uni;
 
